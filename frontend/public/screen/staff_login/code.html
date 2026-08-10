@@ -1,0 +1,191 @@
+<!DOCTYPE html><html class="h-full" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Artiste Bistro - Staff Login</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config defined by the Design System -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#d3c4ba",
+                        "surface-cream": "#fef9f2",
+                        "error": "#ba1a1a",
+                        "on-background": "#1d1c18",
+                        "tertiary-fixed": "#efe0d5",
+                        "outline-variant": "#dec0b8",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#ece7e1",
+                        "surface-variant": "#e6e2db",
+                        "on-primary-fixed-variant": "#842405",
+                        "on-surface-variant": "#57423c",
+                        "on-tertiary-fixed": "#221a14",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "on-surface": "#1d1c18",
+                        "on-secondary": "#ffffff",
+                        "background": "#fef9f2",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fef9f2",
+                        "surface-dim": "#ded9d3",
+                        "tertiary": "#4c423a",
+                        "ticket-high-priority": "#ffdad6",
+                        "surface-container-highest": "#e6e2db",
+                        "surface-tint": "#a53c1b",
+                        "outline": "#8b716a",
+                        "secondary-container": "#ede1d0",
+                        "status-critical": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ede1d0",
+                        "on-tertiary-fixed-variant": "#4f453d",
+                        "surface-container": "#f2ede6",
+                        "primary": "#802102",
+                        "surface-warm-grey": "#f2ede6",
+                        "tertiary-container": "#645951",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#201b11",
+                        "primary-fixed": "#ffdbd1",
+                        "surface": "#fef9f2",
+                        "border-sepia": "#8b716a",
+                        "on-primary-fixed": "#3b0900",
+                        "primary-container": "#a03818",
+                        "inverse-on-surface": "#f5f0e9",
+                        "secondary": "#655d50",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#6b6356",
+                        "inverse-primary": "#ffb5a0",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "on-primary-container": "#ffc6b6",
+                        "surface-container-low": "#f8f3ec",
+                        "inverse-surface": "#32302c",
+                        "on-tertiary-container": "#e0d1c6",
+                        "on-secondary-fixed-variant": "#4d463a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding-desktop": "64px",
+                        "gutter": "24px",
+                        "section-gap": "48px",
+                        "container-padding-mobile": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "cta-label": ["Montserrat"],
+                        "body-secondary": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "caption-bold": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "caption-bold": ["12px", { "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-shadow {
+            box-shadow: 0px 10px 30px rgba(45,36,30,0.05);
+        }
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 15px 40px rgba(45,36,30,0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-full flex flex-col items-center justify-center font-body-main antialiased relative overflow-hidden">
+<!-- Decorative background elements for warm minimalism -->
+<div class="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-surface-container-high/30 to-transparent pointer-events-none"></div>
+<div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-tertiary-fixed-dim/20 blur-3xl pointer-events-none"></div>
+<main class="w-full max-w-md px-container-padding-mobile md:px-0 z-10">
+<!-- Login Card -->
+<div class="bg-surface-container-lowest rounded-xl custom-shadow p-8 md:p-10 border border-surface-variant flex flex-col gap-8">
+<!-- Branding -->
+<header class="text-center">
+<h1 class="font-display-lg text-display-lg text-primary italic mb-2 tracking-tight">L'Artiste Bistro</h1>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant">Staff Authentication</p>
+</header>
+<form class="flex flex-col gap-section-gap">
+<!-- Role Selection -->
+<div class="flex flex-col gap-unit">
+<label class="font-caption-bold text-caption-bold text-on-surface-variant uppercase">Select Role</label>
+<div class="grid grid-cols-3 gap-unit">
+<!-- Admin -->
+<label class="cursor-pointer group relative">
+<input checked="" class="peer sr-only" name="role" type="radio" value="admin">
+<div class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low border border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-colors duration-200">
+<span class="material-symbols-outlined text-secondary peer-checked:text-primary mb-2 transition-colors">shield</span>
+<span class="font-body-secondary text-body-secondary text-on-surface peer-checked:text-primary font-medium">Admin</span>
+</div>
+</label>
+<!-- Waiter -->
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" name="role" type="radio" value="waiter">
+<div class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low border border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-colors duration-200">
+<span class="material-symbols-outlined text-secondary peer-checked:text-primary mb-2 transition-colors">restaurant</span>
+<span class="font-body-secondary text-body-secondary text-on-surface peer-checked:text-primary font-medium">Waiter</span>
+</div>
+</label>
+<!-- Kitchen -->
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" name="role" type="radio" value="kitchen">
+<div class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low border border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-colors duration-200">
+<span class="material-symbols-outlined text-secondary peer-checked:text-primary mb-2 transition-colors">soup_kitchen</span>
+<span class="font-body-secondary text-body-secondary text-on-surface peer-checked:text-primary font-medium">Kitchen</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Credential Entry -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-unit">
+<label class="font-caption-bold text-caption-bold text-on-surface-variant uppercase" for="pin">PIN / Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">lock</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-4 pl-12 pr-4 font-body-main text-body-main text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-surface-variant/50" id="pin" name="pin" placeholder="Enter your 4-digit PIN" type="password">
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-4 pt-4">
+<button class="w-full bg-primary-container text-on-primary-container font-cta-label text-cta-label uppercase py-4 rounded-lg hover-lift hover:opacity-90 transition-all flex items-center justify-center gap-2" type="submit">
+                        Sign In
+                        <span class="material-symbols-outlined text-[18px]">login</span>
+</button>
+<a class="text-center font-body-secondary text-body-secondary text-on-surface-variant hover:text-primary transition-colors underline-offset-4 hover:underline" href="#">
+                        Forgot PIN? Contact Admin
+                    </a>
+</div>
+</form>
+</div>
+</main>
+</body></html>

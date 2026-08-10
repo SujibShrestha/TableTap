@@ -1,0 +1,204 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 391px; height: 884px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Cart - L'Artiste Bistro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4d4639",
+                        "tertiary-fixed": "#f0dfd6",
+                        "secondary-fixed": "#ede1d0",
+                        "primary-container": "#c1502e",
+                        "surface-bright": "#fef9f2",
+                        "surface-variant": "#e7e2db",
+                        "on-tertiary-container": "#fffaf8",
+                        "tertiary-fixed-dim": "#d3c3ba",
+                        "on-background": "#1d1c17",
+                        "on-surface-variant": "#57423c",
+                        "primary": "#a03818",
+                        "surface-container-high": "#ece7e1",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "outline-variant": "#dec0b8",
+                        "inverse-surface": "#32302c",
+                        "secondary": "#655d50",
+                        "secondary-container": "#ede1d0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded9d3",
+                        "surface-container-highest": "#e7e2db",
+                        "on-secondary-fixed": "#201b11",
+                        "on-secondary-container": "#6c6356",
+                        "surface": "#fef9f2",
+                        "on-primary-container": "#fffaf9",
+                        "tertiary-container": "#7e7169",
+                        "on-tertiary-fixed": "#221a14",
+                        "surface-container-low": "#f8f3ec",
+                        "on-primary-fixed-variant": "#842504",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "surface-tint": "#a53c1b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f2ede6",
+                        "on-primary-fixed": "#3b0a00",
+                        "on-tertiary-fixed-variant": "#4f453e",
+                        "primary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#f5f0e9",
+                        "inverse-primary": "#ffb5a0",
+                        "tertiary": "#645951",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1d1c17",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "outline": "#8b716a",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "background": "#fef9f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "24px",
+                        "container-padding-desktop": "64px",
+                        "section-gap": "48px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "cta-label": ["Montserrat"],
+                        "body-secondary": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F0E4D3; /* Arena Suave */
+            color: #57423c; /* Espresso Brown / on-surface-variant */
+            -webkit-font-smoothing: antialiased;
+        }
+        .surface-card {
+            background-color: #F7F2EB; /* Creamy Off-White */
+            box-shadow: 0px 10px 30px rgba(45, 36, 30, 0.05);
+        }
+        .input-line {
+            border-bottom: 1px solid #57423c;
+        }
+        .input-line:focus {
+            outline: none;
+            border-bottom-width: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-32">
+<!-- TopAppBar: Transactional, hides navigation shell -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(45,36,30,0.05)] docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center px-container-padding-mobile py-unit w-full max-w-7xl mx-auto">
+<button class="text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile italic text-primary dark:text-primary-fixed-dim">Cart</h1>
+<span class="font-cta-label text-cta-label text-secondary font-normal">Table 12</span>
+</div>
+</header>
+<main class="px-container-padding-mobile py-8 max-w-md mx-auto space-y-8">
+<!-- Cart Items List -->
+<section class="space-y-6">
+<h2 class="font-menu-item-title text-menu-item-title text-on-surface-variant italic mb-4">Your Order</h2>
+<!-- Item 1 -->
+<div class="surface-card rounded-xl p-4 flex items-center justify-between transition-shadow hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)]">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-variant">
+<img alt="Heirloom Tomato Galette" class="w-full h-full object-cover" data-alt="A close-up, highly detailed shot of a rustic Heirloom Tomato Galette on a textured linen napkin. The lighting is soft, warm, and natural, highlighting the rich reds and yellows of the tomatoes against the flaky, golden crust. The aesthetic is editorial, modern minimalism meets artisanal craft, emphasizing the earthy warmth of the culinary creation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHI6WSD4ymLylDBSc8o5iUXf14-TfFCS1IXGZmVN3CLRYK-nuTaGs3CGyhiUVcr-X2hpOdnExV0Vk_TKBavm-dO5RkLsiFOmffPHKfXbZH-0Xt0gWWj2JUEW-nlfXpUZF_o25FMP_yNPKyKarSydTRswpHbOgsNFYzud-0-5Q97Bbg0_0yZhSg4FDCqIH9hUJ6Z30r4jrjSFF7xPzJTyfqDoZ6bRFtQeDWt3CihB8CTQK2u5oAk9P-">
+</div>
+<div>
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface-variant italic text-sm">Heirloom Tomato Galette</h3>
+<p class="font-price-label text-price-label text-primary mt-1">$18.00</p>
+</div>
+</div>
+<!-- Quantity Editor -->
+<div class="flex items-center gap-3 bg-background rounded-full px-2 py-1 border border-outline-variant shadow-sm">
+<button class="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-body-main text-body-main text-on-surface-variant w-4 text-center">1</span>
+<button class="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="surface-card rounded-xl p-4 flex items-center justify-between transition-shadow hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)]">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-variant">
+<img alt="Truffle Arancini" class="w-full h-full object-cover" data-alt="Three perfectly golden Truffle Arancini spheres arranged on a small, matte off-white ceramic plate. The setting is clean and minimalist with generous whitespace. Subtle, soft shadows ground the plate on an Arena Suave surface. The mood is sophisticated and appetizing, capturing the high-end bistro vibe with warm, inviting lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPDq3nThhency8z2iHnjOGRFjhZ4fqkQPdbsSXRiMryVF1fRBqvyHWAwPV3kN_44iLOKv9bMPLqFVKWHRaoPQwzFQVAYllWBKY_wAcgUqCa-0wgWe43ILDX826IHsL8amjrhp4PuXetbBbbVRcaMqE-MSN2n7taNWftGfnYczVG8IWpc6LprLqIDggdt1OdHIfkbMswObB2tPD0QzJWkC_ABpapOk6xrrK_eNxSdfFNsZlZ_1c5V5A">
+</div>
+<div>
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface-variant italic text-sm">Truffle Arancini</h3>
+<p class="font-price-label text-price-label text-primary mt-1">$12.00</p>
+</div>
+</div>
+<!-- Quantity Editor -->
+<div class="flex items-center gap-3 bg-background rounded-full px-2 py-1 border border-outline-variant shadow-sm">
+<button class="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-body-main text-body-main text-on-surface-variant w-4 text-center">1</span>
+<button class="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Special Instructions -->
+<section class="mt-8">
+<div class="surface-card rounded-xl p-6">
+<label class="block font-menu-item-title text-menu-item-title text-on-surface-variant italic mb-2 text-sm" for="instructions">Special Instructions</label>
+<input class="w-full bg-transparent border-0 input-line font-body-main text-body-main text-on-surface-variant placeholder:text-on-surface-variant/50 focus:ring-0 p-2" id="instructions" placeholder="Add a note (e.g., allergies)..." type="text">
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Summary & CTA -->
+<div class="fixed bottom-0 w-full bg-surface-container-low dark:bg-surface-container-highest shadow-[0px_-10px_30px_rgba(45,36,30,0.05)] rounded-t-xl z-50 p-container-padding-mobile pb-safe">
+<div class="max-w-md mx-auto">
+<div class="flex justify-between items-center mb-6">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface-variant">Total</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface-variant italic font-bold">Total: $30.00</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-cta-label text-cta-label uppercase italic py-4 rounded-full shadow-md hover:opacity-90 active:scale-95 transition-all duration-200 tracking-wider">
+                Place Order
+            </button>
+</div>
+</div>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

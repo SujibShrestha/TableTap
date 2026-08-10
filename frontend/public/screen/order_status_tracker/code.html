@@ -1,0 +1,219 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 391px; height: 884px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Order Status Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4d4639",
+                        "tertiary-fixed": "#f0dfd6",
+                        "secondary-fixed": "#ede1d0",
+                        "primary-container": "#c1502e",
+                        "surface-bright": "#fef9f2",
+                        "surface-variant": "#e7e2db",
+                        "on-tertiary-container": "#fffaf8",
+                        "tertiary-fixed-dim": "#d3c3ba",
+                        "on-background": "#1d1c17",
+                        "on-surface-variant": "#57423c",
+                        "primary": "#a03818",
+                        "surface-container-high": "#ece7e1",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "outline-variant": "#dec0b8",
+                        "inverse-surface": "#32302c",
+                        "secondary": "#655d50",
+                        "secondary-container": "#ede1d0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded9d3",
+                        "surface-container-highest": "#e7e2db",
+                        "on-secondary-fixed": "#201b11",
+                        "on-secondary-container": "#6c6356",
+                        "surface": "#fef9f2",
+                        "on-primary-container": "#fffaf9",
+                        "tertiary-container": "#7e7169",
+                        "on-tertiary-fixed": "#221a14",
+                        "surface-container-low": "#f8f3ec",
+                        "on-primary-fixed-variant": "#842504",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "surface-tint": "#a53c1b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f2ede6",
+                        "on-primary-fixed": "#3b0a00",
+                        "on-tertiary-fixed-variant": "#4f453e",
+                        "primary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#f5f0e9",
+                        "inverse-primary": "#ffb5a0",
+                        "tertiary": "#645951",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1d1c17",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "outline": "#8b716a",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "background": "#fef9f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "24px",
+                        "container-padding-desktop": "64px",
+                        "section-gap": "48px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "cta-label": ["Montserrat"],
+                        "body-secondary": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F0E4D3; } /* Arena Suave fallback */
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-background font-body-main antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(45,36,30,0.05)] docked full-width top-0 z-40">
+<div class="flex justify-between items-center px-container-padding-mobile py-unit w-full max-w-7xl mx-auto">
+<button class="text-secondary font-normal hover:opacity-80 transition-opacity scale-95 duration-200 p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile italic text-primary dark:text-primary-fixed-dim font-bold">L'Artiste Bistro</h1>
+<div class="text-primary font-bold italic px-2">Table 12</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-container-padding-mobile py-section-gap flex flex-col items-center max-w-md mx-auto w-full pb-32">
+<!-- Status Header & Time -->
+<div class="text-center mb-12 flex flex-col items-center gap-4">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface-variant">Estimated Wait</h2>
+<div class="font-display-lg text-display-lg text-on-surface-variant">15-20 min</div>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant/70 italic mt-2 text-center max-w-[250px]">
+                We're crafting your order with care.
+            </p>
+</div>
+<!-- Horizontal Stepper -->
+<div class="w-full relative flex justify-between items-start pt-6 mb-12">
+<!-- Progress Line Background -->
+<div class="absolute top-[34px] left-8 right-8 h-1 bg-surface-variant rounded-full z-0"></div>
+<!-- Active Progress Line (width based on step 3 out of 5) -->
+<div class="absolute top-[34px] left-8 w-[50%] h-1 bg-primary-container rounded-full z-0 transition-all duration-700 ease-in-out"></div>
+<!-- Step 1: Pending (Done) -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0px_10px_30px_rgba(45,36,30,0.15)] transition-transform duration-300 group-hover:scale-105">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">done</span>
+</div>
+<span class="font-body-secondary text-body-secondary text-primary-container text-xs font-medium">Pending</span>
+</div>
+<!-- Step 2: Confirmed (Done) -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0px_10px_30px_rgba(45,36,30,0.15)] transition-transform duration-300 group-hover:scale-105">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt</span>
+</div>
+<span class="font-body-secondary text-body-secondary text-primary-container text-xs font-medium">Confirmed</span>
+</div>
+<!-- Step 3: Preparing (Active) -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 -mt-1 rounded-full bg-surface text-primary border-4 border-primary-container flex items-center justify-center shadow-[0px_10px_30px_rgba(45,36,30,0.2)] transition-transform duration-300 scale-110">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">skillet</span>
+</div>
+<span class="font-body-secondary text-body-secondary text-primary-container italic font-bold text-sm mt-1">Preparing</span>
+</div>
+<!-- Step 4: Ready -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-surface text-on-surface-variant border border-outline-variant flex items-center justify-center transition-colors duration-300 bg-opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">takeout_dining</span>
+</div>
+<span class="font-body-secondary text-body-secondary text-on-surface-variant/60 text-xs">Ready</span>
+</div>
+<!-- Step 5: Served -->
+<div class="relative z-10 flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-surface text-on-surface-variant border border-outline-variant flex items-center justify-center transition-colors duration-300 bg-opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">restaurant</span>
+</div>
+<span class="font-body-secondary text-body-secondary text-on-surface-variant/60 text-xs">Served</span>
+</div>
+</div>
+<!-- Order Summary Card -->
+<div class="w-full bg-surface rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] p-6 mt-4 border border-surface-variant/50 relative overflow-hidden group hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-all duration-300">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110"></div>
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface-variant mb-6 border-b border-surface-variant pb-4">Order #4829</h3>
+<ul class="flex flex-col gap-4">
+<li class="flex justify-between items-start">
+<div>
+<div class="font-body-main text-body-main text-on-surface font-medium">Truffle Risotto</div>
+<div class="font-body-secondary text-body-secondary text-on-surface-variant/70 text-sm">Wild mushrooms, parmesan foam</div>
+</div>
+<div class="font-price-label text-price-label text-on-surface-variant">1x</div>
+</li>
+<li class="flex justify-between items-start">
+<div>
+<div class="font-body-main text-body-main text-on-surface font-medium">Pan-Seared Scallops</div>
+<div class="font-body-secondary text-body-secondary text-on-surface-variant/70 text-sm">Cauliflower purée, brown butter</div>
+</div>
+<div class="font-price-label text-price-label text-on-surface-variant">1x</div>
+</li>
+<li class="flex justify-between items-start">
+<div>
+<div class="font-body-main text-body-main text-on-surface font-medium">Artisanal Sourdough</div>
+</div>
+<div class="font-price-label text-price-label text-on-surface-variant">1x</div>
+</li>
+</ul>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-highest shadow-[0px_-10px_30px_rgba(45,36,30,0.05)] fixed bottom-0 w-full z-50 rounded-t-xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe md:hidden">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform group">
+<span class="material-symbols-outlined mb-1 transition-transform group-hover:-translate-y-1" style="font-variation-settings: 'FILL' 0;">restaurant_menu</span>
+<span class="font-cta-label text-cta-label italic opacity-0 group-hover:opacity-100 transition-opacity h-0 group-hover:h-auto overflow-hidden">Menu</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform group">
+<span class="material-symbols-outlined mb-1 transition-transform group-hover:-translate-y-1" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-cta-label text-cta-label italic opacity-0 group-hover:opacity-100 transition-opacity h-0 group-hover:h-auto overflow-hidden">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 italic hover:text-primary transition-colors active:scale-95 transition-transform group shadow-sm">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-cta-label text-cta-label italic">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform group">
+<span class="material-symbols-outlined mb-1 transition-transform group-hover:-translate-y-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-cta-label text-cta-label italic opacity-0 group-hover:opacity-100 transition-opacity h-0 group-hover:h-auto overflow-hidden">Profile</span>
+</button>
+</nav>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

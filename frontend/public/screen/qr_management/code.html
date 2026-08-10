@@ -1,0 +1,381 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Artiste Bistro - QR Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#3b0900",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#ffc6b6",
+                      "on-primary": "#ffffff",
+                      "secondary-container": "#ede1d0",
+                      "on-error": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed-dim": "#d0c5b5",
+                      "surface-container-low": "#f8f3ec",
+                      "inverse-surface": "#32302c",
+                      "surface-warm-grey": "#f2ede6",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#6b6356",
+                      "on-secondary-fixed-variant": "#4d463a",
+                      "on-surface-variant": "#57423c",
+                      "primary-container": "#a03818",
+                      "ticket-high-priority": "#ffdad6",
+                      "border-sepia": "#8b716a",
+                      "on-tertiary-fixed-variant": "#4f453d",
+                      "on-tertiary-container": "#e0d1c6",
+                      "tertiary-fixed": "#efe0d5",
+                      "primary-fixed-dim": "#ffb5a0",
+                      "primary": "#802102",
+                      "inverse-on-surface": "#f5f0e9",
+                      "surface": "#fef9f2",
+                      "tertiary": "#4c423a",
+                      "surface-container-high": "#ece7e1",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#221a14",
+                      "surface-bright": "#fef9f2",
+                      "surface-container": "#f2ede6",
+                      "surface-container-highest": "#e6e2db",
+                      "outline-variant": "#dec0b8",
+                      "primary-fixed": "#ffdbd1",
+                      "tertiary-container": "#645951",
+                      "surface-tint": "#a53c1b",
+                      "tertiary-fixed-dim": "#d3c4ba",
+                      "background": "#fef9f2",
+                      "outline": "#8b716a",
+                      "surface-cream": "#fef9f2",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#ffb5a0",
+                      "secondary-fixed": "#ede1d0",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#655d50",
+                      "on-surface": "#1d1c18",
+                      "on-secondary-fixed": "#201b11",
+                      "surface-variant": "#e6e2db",
+                      "status-critical": "#ba1a1a",
+                      "on-primary-fixed-variant": "#842405",
+                      "surface-dim": "#ded9d3",
+                      "on-background": "#1d1c18"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "section-gap": "48px",
+                      "container-padding-desktop": "64px",
+                      "unit": "8px",
+                      "gutter": "24px",
+                      "container-padding-mobile": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Montserrat"
+                      ],
+                      "body-secondary": [
+                              "Montserrat"
+                      ],
+                      "menu-item-title": [
+                              "Montserrat"
+                      ],
+                      "body-main": [
+                              "Montserrat"
+                      ],
+                      "headline-lg": [
+                              "Montserrat"
+                      ],
+                      "display-lg": [
+                              "Montserrat"
+                      ],
+                      "caption-bold": [
+                              "Montserrat"
+                      ],
+                      "cta-label": [
+                              "Montserrat"
+                      ],
+                      "price-label": [
+                              "Montserrat"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-secondary": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "menu-item-title": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-main": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption-bold": [
+                              "12px",
+                              {
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "cta-label": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "price-label": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #fef9f2; /* surface */
+            color: #1d1c18; /* on-surface */
+        }
+        .ticket-shadow {
+            box-shadow: 0px 10px 30px rgba(45,36,30,0.05);
+        }
+        .ticket-hover:hover {
+            box-shadow: 0px 15px 40px rgba(45,36,30,0.08);
+            transform: translateY(-4px);
+        }
+      </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-surface">
+<!-- SideNavBar -->
+<nav class="w-64 h-full fixed left-0 top-0 bg-surface-container-low shadow-sm transition-all duration-300 ease-in-out flex flex-col py-gutter px-4 z-50">
+<div class="mb-section-gap">
+<h1 class="font-display-lg text-display-lg italic text-primary">L'Artiste Bistro</h1>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant mt-2">Kitchen Management</p>
+</div>
+<button class="w-full bg-primary-container text-on-primary font-cta-label text-cta-label uppercase tracking-widest py-3 px-4 rounded-DEFAULT mb-8 hover:bg-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Order
+        </button>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 group font-menu-item-title text-menu-item-title italic" href="#">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+                    Orders
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-DEFAULT text-primary font-bold italic border-r-2 border-primary bg-surface-container transition-colors duration-200 font-menu-item-title text-menu-item-title" href="#">
+<span class="material-symbols-outlined text-[24px]">table_bar</span>
+                    Tables
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 group font-menu-item-title text-menu-item-title italic" href="#">
+<span class="material-symbols-outlined text-[24px]">restaurant_menu</span>
+                    Menu
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 group font-menu-item-title text-menu-item-title italic" href="#">
+<span class="material-symbols-outlined text-[24px]">analytics</span>
+                    Analytics
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 group font-menu-item-title text-menu-item-title italic" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<ul class="mt-auto space-y-2 pt-4 border-t border-outline-variant/30">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 font-body-secondary text-body-secondary" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+                    Support
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:text-primary hover:bg-surface-container transition-colors duration-200 font-body-secondary text-body-secondary" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                    Log Out
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content -->
+<main class="ml-64 flex-1 h-full overflow-y-auto bg-surface pt-16">
+<!-- TopNavBar (Simulated for layout consistency, content logic often hides it on specific pages, but keeping for structure) -->
+<header class="fixed top-0 right-0 w-[calc(100%-256px)] h-16 bg-surface border-b border-outline-variant/30 flex justify-between items-center px-container-padding-desktop z-40">
+<div class="invisible font-headline-lg text-headline-lg italic text-primary">L'Artiste Bistro</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<img alt="Manager Profile" class="w-8 h-8 rounded-full object-cover ml-2 border border-outline-variant" data-alt="A small, circular profile picture of a sophisticated restaurant manager wearing a tailored dark suit. The lighting is warm and professional, suitable for a high-end bistro administration dashboard. The background is a soft, blurred neutral tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQjcc3jwQGpzDpxSHeFqoyStwvdKDr8NW2TtpseNf-xJbSdYnn9jzPeDS79kD8TRgHFE7xUJaKAda1l0dTdV4TLegukbH1QBB_-XbK5rf-S8p0tbrekiwAyJjlRy8w2lCqEhooU7JMbqDtzppyDX6mOS_y4hq6Vjn_OlFw-wVsUFaE28QHGNSlh4t-patiico5rvfjRAwfFWxjyFPs1AExPVcBVyqCCNi9OIGQ-xCmyKycAAOaejCQ">
+</div>
+</header>
+<div class="px-container-padding-desktop py-section-gap max-w-[1400px] mx-auto mt-8">
+<header class="mb-12">
+<h2 class="font-display-lg text-display-lg italic text-primary mb-2">Table QR Management</h2>
+<p class="font-body-main text-body-main text-on-surface-variant max-w-2xl">Generate and manage unique QR codes for seamless tableside ordering. Ensure each table has a clear, printed code for guests to scan.</p>
+</header>
+<section class="bg-surface-container-low rounded-xl p-8 mb-16 ticket-shadow border border-outline-variant/50">
+<h3 class="font-headline-lg text-headline-lg italic text-on-surface mb-6">Generate New QR Codes</h3>
+<form class="flex flex-col md:flex-row gap-6 items-end">
+<div class="w-full md:w-64">
+<label class="block font-caption-bold text-caption-bold uppercase tracking-widest text-on-surface-variant mb-2" for="table-select">Select Table Number</label>
+<select class="w-full bg-surface border-outline-variant rounded-DEFAULT py-3 px-4 font-body-main text-body-main text-on-surface focus:ring-primary focus:border-primary" id="table-select">
+<option disabled="" selected="" value="">Choose a table...</option>
+<option value="1">Table 1 (Patio)</option>
+<option value="2">Table 2 (Patio)</option>
+<option value="15">Table 15 (Main Dining)</option>
+<option value="16">Table 16 (Main Dining)</option>
+<option value="32">Table 32 (Bar Area)</option>
+</select>
+</div>
+<button class="w-full md:w-auto bg-primary-container text-on-primary font-cta-label text-cta-label uppercase tracking-widest py-3 px-8 rounded-DEFAULT hover:bg-primary transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+                        Generate
+                    </button>
+</form>
+</section>
+<section>
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline-lg text-headline-lg italic text-on-surface">Active Table Codes</h3>
+<div class="flex gap-2">
+<button class="bg-surface-container-low border border-outline-variant text-on-surface-variant font-caption-bold text-caption-bold uppercase px-4 py-2 rounded-DEFAULT hover:bg-surface-container transition-colors">
+                            Filter: All
+                        </button>
+<button class="text-on-surface-variant font-caption-bold text-caption-bold uppercase px-4 py-2 hover:bg-surface-container transition-colors rounded-DEFAULT">
+                            Patio
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- QR Card 1 -->
+<article class="bg-surface rounded-lg p-6 border border-outline-variant/30 ticket-shadow ticket-hover transition-all duration-300 flex flex-col items-center text-center">
+<div class="w-full bg-surface-container-low rounded-DEFAULT p-4 mb-4 flex justify-center items-center aspect-square">
+<img alt="QR Code for Table 12" class="w-3/4 h-3/4 object-contain" data-alt="A clean, high-contrast QR code generated in stark black against a pure white background. It is sharp and scannable, designed for a modern restaurant ordering system. The aesthetic is strictly utilitarian but pristine." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRJd62Gv3wH0NDvr57aBIm-7U7Jx-OXYGQGl-aX4zG8YX4V_AlVUbEWBWuawNTCcn8QnTSi39N5kascJFvtIOdv_P4TNgaiOxXovQ5P3FZTv8dKHId8TJDLod3-iZYsPL73K56KHEzZ5wTvQ-1nB-3dBXuUSylWWeSRKpPbqNVhBzDI6A6RA3ekv7Mz2fX-1Agbf3sx5oj6WQQxejvmU6xYpoOhTC2xRWbq0LyWEYyRM-HLd03yV9Q">
+</div>
+<h4 class="font-menu-item-title text-menu-item-title italic text-primary mb-1">Table 12</h4>
+<p class="font-caption-bold text-caption-bold text-on-surface-variant uppercase tracking-widest mb-6">Main Dining</p>
+<div class="flex gap-3 w-full mt-auto">
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                                Save
+                            </button>
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">print</span>
+                                Print
+                            </button>
+</div>
+</article>
+<!-- QR Card 2 -->
+<article class="bg-surface rounded-lg p-6 border border-outline-variant/30 ticket-shadow ticket-hover transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-primary text-on-primary font-caption-bold text-[10px] uppercase px-2 py-1 rounded-bl-lg">Recent</div>
+<div class="w-full bg-surface-container-low rounded-DEFAULT p-4 mb-4 flex justify-center items-center aspect-square">
+<img alt="QR Code for Table 14" class="w-3/4 h-3/4 object-contain" data-alt="A clean, high-contrast QR code generated in stark black against a pure white background. It is sharp and scannable, designed for a modern restaurant ordering system. The aesthetic is strictly utilitarian but pristine." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC6YaCDwRnwZes5ZuUShXjOVxq-RohxNxxP0e6Ebspw3uTppDq2l27P7c4E_q3EXKIW4JXG5UHRL1HLz8fs78hKfA93vKPytwjqdc_R9gcNV7f_ID7pa3XwAgU1-IwMNExSKT8uCdQQWYBS83_reNAHRQjBIiDct-Oag7--hGu-AGf7n2vDTYmd0Ul3N0aHf8thSdxxFKJUowm2h5OKC-YIHTzkG-LMBo8FW_eCfR6Hdl9yIcWWmr2">
+</div>
+<h4 class="font-menu-item-title text-menu-item-title italic text-primary mb-1">Table 14</h4>
+<p class="font-caption-bold text-caption-bold text-on-surface-variant uppercase tracking-widest mb-6">Main Dining</p>
+<div class="flex gap-3 w-full mt-auto">
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                                Save
+                            </button>
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">print</span>
+                                Print
+                            </button>
+</div>
+</article>
+<!-- QR Card 3 -->
+<article class="bg-surface rounded-lg p-6 border border-outline-variant/30 ticket-shadow ticket-hover transition-all duration-300 flex flex-col items-center text-center">
+<div class="w-full bg-surface-container-low rounded-DEFAULT p-4 mb-4 flex justify-center items-center aspect-square opacity-70">
+<img alt="QR Code for Table 01" class="w-3/4 h-3/4 object-contain" data-alt="A clean, high-contrast QR code generated in stark black against a pure white background. It is sharp and scannable, designed for a modern restaurant ordering system. The aesthetic is strictly utilitarian but pristine." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI60aBpsmGcE6NMbGKsgZHFFDR1FWoofvai232VfasZTIfbQcVB-IMs575uVWbocRkX2ibJT5sd-Dk88DEEXNmh-quyOSVrOviw7EEDyQJIdAZ2DkO2wIfZW1CB2q6mmredKH_tkg2IR4nCHV-fMV-2mH9Dsmt4i97RIoml7gfmYUhXOk8rBLCb78HPeixfjPp2TeNMhkNbkS1wvfmkDIt0jWVX_uAsTCxDyHE-crIFFmYCmO0hLf8">
+</div>
+<h4 class="font-menu-item-title text-menu-item-title italic text-on-surface-variant mb-1">Table 01</h4>
+<p class="font-caption-bold text-caption-bold text-on-surface-variant uppercase tracking-widest mb-6">Patio</p>
+<div class="flex gap-3 w-full mt-auto">
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                                Save
+                            </button>
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-surface-container transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">print</span>
+                                Print
+                            </button>
+</div>
+</article>
+<!-- QR Card 4 -->
+<article class="bg-surface rounded-lg p-6 border border-primary/40 bg-error-container/5 ticket-shadow ticket-hover transition-all duration-300 flex flex-col items-center text-center">
+<div class="w-full bg-surface-container-low rounded-DEFAULT p-4 mb-4 flex justify-center items-center aspect-square">
+<img alt="QR Code for Table 30" class="w-3/4 h-3/4 object-contain" data-alt="A clean, high-contrast QR code generated in stark black against a pure white background. It is sharp and scannable, designed for a modern restaurant ordering system. The aesthetic is strictly utilitarian but pristine." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIhEV3drQFhrYYkRZ8cqunZYKXvNSvlhXqmrbFDden29CS_GH6cgjEFC3ACKvmelbOH_3RE6Op0E8rzEGW1hVQiB9V4w14vqrZc3U_cjZKTxjTheszC3cm5qFkBGtrsHfpVhWFyztykwsEdWPdjuS7jzMbSqnxU9yUTT0D6RpkkWG_u-6ggDlsQ3q94lPLefCzZt8l_ZwAe-NRe-jmP2hA4xZvfNaUmmVFKpCP08Avt81M2dFJ5pPP">
+</div>
+<h4 class="font-menu-item-title text-menu-item-title italic text-primary mb-1">Table 30</h4>
+<p class="font-caption-bold text-caption-bold text-error uppercase tracking-widest mb-6 flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> Needs Replace
+                        </p>
+<div class="flex gap-3 w-full mt-auto">
+<button class="flex-1 bg-primary-container text-on-primary font-cta-label text-cta-label uppercase py-2 px-2 rounded-DEFAULT hover:bg-primary transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]">autorenew</span>
+                                Re-Gen
+                            </button>
+</div>
+</article>
+</div>
+</section>
+</div>
+</main>
+</body></html>

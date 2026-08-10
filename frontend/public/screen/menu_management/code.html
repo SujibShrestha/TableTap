@@ -1,0 +1,356 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Artiste Bistro - Menu Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Editorial adjustments */
+        em, i { font-style: italic; }
+        
+        /* Custom scrollbar for tabs */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#32302c",
+                        "surface-bright": "#fef9f2",
+                        "secondary-fixed": "#ede1d0",
+                        "on-tertiary-fixed": "#221a14",
+                        "surface-container": "#f2ede6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#ece7e1",
+                        "on-secondary-fixed": "#201b11",
+                        "tertiary-fixed": "#efe0d5",
+                        "ticket-high-priority": "#ffdad6",
+                        "secondary-container": "#ede1d0",
+                        "surface-container-low": "#f8f3ec",
+                        "on-tertiary-fixed-variant": "#4f453d",
+                        "tertiary-fixed-dim": "#d3c4ba",
+                        "primary-container": "#a03818",
+                        "on-secondary-fixed-variant": "#4d463a",
+                        "primary": "#802102",
+                        "on-primary-fixed-variant": "#842405",
+                        "on-error-container": "#93000a",
+                        "surface-cream": "#fef9f2",
+                        "on-background": "#1d1c18",
+                        "surface-container-highest": "#e6e2db",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#645951",
+                        "tertiary": "#4c423a",
+                        "on-secondary": "#ffffff",
+                        "surface-warm-grey": "#f2ede6",
+                        "inverse-primary": "#ffb5a0",
+                        "background": "#fef9f2",
+                        "on-primary-container": "#ffc6b6",
+                        "on-surface": "#1d1c18",
+                        "on-secondary-container": "#6b6356",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#dec0b8",
+                        "error": "#ba1a1a",
+                        "surface": "#fef9f2",
+                        "primary-fixed": "#ffdbd1",
+                        "surface-dim": "#ded9d3",
+                        "surface-tint": "#a53c1b",
+                        "status-critical": "#ba1a1a",
+                        "on-surface-variant": "#57423c",
+                        "inverse-on-surface": "#f5f0e9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "error-container": "#ffdad6",
+                        "outline": "#8b716a",
+                        "on-tertiary-container": "#e0d1c6",
+                        "on-primary-fixed": "#3b0900",
+                        "surface-variant": "#e6e2db",
+                        "border-sepia": "#8b716a",
+                        "secondary": "#655d50"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "section-gap": "48px",
+                        "container-padding-mobile": "24px",
+                        "unit": "8px",
+                        "container-padding-desktop": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-secondary": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "cta-label": ["Montserrat"],
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "caption-bold": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "caption-bold": ["12px", { "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-main antialiased min-h-screen flex selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-64 bg-surface-container-low dark:bg-surface-container-low flex flex-col h-full py-8 border-r border-outline-variant/30 hidden md:flex z-50">
+<div class="px-6 mb-12">
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim leading-none tracking-tight">L'Artiste</h1>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant mt-2 italic">Bistro</p>
+</div>
+<ul class="flex flex-col gap-2 px-4 flex-grow">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-highest dark:hover:bg-surface-container-highest transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-menu-item-title text-[16px] font-medium">Orders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-highest dark:hover:bg-surface-container-highest transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+<span class="font-menu-item-title text-[16px] font-medium">Tables</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary bg-surface-container-highest/50" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-menu-item-title text-[16px]">Menu</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-highest dark:hover:bg-surface-container-highest transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-menu-item-title text-[16px] font-medium">Analytics</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-highest dark:hover:bg-surface-container-highest transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-menu-item-title text-[16px] font-medium">Settings</span>
+</a>
+</li>
+</ul>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary-container text-on-tertiary font-cta-label text-cta-label uppercase py-4 px-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Order
+            </button>
+<div class="mt-6 flex items-center gap-3">
+<img alt="Chef de Cuisine Profile" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A small, elegant circular profile picture of a professional chef in a crisp white jacket against a neutral warm grey background. High quality photography, soft natural lighting, modern restaurant aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw90ygEpuCO11DR3iePsoqdktjzOtuKUiSgCjlDhOZHaiBRcdSmqTYAutM_yIGi3JRpzn0ADCVjKoPqBUBzY2bI9ulb5WmtyrFJJJEYU93v3dVIaHLlgGzyy2IoLrrTfrFyAVq3V_ry4ETgBl-GXRCNaecGeHZckVKw2KAECIVsYpndijlSfIhv3Ak5p_nTeNR-HBvTwhRss5TC7gutu-4Xhyk6vfWeZtG0wR8BiR556OxUmLqbDLj">
+<div>
+<p class="font-body-secondary text-[14px] font-semibold text-on-surface">Chef de Cuisine</p>
+<p class="font-caption-bold text-caption-bold text-on-surface-variant lowercase font-normal">Kitchen Management</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-20 bg-surface/90 backdrop-blur-md z-40 flex items-center justify-between px-gutter transition-all duration-300 border-b border-transparent" id="top-nav">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface p-2 -ml-2 rounded-full hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-lg text-[24px] md:text-[28px] font-semibold text-on-surface tracking-tight hidden sm:block">Menu Manager</h2>
+</div>
+<div class="flex items-center gap-2 md:gap-6">
+<!-- Search -->
+<div class="relative hidden lg:block group focus-within:ring-2 focus-within:ring-primary rounded-full transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-focus-within:text-primary transition-colors">search</span>
+<input class="bg-surface-container-low border border-outline-variant/50 text-body-secondary rounded-full py-2 pl-10 pr-4 w-64 focus:outline-none focus:border-primary/50 placeholder:text-on-surface-variant/60 transition-all bg-transparent" placeholder="Search menu items..." type="text">
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2">
+<button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-highest">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Help" class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-highest">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant/30 hidden sm:block"></div>
+<div class="flex items-center gap-3">
+<button class="hidden sm:block font-cta-label text-[13px] uppercase text-on-surface-variant hover:text-primary transition-colors px-2 py-1">Support</button>
+<button class="font-cta-label text-cta-label uppercase text-primary border border-primary px-4 py-2 rounded-lg hover:bg-primary/5 transition-colors">Live View</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 pt-28 px-4 md:px-container-padding-desktop pb-24 max-w-[1400px] w-full mx-auto">
+<!-- Page Header & Actions -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-section-gap">
+<div>
+<h1 class="font-display-lg text-[36px] md:text-display-lg text-on-surface mb-2 tracking-tight">Menu Management</h1>
+<p class="font-body-main text-body-main text-on-surface-variant italic">Refine your culinary offerings</p>
+</div>
+<button class="bg-primary-container text-on-tertiary font-cta-label text-cta-label uppercase py-3.5 px-6 rounded-lg shadow-[0px_4px_14px_rgba(160,56,24,0.2)] hover:shadow-[0px_6px_20px_rgba(160,56,24,0.3)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 whitespace-nowrap self-start sm:self-auto">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add New Item
+                </button>
+</div>
+<!-- Category Tabs -->
+<div class="flex items-center justify-between border-b border-outline-variant/40 mb-8 overflow-x-auto hide-scrollbar pb-1">
+<div class="flex gap-8 min-w-max">
+<button class="font-cta-label text-[14px] uppercase tracking-widest text-primary border-b-2 border-primary pb-3 px-1">Starters</button>
+<button class="font-cta-label text-[14px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors pb-3 px-1">Mains</button>
+<button class="font-cta-label text-[14px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors pb-3 px-1">Desserts</button>
+<button class="font-cta-label text-[14px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors pb-3 px-1">Beverages</button>
+</div>
+<button class="hidden md:flex font-cta-label text-[12px] uppercase text-secondary hover:text-primary transition-colors items-center gap-1 pb-3 pl-6">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                    Add Category
+                </button>
+</div>
+<!-- Menu Grid - Bento/Editorial Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Card 1: High Priority/Active -->
+<div class="bg-surface-bright rounded-xl p-3 border border-primary/20 shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-error-container/30 to-transparent rounded-bl-full z-0 pointer-events-none"></div>
+<div class="aspect-[4/3] rounded-lg overflow-hidden mb-4 relative z-10">
+<img alt="Beef Tartare" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A top-down view of a beautifully plated beef tartare with a raw quail egg yolk on top, garnished with microgreens and capers, served on an artisan ceramic plate resting on a dark wooden table. High contrast, warm editorial lighting, professional food photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7nDwpAs7-8li9klMJw1TlJLGCIdLMWVTh2ZDXdbrQiOl6g-Aj6yIOFtJI2d5Sv5T48UbJjtG5Mmd7e-GOiC_tf22QHHWvFJh0i2BAHe4JCjLQc_WUGHehVvCRVMRKmGfaWKZ3duWVEhmfbEgfBrk0yijsb10aHC_SjSPfwKdDWV29vNP3bQzWJw1_EQnm1bX7JRF99zU4ZPw8wA9L7KX_ihRvGUEPG3JCjIUSdYgZukmiGyXg8wxm">
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur-sm rounded-full p-1 border border-outline-variant/30 flex gap-1">
+<button class="p-1.5 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+</div>
+</div>
+<div class="px-2 pb-2 flex-1 flex flex-col z-10">
+<div class="flex justify-between items-start mb-1 gap-2">
+<h3 class="font-menu-item-title text-menu-item-title text-primary italic leading-tight">Tartare de Bœuf</h3>
+<span class="font-price-label text-price-label text-on-surface italic whitespace-nowrap">€24.00</span>
+</div>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant line-clamp-2 mb-4">Hand-cut pasture-raised beef, confit egg yolk, caper emulsion, and toasted brioche points.</p>
+<div class="mt-auto flex items-center justify-between border-t border-outline-variant/20 pt-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span class="font-caption-bold text-[11px] uppercase tracking-wider text-emerald-700">Available</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-bright rounded-xl p-3 border border-outline-variant/40 shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-all duration-300 hover:-translate-y-1 group flex flex-col">
+<div class="aspect-[4/3] rounded-lg overflow-hidden mb-4 relative">
+<img alt="French Onion Soup" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up shot of a delicate French onion soup served in a traditional rustic crocks, topped with a thick layer of melted, bubbly gruyere cheese and crusty baguette slice visible underneath. Warm, inviting lighting, cozy bistro atmosphere, high-end food photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBquoH7fArqpWq7Y9G7ImMtjWknl-EOYmO_4EWMXsseSlUy1A0hX0PfI1Ub3vq32uIWvII7mt5_kbEHpJSVzGrgidbycpt8VLbgzs6KkveIiimvkpF9AisbbhDN2tNWu3CJq82OCGwFhJTqhlvvB-A0ccXywk5x8b1CcXpz9KRiRgkvCkyXrsNfgDJE8ySQmgzoCtvNstrlRrhtogJ_ZaAZPeh1Nj1nnbSKa115OEZraVuBPbWg44RB">
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur-sm rounded-full p-1 border border-outline-variant/30 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+<button class="p-1.5 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+</div>
+</div>
+<div class="px-2 pb-2 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-1 gap-2">
+<h3 class="font-menu-item-title text-menu-item-title text-primary italic leading-tight">Soupe à l'Oignon</h3>
+<span class="font-price-label text-price-label text-on-surface italic whitespace-nowrap">€16.00</span>
+</div>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant line-clamp-2 mb-4">Caramelized sweet onions, rich beef broth, sourdough crouton, and aged gruyère.</p>
+<div class="mt-auto flex items-center justify-between border-t border-outline-variant/20 pt-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span class="font-caption-bold text-[11px] uppercase tracking-wider text-emerald-700">Available</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Card 3: Inactive -->
+<div class="bg-surface rounded-xl p-3 border border-outline-variant/20 shadow-sm opacity-80 transition-all duration-300 hover:opacity-100 group flex flex-col">
+<div class="aspect-[4/3] rounded-lg overflow-hidden mb-4 relative">
+<div class="absolute inset-0 bg-surface/40 z-10"></div>
+<img alt="Scallops" class="w-full h-full object-cover grayscale-[30%]" data-alt="A plate of seared scallops resting on a bed of bright green pea purée, garnished with crispy pancetta crumbles. The colors are muted slightly to indicate it is out of stock. Clean, modern plating on a matte white dish, editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF7kg0pZ14cAws2YpN-x224ggz28rictzy6k1wingqsJiMSa9tn8XvnBkh3G4mzOQKEZpwXnod3sXr5G7Tq9FIdvXf6z8dU8yhFdpscOKuzjoOSOQT-pPU-W2N6YG5g35OcAgwZynyq0xnwE43fqwF1X6dZ82K9Y-sHVC4d9NQ5V4xP6fI54z3-AvqN9U8wsylUDKnXAwVfv52WToK0epNNQObFnqp8_11C_G1h26sQUICMXEi5M4K">
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur-sm rounded-full p-1 border border-outline-variant/30 flex gap-1 z-20">
+<button class="p-1.5 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+</div>
+</div>
+<div class="px-2 pb-2 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-1 gap-2">
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface-variant italic leading-tight">Coquilles Saint-Jacques</h3>
+<span class="font-price-label text-price-label text-on-surface-variant italic whitespace-nowrap">€28.00</span>
+</div>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant/70 line-clamp-2 mb-4">Pan-seared diver scallops, sweet pea purée, crispy pancetta, and lemon beurre blanc.</p>
+<div class="mt-auto flex items-center justify-between border-t border-outline-variant/20 pt-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-caption-bold text-[11px] uppercase tracking-wider text-secondary">86'd (Inactive)</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox">
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Add Quick Item Card -->
+<button class="bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant/50 flex flex-col items-center justify-center p-6 text-on-surface-variant hover:text-primary hover:border-primary/50 hover:bg-surface transition-all duration-300 group min-h-[300px]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:bg-primary/10">
+<span class="material-symbols-outlined text-[32px] group-hover:text-primary">add</span>
+</div>
+<span class="font-menu-item-title text-[18px]">Quick Add Item</span>
+<span class="font-body-secondary text-[13px] mt-2 opacity-70">Draft a new starter</span>
+</button>
+</div>
+</main>
+</div>
+<script>
+        // Simple top nav shadow on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('top-nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-[0_4px_20px_rgba(45,36,30,0.05)]', 'border-outline-variant/20');
+                nav.classList.remove('border-transparent');
+            } else {
+                nav.classList.remove('shadow-[0_4px_20px_rgba(45,36,30,0.05)]', 'border-outline-variant/20');
+                nav.classList.add('border-transparent');
+            }
+        });
+    </script>
+</body></html>

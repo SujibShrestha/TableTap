@@ -1,0 +1,229 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>L'Artiste Bistro - Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4d4639",
+                        "tertiary-fixed": "#f0dfd6",
+                        "secondary-fixed": "#ede1d0",
+                        "primary-container": "#c1502e",
+                        "surface-bright": "#fef9f2",
+                        "surface-variant": "#e7e2db",
+                        "on-tertiary-container": "#fffaf8",
+                        "tertiary-fixed-dim": "#d3c3ba",
+                        "on-background": "#1d1c17",
+                        "on-surface-variant": "#57423c",
+                        "primary": "#a03818",
+                        "surface-container-high": "#ece7e1",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "outline-variant": "#dec0b8",
+                        "inverse-surface": "#32302c",
+                        "secondary": "#655d50",
+                        "secondary-container": "#ede1d0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded9d3",
+                        "surface-container-highest": "#e7e2db",
+                        "on-secondary-fixed": "#201b11",
+                        "on-secondary-container": "#6c6356",
+                        "surface": "#fef9f2",
+                        "on-primary-container": "#fffaf9",
+                        "tertiary-container": "#7e7169",
+                        "on-tertiary-fixed": "#221a14",
+                        "surface-container-low": "#f8f3ec",
+                        "on-primary-fixed-variant": "#842504",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "surface-tint": "#a53c1b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f2ede6",
+                        "on-primary-fixed": "#3b0a00",
+                        "on-tertiary-fixed-variant": "#4f453e",
+                        "primary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#f5f0e9",
+                        "inverse-primary": "#ffb5a0",
+                        "tertiary": "#645951",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1d1c17",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "outline": "#8b716a",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "background": "#fef9f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "24px",
+                        "container-padding-desktop": "64px",
+                        "section-gap": "48px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "cta-label": ["Montserrat"],
+                        "body-secondary": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F0E4D3; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .menu-card { background-color: #F7F2EB; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased text-on-background pb-32 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(45,36,30,0.05)] docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center px-container-padding-mobile py-unit w-full max-w-7xl mx-auto">
+<button class="hover:opacity-80 transition-opacity scale-95 duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile italic text-primary dark:text-primary-fixed-dim text-center flex-1">
+                L'Artiste Bistro
+            </h1>
+<span class="font-body-main text-body-main text-primary dark:text-primary-fixed-dim whitespace-nowrap">Table 12</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto w-full md:px-container-padding-desktop">
+<!-- Horizontal Scrollable Category Tabs -->
+<nav class="sticky top-[64px] z-30 pt-6 pb-4 bg-[#F0E4D3] px-container-padding-mobile md:px-0">
+<ul class="flex space-x-3 overflow-x-auto hide-scrollbar pb-2">
+<li>
+<button class="px-6 py-2 rounded-full bg-primary-container text-on-primary-container font-cta-label text-cta-label italic whitespace-nowrap shadow-sm">
+                        Starters
+                    </button>
+</li>
+<li>
+<button class="px-6 py-2 rounded-full border border-outline bg-transparent text-on-surface-variant font-cta-label text-cta-label whitespace-nowrap hover:bg-surface-container-low transition-colors">
+                        Mains
+                    </button>
+</li>
+<li>
+<button class="px-6 py-2 rounded-full border border-outline bg-transparent text-on-surface-variant font-cta-label text-cta-label whitespace-nowrap hover:bg-surface-container-low transition-colors">
+                        Beverages
+                    </button>
+</li>
+<li>
+<button class="px-6 py-2 rounded-full border border-outline bg-transparent text-on-surface-variant font-cta-label text-cta-label whitespace-nowrap hover:bg-surface-container-low transition-colors">
+                        Desserts
+                    </button>
+</li>
+</ul>
+</nav>
+<!-- Menu Section: Starters -->
+<section class="px-container-padding-mobile md:px-0 pt-4 pb-section-gap flex flex-col gap-6">
+<!-- Menu Item 1 -->
+<article class="menu-card rounded-xl p-4 md:p-6 shadow-[0px_10px_30px_rgba(45,36,30,0.05)] flex flex-col gap-unit hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow duration-300">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<h2 class="font-menu-item-title text-menu-item-title text-primary italic mb-1">Heirloom Tomato Galette</h2>
+<p class="font-body-main text-body-main text-[#4d4639] opacity-70">Sun-ripened tomatoes, goat cheese, and fresh basil.</p>
+</div>
+<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="A beautifully plated Heirloom Tomato Galette on a rustic ceramic plate. Sun-ripened red and yellow tomatoes sit atop a flaky pastry crust, dolloped with creamy white goat cheese and garnished with vibrant green fresh basil leaves. Soft, natural light illuminates the dish, highlighting its textures. Warm, editorial aesthetic, high-end food photography, creamy off-white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCZT6iWPvHFYIHX-Em0syEAXYC7J8b8hCU7KcAVmJyb3FotoNnYEyM9tsaTUF9JaAgKi7ECLutAVoJKcsl4JoonijiRWKwbAjJCUyUs5XPUs7D-McRpZAf7aUgZWf15AycmUtNqbzH75ye_ivpEbI2kfGsxLWQ9gGI0bj7joWgcgedpTEvX5VuUwfoqqAhhd0YLksd-a_DeHzlUbGP_DJyy4-IoWX1TE0GKeuIwTaYA6kmcehbIQ_E">
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-price-label text-price-label text-primary italic">$14.00</span>
+<!-- Stepper -->
+<div class="flex items-center bg-surface-container-low rounded-full border border-outline-variant p-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="font-body-main text-body-main text-on-surface w-6 text-center font-medium">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Menu Item 2 -->
+<article class="menu-card rounded-xl p-4 md:p-6 shadow-[0px_10px_30px_rgba(45,36,30,0.05)] flex flex-col gap-unit hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow duration-300">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<h2 class="font-menu-item-title text-menu-item-title text-primary italic mb-1">Truffle Arancini</h2>
+<p class="font-body-main text-body-main text-[#4d4639] opacity-70">Crispy risotto balls with black truffle and parmesan.</p>
+</div>
+<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Three golden-brown, crispy Truffle Arancini balls resting on a soft linen napkin over a wooden table. A light dusting of parmesan cheese falls over them. The lighting is warm and directional, emphasizing the crispy texture of the exterior. The background is a soft, creamy off-white, maintaining a sophisticated, editorial food styling look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj5XJuMpkg40UG0k7IDZQM7b4csiIcPLcAkZe5kPeYOOTeQs-YaBoUgO1ueJHxKFKXktMREF6891Q50mf7_j8Z4tl5n3zt0qmWRXp_w7dyVRGby8BH_wqaDB8alKvz37W5ObPc3WYbna6gKPeLF9OsxjaC1HUzJzR4oDy9gizd26v4rZtC8xOOCAJUy2bfls_JvsCE334hHvkh-_mziJslPRfOYpkYw3Ryr5wK45qWxC_Q24b9BSNF">
+</div>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-price-label text-price-label text-primary italic">$16.00</span>
+<!-- Add Button (Initial State) -->
+<button class="px-4 py-2 bg-transparent border border-primary text-primary font-cta-label text-cta-label italic rounded-full hover:bg-primary-container hover:text-on-primary-container hover:border-primary-container transition-colors uppercase">
+                        Add
+                    </button>
+</div>
+</article>
+</section>
+</main>
+<!-- Floating Cart (Mobile FAB equivalent) -->
+<div class="fixed bottom-[88px] md:bottom-8 left-0 w-full px-container-padding-mobile z-40 md:max-w-md md:left-auto md:right-container-padding-desktop md:px-0">
+<button class="w-full bg-primary-container text-on-primary-container rounded-full py-4 px-6 flex justify-between items-center shadow-[0px_10px_30px_rgba(160,56,24,0.3)] hover:opacity-95 active:scale-95 transition-all duration-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-cta-label text-cta-label italic uppercase">View Order</span>
+</div>
+<span class="font-price-label text-price-label italic">2 Items • $30.00</span>
+</button>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface-container-low dark:bg-surface-container-highest shadow-[0px_-10px_30px_rgba(45,36,30,0.05)] fixed bottom-0 w-full z-50 rounded-t-xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe">
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 italic active:scale-95 transition-transform hover:opacity-80">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="font-cta-label text-cta-label italic mt-1">Menu</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">search</span>
+<span class="font-cta-label text-cta-label mt-1">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-cta-label text-cta-label mt-1">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-on-secondary-container px-4 py-1 hover:text-primary transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">person</span>
+<span class="font-cta-label text-cta-label mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

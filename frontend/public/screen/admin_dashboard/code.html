@@ -1,0 +1,357 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Artiste Bistro - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#842504",
+                    "outline": "#8b716a",
+                    "tertiary": "#645951",
+                    "surface-bright": "#fef9f2",
+                    "inverse-on-surface": "#f5f0e9",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#221a14",
+                    "on-primary-container": "#fffaf9",
+                    "on-primary-fixed": "#3b0a00",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#d0c5b5",
+                    "surface-container-low": "#f8f3ec",
+                    "tertiary-fixed-dim": "#d3c3ba",
+                    "surface-tint": "#a53c1b",
+                    "secondary": "#655d50",
+                    "tertiary-container": "#7e7169",
+                    "surface-dim": "#ded9d3",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#f0dfd6",
+                    "on-surface-variant": "#57423c",
+                    "secondary-container": "#ede1d0",
+                    "on-background": "#1d1c17",
+                    "on-tertiary-fixed-variant": "#4f453e",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#ece7e1",
+                    "outline-variant": "#dec0b8",
+                    "primary": "#a03818",
+                    "on-secondary-fixed": "#201b11",
+                    "primary-container": "#c1502e",
+                    "surface-variant": "#e7e2db",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ede1d0",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#ffb5a0",
+                    "surface": "#fef9f2",
+                    "background": "#fef9f2",
+                    "on-surface": "#1d1c17",
+                    "on-secondary-container": "#6c6356",
+                    "surface-container": "#f2ede6",
+                    "surface-container-highest": "#e7e2db",
+                    "primary-fixed": "#ffdbd1",
+                    "on-tertiary-container": "#fffaf8",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#32302c",
+                    "primary-fixed-dim": "#ffb5a0",
+                    "on-secondary-fixed-variant": "#4d4639"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-mobile": "24px",
+                    "container-padding-desktop": "64px",
+                    "gutter": "24px",
+                    "section-gap": "48px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "menu-item-title": [
+                            "Montserrat"
+                    ],
+                    "cta-label": [
+                            "Montserrat"
+                    ],
+                    "headline-lg": [
+                            "Montserrat"
+                    ],
+                    "price-label": [
+                            "Montserrat"
+                    ],
+                    "headline-lg-mobile": [
+                            "Montserrat"
+                    ],
+                    "display-lg": [
+                            "Montserrat"
+                    ],
+                    "body-main": [
+                            "Montserrat"
+                    ],
+                    "body-secondary": [
+                            "Montserrat"
+                    ]
+            },
+            "fontSize": {
+                    "menu-item-title": [
+                            "20px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "cta-label": [
+                            "14px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "price-label": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-main": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-secondary": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          },
+        }
+      }
+    </script>
+</head>
+<body class="bg-[#F0E4D3] text-on-surface font-body-main antialiased min-h-screen flex flex-col md:flex-row">
+<!-- TopNavBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-container-padding-mobile h-20 bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(45,36,30,0.05)] sticky top-0 z-50">
+<div class="text-headline-lg-mobile font-headline-lg-mobile italic text-primary dark:text-primary-fixed">L'Artiste Bistro</div>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full w-64 flex-col p-6 space-y-4 bg-surface-container-low dark:bg-surface-container shadow-[0px_10px_30px_rgba(45,36,30,0.05)] z-40">
+<div class="mb-8">
+<h1 class="text-menu-item-title font-menu-item-title italic text-primary dark:text-primary-fixed">L'Artiste</h1>
+<p class="text-cta-label font-cta-label italic text-on-surface-variant dark:text-outline-variant mt-1 opacity-70">Management Portal</p>
+</div>
+<div class="flex flex-col gap-2 flex-grow">
+<!-- Active Tab: Orders (assuming Dashboard is closely related, but tab array doesn't have Dashboard) -->
+<a class="bg-secondary-container dark:bg-tertiary-container text-primary dark:text-primary-fixed rounded-lg font-bold flex items-center gap-3 p-3 transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-cta-label font-cta-label italic">Orders</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest dark:hover:bg-tertiary transition-all duration-300 rounded-lg flex items-center gap-3 p-3" href="#">
+<span class="material-symbols-outlined" data-icon="table_restaurant" style="font-variation-settings: 'FILL' 1;">table_restaurant</span>
+<span class="text-cta-label font-cta-label italic">Tables</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest dark:hover:bg-tertiary transition-all duration-300 rounded-lg flex items-center gap-3 p-3" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="text-cta-label font-cta-label italic">Menu</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest dark:hover:bg-tertiary transition-all duration-300 rounded-lg flex items-center gap-3 p-3" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-cta-label font-cta-label italic">Analytics</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest dark:hover:bg-tertiary transition-all duration-300 rounded-lg flex items-center gap-3 p-3 mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-cta-label font-cta-label italic">Settings</span>
+</a>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg text-cta-label font-cta-label italic uppercase tracking-widest shadow-md hover:shadow-lg transition-shadow mt-4">
+            New Reservation
+        </button>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow md:ml-64 p-container-padding-mobile md:p-container-padding-desktop max-w-[1200px] mx-auto w-full space-y-section-gap">
+<!-- Top Metrics Cards -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-[#F7F2EB] p-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow hover:-translate-y-1 duration-300 flex flex-col items-start">
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-80 mb-2">Total Sales</p>
+<p class="text-headline-lg font-headline-lg italic text-[#C1502E]">$4,250</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-[#F7F2EB] p-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow hover:-translate-y-1 duration-300 flex flex-col items-start">
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-80 mb-2">Active Orders</p>
+<p class="text-headline-lg font-headline-lg italic text-[#C1502E]">24</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-[#F7F2EB] p-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow hover:-translate-y-1 duration-300 flex flex-col items-start">
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-80 mb-2">Avg. Prep Time</p>
+<p class="text-headline-lg font-headline-lg italic text-[#C1502E]">18m</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-[#F7F2EB] p-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-shadow hover:-translate-y-1 duration-300 flex flex-col items-start">
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-80 mb-2">Table Occupancy</p>
+<p class="text-headline-lg font-headline-lg italic text-[#C1502E]">72%</p>
+</div>
+</section>
+<!-- Main Workspace -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Table Management Floor Plan -->
+<div class="lg:col-span-2 bg-[#F7F2EB] p-8 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] min-h-[500px] flex flex-col">
+<h2 class="text-menu-item-title font-menu-item-title italic text-[#1d1c17] mb-6">Floor Plan Management</h2>
+<!-- Floor Grid -->
+<div class="flex-grow grid grid-cols-4 grid-rows-4 gap-6 p-4 bg-[#F0E4D3] rounded-lg border border-outline-variant/30 relative">
+<!-- Legend -->
+<div class="absolute top-2 right-2 flex gap-3 text-[10px] text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary-container"></span> Occupied</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary-container"></span> Available</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Cleaning</span>
+</div>
+<!-- Tables (Circles & Rectangles) -->
+<!-- Table 1: Circle, Occupied -->
+<div class="col-span-1 row-span-1 flex justify-center items-center">
+<div class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex justify-center items-center font-bold text-sm shadow-md cursor-pointer hover:scale-105 transition-transform">
+                            T1
+                        </div>
+</div>
+<!-- Table 2: Rectangle, Available -->
+<div class="col-span-2 row-span-1 flex justify-center items-center">
+<div class="w-32 h-12 rounded-lg bg-secondary-container text-on-surface-variant flex justify-center items-center font-bold text-sm shadow-md border border-outline-variant/50 cursor-pointer hover:scale-105 transition-transform">
+                            T2 (Booth)
+                        </div>
+</div>
+<!-- Table 3: Circle, Cleaning -->
+<div class="col-span-1 row-span-1 flex justify-center items-center">
+<div class="w-16 h-16 rounded-full bg-tertiary-container text-on-tertiary-container flex justify-center items-center font-bold text-sm shadow-md cursor-pointer hover:scale-105 transition-transform">
+                            T3
+                        </div>
+</div>
+<!-- Empty space -->
+<div class="col-span-1 row-span-2"></div>
+<!-- Large Central Table -->
+<div class="col-span-2 row-span-2 flex justify-center items-center">
+<div class="w-40 h-24 rounded-xl bg-primary-container text-on-primary-container flex flex-col justify-center items-center font-bold text-sm shadow-lg cursor-pointer hover:scale-105 transition-transform">
+<span>T4 (Communal)</span>
+<span class="text-[10px] font-normal opacity-80 mt-1">Party of 8</span>
+</div>
+</div>
+<!-- Table 5: Circle, Available -->
+<div class="col-span-1 row-span-1 flex justify-center items-center">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-surface-variant flex justify-center items-center font-bold text-sm shadow-md border border-outline-variant/50 cursor-pointer hover:scale-105 transition-transform">
+                            T5
+                        </div>
+</div>
+</div>
+</div>
+<!-- Popular Items -->
+<div class="lg:col-span-1 flex flex-col gap-gutter">
+<div class="bg-[#F7F2EB] p-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] h-full">
+<h2 class="text-menu-item-title font-menu-item-title italic text-[#1d1c17] mb-6">Popular Items</h2>
+<div class="flex flex-col gap-6">
+<!-- Item 1 -->
+<div class="flex items-center gap-4 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A beautifully plated artisanal roasted chicken dish with rustic root vegetables, shot from top-down with soft, warm, diffused natural lighting. The scene embodies a modern minimalist yet tactile culinary aesthetic, set against an earthy, muted linen tablecloth. High-end food photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC82wYSNmW6DReBhBKObyeA30ojo7dt72fbz0SBPnettUfqZI7CophTBue1jDOAQS_CGh0vkmK5RCASUSVEYSRGjzCNJL4RKhV1HzUVWE61o-C0gI04Ago1zZ4ETIRjy_8Gwb9K9gNYnW0GIrTNoZN7-53BhXypO8h4qLyuPdYEItvS6Kc0PNEJkuvizw5EZrflWV7V5OZNsHHf0DdwFgdYXe_rH5Pb_9xb_NYsfTU5Xg8fhHmlbba4">
+</div>
+<div class="flex-grow">
+<h3 class="text-body-main font-body-main font-semibold text-[#3b0a00]">Poulet Rôti</h3>
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-70">Main Course</p>
+</div>
+<div class="text-right">
+<span class="text-price-label font-price-label text-[#C1502E]">42</span>
+<p class="text-[10px] text-on-surface-variant opacity-50 uppercase tracking-wider">Orders</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-4 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A delicate and elegant seared scallop appetizer served on a pristine white ceramic plate. The lighting is soft and moody, highlighting the caramelization on the scallops. The setting is refined and sophisticated, featuring a creamy off-white background and earthy, warm undertones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA97cUmkqYB-PAaNS3sRMNDk5qOZoEY8Bt1SGhN9FKkmiFI1XvBAWdxHWqb_MZ5MsFMZa1dsAim6JCXBFgnmKVa6OgVdUxRGQNWlt0leg_7QncmxjlISEFUeUeqsrpsvbYgNIv9Nd70lJGl670y4D44l6j-Qbz5TxbFYhzDqlYDcsnXJAeVaYuxdHYc42KtsDO-vc1YJB4T0RAYY-KMvoWtXoEoadIN3yEx8RHxa7QEEsewogUMuTng">
+</div>
+<div class="flex-grow">
+<h3 class="text-body-main font-body-main font-semibold text-[#3b0a00]">Coquilles St. Jacques</h3>
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-70">Appetizer</p>
+</div>
+<div class="text-right">
+<span class="text-price-label font-price-label text-[#C1502E]">38</span>
+<p class="text-[10px] text-on-surface-variant opacity-50 uppercase tracking-wider">Orders</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-4 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A decadent chocolate fondant dessert with a molten center, dusted lightly with cocoa powder and served next to a quenelle of vanilla bean ice cream. The lighting is warm and dramatic, emphasizing the rich espresso and terracotta tones of the chocolate and setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSoZpRgm3JeKtmSSghJo4qoU0HAZo-j8RjkoNR8FUAQ-x83K9QUF9BFUEBzkkdtdP3beV_whrNx_2uf0NIGrQ1k9M9RMWjK5mTcs_X7pNkJ9-fn08bXwG3eKKnT9o1xkYQmBJWw_odSeoT3G_k69TcK6b9LGcTgnAowiwbWX3fAmpihCSsmFEMtxNDSz2J81ELXdnhDKdlNWUMv6gZa4__e5-nCxrfw-BPg1OnRz5yOaRXY9pxw27N">
+</div>
+<div class="flex-grow">
+<h3 class="text-body-main font-body-main font-semibold text-[#3b0a00]">Fondant au Chocolat</h3>
+<p class="text-body-secondary font-body-secondary text-on-surface-variant opacity-70">Dessert</p>
+</div>
+<div class="text-right">
+<span class="text-price-label font-price-label text-[#C1502E]">29</span>
+<p class="text-[10px] text-on-surface-variant opacity-50 uppercase tracking-wider">Orders</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 py-2 border-b border-[#8b716a] text-center text-cta-label font-cta-label italic text-[#645951] hover:text-[#C1502E] transition-colors">
+                         View Full Menu Analytics
+                     </button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface dark:bg-surface-dim shadow-[0px_-5px_20px_rgba(45,36,30,0.05)] flex justify-around items-center h-16 pb-safe z-50">
+<a class="flex flex-col items-center justify-center w-full h-full text-primary dark:text-primary-fixed border-t-2 border-primary" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-[10px] font-bold">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant dark:text-outline-variant hover:text-primary-container dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="table_restaurant">table_restaurant</span>
+<span class="text-[10px]">Tables</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant dark:text-outline-variant hover:text-primary-container dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="text-[10px]">Menu</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant dark:text-outline-variant hover:text-primary-container dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="text-[10px]">Settings</span>
+</a>
+</nav>
+</body></html>

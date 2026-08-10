@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TableTap - TableTap Kitchen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#fef9f2",
+                      "on-tertiary-container": "#e0d1c6",
+                      "on-tertiary-fixed-variant": "#4f453d",
+                      "surface": "#fef9f2",
+                      "outline": "#8b716a",
+                      "tertiary": "#4c423a",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f8f3ec",
+                      "status-critical": "#ba1a1a",
+                      "secondary-fixed": "#ede1d0",
+                      "secondary-container": "#ede1d0",
+                      "surface-warm-grey": "#f2ede6",
+                      "surface-container-high": "#ece7e1",
+                      "on-surface": "#1d1c18",
+                      "on-secondary-container": "#6b6356",
+                      "primary-container": "#a03818",
+                      "on-secondary": "#ffffff",
+                      "surface-container": "#f2ede6",
+                      "background": "#fef9f2",
+                      "inverse-on-surface": "#f5f0e9",
+                      "surface-dim": "#ded9d3",
+                      "on-secondary-fixed": "#201b11",
+                      "on-surface-variant": "#57423c",
+                      "inverse-surface": "#32302c",
+                      "on-primary-container": "#ffc6b6",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#645951",
+                      "tertiary-fixed-dim": "#d3c4ba",
+                      "on-background": "#1d1c18",
+                      "surface-container-highest": "#e6e2db",
+                      "surface-cream": "#fef9f2",
+                      "secondary": "#655d50",
+                      "surface-tint": "#a53c1b",
+                      "surface-variant": "#e6e2db",
+                      "on-primary-fixed-variant": "#842405",
+                      "secondary-fixed-dim": "#d0c5b5",
+                      "primary-fixed-dim": "#ffb5a0",
+                      "tertiary-fixed": "#efe0d5",
+                      "border-sepia": "#8b716a",
+                      "on-primary": "#ffffff",
+                      "ticket-high-priority": "#ffdad6",
+                      "primary-fixed": "#ffdbd1",
+                      "on-primary-fixed": "#3b0900",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#dec0b8",
+                      "on-error-container": "#93000a",
+                      "primary": "#802102",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#4d463a",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#ffb5a0",
+                      "on-tertiary-fixed": "#221a14"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem",
+                      "2xl": "1.5rem"
+              },
+              "spacing": {
+                      "section-gap": "48px",
+                      "container-padding-desktop": "64px",
+                      "unit": "8px",
+                      "container-padding-mobile": "24px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-secondary": [
+                              "Montserrat"
+                      ],
+                      "body-main": [
+                              "Montserrat"
+                      ],
+                      "menu-item-title": [
+                              "Montserrat"
+                      ],
+                      "headline-lg-mobile": [
+                              "Montserrat"
+                      ],
+                      "display-lg": [
+                              "Montserrat"
+                      ],
+                      "cta-label": [
+                              "Montserrat"
+                      ],
+                      "headline-lg": [
+                              "Montserrat"
+                      ],
+                      "price-label": [
+                              "Montserrat"
+                      ],
+                      "caption-bold": [
+                              "Montserrat"
+                      ]
+              },
+              "fontSize": {
+                      "body-secondary": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-main": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "menu-item-title": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "cta-label": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "price-label": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "caption-bold": [
+                              "12px",
+                              {
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .shadow-soft {
+            box-shadow: 0px 8px 24px rgba(45,36,30,0.06);
+        }
+        
+        .shadow-hover {
+            box-shadow: 0px 12px 32px rgba(45,36,30,0.1);
+        }
+        
+        .ticket-card {
+            transition: all 0.3s ease;
+        }
+        
+        .ticket-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-main text-body-main text-on-surface h-screen overflow-hidden flex">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-surface-container-low fixed left-0 top-0 h-full w-64 rounded-r-[1.5rem] shadow-md flex flex-col p-6 gap-unit z-50 hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-primary-container">
+<img alt="TableTap Logo" class="w-full h-full object-cover" data-alt="TableTap logo, minimalist, modern, terracotta color, Montserrat font, restaurant technology brand, sophisticated editorial style." src="https://lh3.googleusercontent.com/aida/AP1WRLuveHgM-AVUlG8uxZ-9g2J-_HKpHVjhh86eMRXp-LhwZCiNjja2P42_sRcfN9mGJioRaSpRAcARN36u5Nikcet3S-uvHYN_ExdiYiFcjf_9diddwxNS4NvxtOzICjskAbPbVkKlj_8EXttgI7Xq4hw29IsS368e4iPgWkjt2lcYapWZR08LmACfLyqxsShlKv4mgi_PoLgAW7kJ5_06W2PG36PLz-hiwrVzxSVPUdODBQHShSJSmWN_K0o"/>
+</div>
+<div>
+<h1 class="font-menu-item-title text-menu-item-title text-primary m-0">TableTap</h1>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant italic">TableTap Kitchen</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="bg-primary-container text-on-primary font-cta-label text-cta-label py-3 px-6 rounded-full w-full mb-6 hover:bg-primary transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            New Ticket
+        </button>
+<!-- Main Navigation -->
+<ul class="flex flex-col gap-2 flex-grow">
+<!-- Active: Orders -->
+<li>
+<a class="flex items-center gap-3 text-primary font-bold bg-secondary-container rounded-full px-4 py-3 hover:bg-surface-container-highest transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+                    Orders
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-secondary-container px-4 py-3 hover:text-primary hover:bg-surface-container-high rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                    Menu
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-secondary-container px-4 py-3 hover:text-primary hover:bg-surface-container-high rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<!-- Footer Navigation -->
+<ul class="flex flex-col gap-2 mt-auto pt-6 border-t border-outline-variant/30">
+<li>
+<a class="flex items-center gap-3 text-on-secondary-container px-4 py-3 hover:text-primary hover:bg-surface-container-high rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+                    Support
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-secondary-container px-4 py-3 hover:text-primary hover:bg-surface-container-high rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined">logout</span>
+                    Log Out
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-0 md:ml-64 h-full overflow-y-auto bg-surface relative p-container-padding-mobile md:p-container-padding-desktop">
+<!-- Top Toolbar / Filters -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary italic mb-1">Kitchen Feed</h2>
+<p class="font-body-main text-body-main text-on-surface-variant">Service is flowing nicely. 12 active orders.</p>
+</div>
+<div class="flex gap-3 flex-wrap">
+<button class="bg-surface-container-low border border-outline-variant text-on-surface font-caption-bold text-caption-bold px-4 py-2 rounded-full hover:bg-surface-container-high transition-colors">
+                    All Active
+                </button>
+<button class="text-on-surface-variant font-caption-bold text-caption-bold px-4 py-2 rounded-full hover:bg-surface-container-low transition-colors">
+                    Grill Station
+                </button>
+<button class="text-on-surface-variant font-caption-bold text-caption-bold px-4 py-2 rounded-full hover:bg-surface-container-low transition-colors">
+                    Salad/Cold
+                </button>
+</div>
+</header>
+<!-- Feed Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+<!-- Urgent / High Priority Card -->
+<article class="ticket-card bg-surface-container-lowest rounded-[1.5rem] shadow-soft hover:shadow-hover border border-error-container/50 overflow-hidden flex flex-col">
+<!-- Soft Header -->
+<div class="bg-error-container/20 px-6 py-4 flex justify-between items-center border-b border-error-container/30">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">table_restaurant</span>
+</div>
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface m-0">Table 12</h3>
+</div>
+<span class="font-caption-bold text-caption-bold text-error bg-error/10 px-3 py-1 rounded-full">VIP / Waiting</span>
+</div>
+<!-- Items -->
+<div class="p-6 flex-1 flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="flex flex-col gap-2 border-b border-outline-variant/20 pb-4">
+<div class="flex justify-between items-start">
+<div class="flex items-start gap-3">
+<span class="font-price-label text-price-label text-on-surface-variant mt-1">1x</span>
+<div>
+<h4 class="font-body-main text-body-main text-on-surface font-semibold m-0">Truffle Risotto</h4>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant italic">Course 2</p>
+</div>
+</div>
+</div>
+<!-- Modifiers -->
+<div class="flex gap-2 flex-wrap pl-8">
+<span class="font-caption-bold text-caption-bold text-on-tertiary-fixed-variant bg-surface-container-low px-2 py-1 rounded-md">Extra Parmesan</span>
+<span class="font-caption-bold text-caption-bold text-on-tertiary-fixed-variant bg-surface-container-low px-2 py-1 rounded-md border border-outline-variant/50">Allergy: Nuts</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="flex items-start gap-3">
+<span class="font-price-label text-price-label text-on-surface-variant mt-1">2x</span>
+<div>
+<h4 class="font-body-main text-body-main text-on-surface font-semibold m-0">Pan-Seared Scallops</h4>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant italic">Course 1</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<button class="flex-1 bg-surface-container-low border border-border-sepia text-on-surface font-cta-label text-cta-label py-3 rounded-full hover:bg-surface-container-high transition-colors">
+                        Hold
+                    </button>
+<button class="flex-1 bg-primary-container text-on-primary font-cta-label text-cta-label py-3 rounded-full hover:bg-primary transition-colors shadow-sm">
+                        READY
+                    </button>
+</div>
+</article>
+<!-- Standard Card -->
+<article class="ticket-card bg-surface-container-lowest rounded-[1.5rem] shadow-soft hover:shadow-hover border border-outline-variant/30 overflow-hidden flex flex-col">
+<!-- Soft Header -->
+<div class="bg-primary-fixed/20 px-6 py-4 flex justify-between items-center border-b border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 18px;">chair</span>
+</div>
+<h3 class="font-menu-item-title text-menu-item-title text-on-surface m-0">Table 4</h3>
+</div>
+<span class="font-caption-bold text-caption-bold text-on-surface-variant bg-surface-container-low px-3 py-1 rounded-full">Order in progress...</span>
+</div>
+<!-- Items -->
+<div class="p-6 flex-1 flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="flex flex-col gap-2 border-b border-outline-variant/20 pb-4">
+<div class="flex justify-between items-start">
+<div class="flex items-start gap-3">
+<span class="font-price-label text-price-label text-on-surface-variant mt-1">1x</span>
+<div>
+<h4 class="font-body-main text-body-main text-on-surface font-semibold m-0">Steak Frites</h4>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant italic">Medium Rare</p>
+</div>
+</div>
+</div>
+<!-- Modifiers -->
+<div class="flex gap-2 flex-wrap pl-8">
+<span class="font-caption-bold text-caption-bold text-on-tertiary-fixed-variant bg-surface-container-low px-2 py-1 rounded-md">Sauce on side</span>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<button class="w-full bg-surface-container-high text-on-surface font-cta-label text-cta-label py-3 rounded-full hover:bg-surface-container-highest transition-colors">
+                        Mark as Cooking
+                    </button>
+</div>
+</article>
+</div>
+</main>
+</body></html>

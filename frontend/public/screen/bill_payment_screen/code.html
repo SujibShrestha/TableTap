@@ -1,0 +1,170 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 391px; height: 884px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Artiste Bistro - Bill</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4d4639",
+                        "tertiary-fixed": "#f0dfd6",
+                        "secondary-fixed": "#ede1d0",
+                        "primary-container": "#c1502e",
+                        "surface-bright": "#fef9f2",
+                        "surface-variant": "#e7e2db",
+                        "on-tertiary-container": "#fffaf8",
+                        "tertiary-fixed-dim": "#d3c3ba",
+                        "on-background": "#1d1c17",
+                        "on-surface-variant": "#57423c",
+                        "primary": "#a03818",
+                        "surface-container-high": "#ece7e1",
+                        "secondary-fixed-dim": "#d0c5b5",
+                        "outline-variant": "#dec0b8",
+                        "inverse-surface": "#32302c",
+                        "secondary": "#655d50",
+                        "secondary-container": "#ede1d0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded9d3",
+                        "surface-container-highest": "#e7e2db",
+                        "on-secondary-fixed": "#201b11",
+                        "on-secondary-container": "#6c6356",
+                        "surface": "#fef9f2",
+                        "on-primary-container": "#fffaf9",
+                        "tertiary-container": "#7e7169",
+                        "on-tertiary-fixed": "#221a14",
+                        "surface-container-low": "#f8f3ec",
+                        "on-primary-fixed-variant": "#842504",
+                        "primary-fixed-dim": "#ffb5a0",
+                        "surface-tint": "#a53c1b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f2ede6",
+                        "on-primary-fixed": "#3b0a00",
+                        "on-tertiary-fixed-variant": "#4f453e",
+                        "primary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#f5f0e9",
+                        "inverse-primary": "#ffb5a0",
+                        "tertiary": "#645951",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1d1c17",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "outline": "#8b716a",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "background": "#fef9f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "24px",
+                        "container-padding-desktop": "64px",
+                        "section-gap": "48px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "menu-item-title": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-main": ["Montserrat"],
+                        "price-label": ["Montserrat"],
+                        "cta-label": ["Montserrat"],
+                        "body-secondary": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "menu-item-title": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-label": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "cta-label": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-secondary": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
+<!-- TopAppBar (Transactional - Hidden Nav, but keeping header for context) -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(45,36,30,0.05)] docked full-width top-0 z-50">
+<div class="flex justify-between items-center px-container-padding-mobile py-unit w-full max-w-7xl mx-auto">
+<button class="text-secondary font-normal hover:opacity-80 transition-opacity scale-95 duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile italic text-primary dark:text-primary-fixed-dim">L'Artiste Bistro</h1>
+<div class="text-secondary font-normal">Table 12</div>
+</div>
+</header>
+<main class="flex-grow px-container-padding-mobile py-[32px] max-w-[600px] w-full mx-auto flex flex-col gap-section-gap">
+<!-- Bill Summary Card -->
+<section class="bg-[#F7F2EB] rounded-xl p-[32px] shadow-[0px_10px_30px_rgba(45,36,30,0.05)] flex flex-col gap-[24px]">
+<h2 class="font-menu-item-title text-menu-item-title italic text-[#3b2d28] border-b border-surface-variant pb-[16px]">Your Check</h2>
+<div class="flex flex-col gap-[16px]">
+<!-- Item 1 -->
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-body-main text-body-main text-[#3b2d28]">Avocado Toast</span>
+<span class="font-body-secondary text-body-secondary text-[#3b2d28] opacity-70">Sourdough, poached egg</span>
+</div>
+<span class="font-price-label text-price-label text-[#3b2d28]">$14.00</span>
+</div>
+<!-- Item 2 -->
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-body-main text-body-main text-[#3b2d28]">Matcha Latte</span>
+<span class="font-body-secondary text-body-secondary text-[#3b2d28] opacity-70">Almond milk</span>
+</div>
+<span class="font-price-label text-price-label text-[#3b2d28]">$6.00</span>
+</div>
+</div>
+<!-- Totals -->
+<div class="border-t border-surface-variant pt-[24px] flex flex-col gap-[8px]">
+<div class="flex justify-between font-body-secondary text-body-secondary text-[#3b2d28] opacity-70">
+<span>Subtotal</span>
+<span>$20.00</span>
+</div>
+<div class="flex justify-between font-body-secondary text-body-secondary text-[#3b2d28] opacity-70">
+<span>Tax</span>
+<span>$1.80</span>
+</div>
+<div class="flex justify-between font-body-secondary text-body-secondary text-[#3b2d28] opacity-70">
+<span>Gratuity (Suggested 20%)</span>
+<span>$4.00</span>
+</div>
+</div>
+<div class="mt-[16px] pt-[24px] border-t border-surface-variant flex justify-between items-baseline">
+<span class="font-menu-item-title text-menu-item-title text-[#3b2d28]">Total</span>
+<span class="font-display-lg text-display-lg italic text-primary-container">$30.00</span>
+</div>
+</section>
+<!-- Payment Actions -->
+<section class="flex flex-col gap-[16px]">
+<button class="w-full bg-primary-container text-on-primary-container font-cta-label text-cta-label italic uppercase py-[24px] rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all">
+                Pay Online
+            </button>
+<button class="w-full bg-[#F7F2EB] text-[#3b2d28] border border-outline-variant font-cta-label text-cta-label italic uppercase py-[24px] rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all">
+                Pay at Counter
+            </button>
+</section>
+</main>
+<!-- Bottom Nav Suppressed on Transactional Screen -->
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>
