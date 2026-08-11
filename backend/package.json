@@ -10,8 +10,9 @@
     "dev": "tsx watch src/server.ts",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "crud": "tsx src/main.ts"
+    "prisma:seed": "tsx prisma/seed.ts"
   },
+  
   "keywords": [],
   "type": "module",
   "author": "",

@@ -12,6 +12,26 @@ function getRefreshExpiry() {
   return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 }
 
+function getAccessExpiryDate() {
+  const expiry = process.env.ACCESS_TOKEN_EXPIRY ?? "15m";
+  const match = expiry.match(/^(\d+)([smhd])$/i);
+
+  if (!match) {
+    return new Date(Date.now() + 15 * 60 * 1000);
+  }
+
+  const value = Number(match[1]);
+  const unit = match[2].toLowerCase();
+  const multiplier = {
+    s: 1000,
+    m: 60 * 1000,
+    h: 60 * 60 * 1000,
+    d: 24 * 60 * 60 * 1000,
+  }[unit as "s" | "m" | "h" | "d"];
+
+  return new Date(Date.now() + value * multiplier);
+}
+
 export async function login(data: loginData) {
   try {
     if (!data.email || !data.password) {
@@ -48,7 +68,7 @@ export async function login(data: loginData) {
 
     const { passwordHash, ...safeUser } = user;
 
-    return { accessToken, refreshToken, user: safeUser };
+    return { user: safeUser,accessToken, refreshToken };
   } catch (error) {
     if (error instanceof Error) {
       throw error;
@@ -56,4 +76,74 @@ export async function login(data: loginData) {
 
     throw new Error("Login failed");
   }
+}
+
+export async function refreshSession(refreshToken: string) {
+  if (!refreshToken) {
+    throw new Error("Refresh token is required");
+  }
+
+  const tokenHash = hashToken(refreshToken);
+
+  const storedToken = await prisma.refreshToken.findUnique({
+    where: { tokenHash },
+    include: { user: true },
+  });
+
+  if (
+    !storedToken ||
+    storedToken.revoked ||
+    storedToken.expiresAt < new Date() ||
+    !storedToken.user.isActive
+  ) {
+    throw new Error("Invalid or expired refresh token");
+  }
+
+  const accessToken = generateAccessToken(storedToken.user.id, storedToken.user.role);
+  const nextRefreshToken = generateRefreshToken();
+
+  await prisma.$transaction([
+    prisma.refreshToken.update({
+      where: { id: storedToken.id },
+      data: { revoked: true },
+    }),
+    prisma.refreshToken.create({
+      data: {
+        userId: storedToken.user.id,
+        tokenHash: hashToken(nextRefreshToken),
+        expiresAt: getRefreshExpiry(),
+      },
+    }),
+    prisma.user.update({
+      where: { id: storedToken.user.id },
+      data: { lastLoginAt: new Date() },
+    }),
+  ]);
+
+  const { passwordHash, ...safeUser } = storedToken.user;
+
+  return {
+    accessToken,
+    refreshToken: nextRefreshToken,
+    expiresAt: getAccessExpiryDate(),
+    user: safeUser,
+  };
+}
+
+export async function logoutSession(refreshToken: string) {
+  if (!refreshToken) {
+    throw new Error("Refresh token is required");
+  }
+
+  const tokenHash = hashToken(refreshToken);
+
+  await prisma.refreshToken.updateMany({
+    where: {
+      tokenHash,
+      revoked: false,
+    },
+    data: {
+      revoked: true,
+    },
+  });
 }
