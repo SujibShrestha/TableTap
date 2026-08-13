@@ -14,6 +14,39 @@ enum Role {
   CASHIER
 }
 
+enum SessionStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum ClosedBy {
+  SYSTEM
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  SERVED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  ONLINE
+}
+
 model User {
   id           String  @id @default(uuid())
   email        String  @unique
@@ -26,6 +59,7 @@ model User {
   lastLoginAt DateTime?
 
   refreshTokens RefreshToken[]
+  updatedOrders Order[]        @relation("UpdatedByStaff")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,4 +75,113 @@ model RefreshToken {
   revoked   Boolean  @default(false)
 
   createdAt DateTime @default(now())
+}
+
+model RestaurantTable {
+  id          String  @id @default(uuid())
+  tableNumber String  @unique
+  qrCodeUrl   String?
+  isActive    Boolean @default(true)
+
+  sessions TableSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TableSession {
+  id      String          @id @default(uuid())
+  tableId String
+  table   RestaurantTable @relation(fields: [tableId], references: [id])
+
+  status   SessionStatus @default(ACTIVE)
+  closedBy ClosedBy?
+
+  orders  Order[]
+  payment Payment?
+
+  createdAt DateTime  @default(now())
+  closedAt  DateTime?
+
+  @@index([tableId, status])
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+
+  menuItems MenuItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuItem {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+
+  price     Decimal @db.Decimal(10, 2) // current selling price
+  costPrice Decimal @db.Decimal(10, 2) // current cost price
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  isAvailable Boolean @default(true)
+
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        String       @id @default(uuid())
+  sessionId String
+  session   TableSession @relation(fields: [sessionId], references: [id])
+
+  status              OrderStatus @default(PENDING)
+  specialInstructions String?
+  totalAmount         Decimal     @db.Decimal(10, 2)
+
+  updatedByStaffId String?
+  updatedByStaff   User?   @relation("UpdatedByStaff", fields: [updatedByStaffId], references: [id])
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sessionId])
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+
+  quantity         Int     @default(1)
+  unitPrice        Decimal @db.Decimal(10, 2) // snapshot: selling price at order time
+  costPriceAtOrder Decimal @db.Decimal(10, 2) // snapshot: cost price at order time
+
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String       @id @default(uuid())
+  sessionId String       @unique
+  session   TableSession @relation(fields: [sessionId], references: [id])
+
+  amount Decimal       @db.Decimal(10, 2)
+  method PaymentMethod
+  status PaymentStatus @default(PROCESSING)
+
+  gatewayReferenceId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

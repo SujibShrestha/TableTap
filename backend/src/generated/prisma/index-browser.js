@@ -142,6 +142,76 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.RestaurantTableScalarFieldEnum = {
+  id: 'id',
+  tableNumber: 'tableNumber',
+  qrCodeUrl: 'qrCodeUrl',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TableSessionScalarFieldEnum = {
+  id: 'id',
+  tableId: 'tableId',
+  status: 'status',
+  closedBy: 'closedBy',
+  createdAt: 'createdAt',
+  closedAt: 'closedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MenuItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  price: 'price',
+  costPrice: 'costPrice',
+  categoryId: 'categoryId',
+  isAvailable: 'isAvailable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  status: 'status',
+  specialInstructions: 'specialInstructions',
+  totalAmount: 'totalAmount',
+  updatedByStaffId: 'updatedByStaffId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  menuItemId: 'menuItemId',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  costPriceAtOrder: 'costPriceAtOrder',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  amount: 'amount',
+  method: 'method',
+  status: 'status',
+  gatewayReferenceId: 'gatewayReferenceId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -163,9 +233,49 @@ exports.Role = exports.$Enums.Role = {
   CASHIER: 'CASHIER'
 };
 
+exports.SessionStatus = exports.$Enums.SessionStatus = {
+  ACTIVE: 'ACTIVE',
+  CLOSED: 'CLOSED'
+};
+
+exports.ClosedBy = exports.$Enums.ClosedBy = {
+  SYSTEM: 'SYSTEM',
+  STAFF: 'STAFF'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  READY: 'READY',
+  SERVED: 'SERVED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  CASH: 'CASH',
+  CARD: 'CARD',
+  ONLINE: 'ONLINE'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  UNPAID: 'UNPAID',
+  PROCESSING: 'PROCESSING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  RestaurantTable: 'RestaurantTable',
+  TableSession: 'TableSession',
+  Category: 'Category',
+  MenuItem: 'MenuItem',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  Payment: 'Payment'
 };
 
 /**
