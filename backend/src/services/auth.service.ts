@@ -20,8 +20,8 @@ function getAccessExpiryDate() {
     return new Date(Date.now() + 15 * 60 * 1000);
   }
 
-  const value = Number(match[1]);
-  const unit = match[2].toLowerCase();
+  const value = Number(match[1]!);
+  const unit = match[2]!.toLowerCase();
   const multiplier = {
     s: 1000,
     m: 60 * 1000,

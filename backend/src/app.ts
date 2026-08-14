@@ -1,9 +1,11 @@
 import express, { type Application, type Request, type Response } from "express";
-import authRoute from "./routes/auth.route.js";
 import cors from "cors";
 import helmet from "helmet";
 import logger from "./config/logger.js";
 import morgan from "morgan";
+import authRoute from "./routes/auth.route.js";
+import userRoute from "./routes/user.route.js";
+
 
 const app:Application = express();
 
@@ -20,6 +22,7 @@ app.use(
 
 // Routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/users", userRoute);
 
 
 

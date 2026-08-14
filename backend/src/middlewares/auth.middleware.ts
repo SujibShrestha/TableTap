@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken } from '../utils/token';
+import type{ Request, Response, NextFunction } from 'express';
+import { verifyAccessToken } from '../utils/token.js';
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -8,6 +8,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Missing or invalid authorization header' });
+  }
 
   try {
     const payload = verifyAccessToken(token);
