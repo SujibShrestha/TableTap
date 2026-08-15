@@ -12,6 +12,28 @@ export default defineConfig({
       '@': new URL('./src', import.meta.url).pathname,
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'react-vendor',
+              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+            },
+            {
+              name: 'router',
+              test: /node_modules[\\/]react-router[\\/]/,
+            },
+            {
+              name: 'vendor',
+              test: /node_modules[\\/](axios|qrcode\.react|lucide-react)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {

@@ -40,3 +40,21 @@ export interface ListUsersParams {
   role?: Role | "";
   isActive?: boolean | "";
 }
+
+export interface RestaurantTable {
+  id: string;
+  tableNumber: string;
+  qrCodeUrl: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTablePayload {
+  tableNumber: string;
+}
+
+export interface UpdateTablePayload {
+  tableNumber?: string;
+  isActive?: boolean;
+}
