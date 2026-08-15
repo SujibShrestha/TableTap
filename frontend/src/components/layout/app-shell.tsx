@@ -33,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
 const MOBILE_NAV_ITEMS: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/users", label: "Staff", icon: Users, adminOnly: true },
+  { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
   { to: "/kitchen", label: "Kitchen", icon: ChefHat },

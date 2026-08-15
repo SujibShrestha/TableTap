@@ -1,9 +1,12 @@
 import axios from "axios";
 import type {
   AuthSession,
+  CreateTablePayload,
   ListUsersParams,
   PaginatedUsers,
+  RestaurantTable,
   Role,
+  UpdateTablePayload,
   User,
 } from "@/types";
 
@@ -149,6 +152,54 @@ export const changeOwnPassword = async (token: string, data: ChangeOwnPasswordPa
   });
 
   return res.data.data;
+};
+
+// ---------------- Tables ----------------
+
+export const getTableById = async (id: string) => {
+  const res = await api.get(`/tables/${id}`);
+
+  return res.data.table as RestaurantTable;
+};
+
+export const getTables = async (token: string) => {
+  const res = await api.get("/tables", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.table as RestaurantTable[];
+};
+
+export const createTable = async (token: string, data: CreateTablePayload) => {
+  const res = await api.post("/tables", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.table as RestaurantTable;
+};
+
+export const updateTable = async (token: string, id: string, data: UpdateTablePayload) => {
+  const res = await api.put(`/tables/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.table as RestaurantTable;
+};
+
+export const deleteTable = async (token: string, id: string) => {
+  const res = await api.delete(`/tables/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.table as RestaurantTable;
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {
