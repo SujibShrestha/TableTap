@@ -156,6 +156,12 @@ export const changeOwnPassword = async (token: string, data: ChangeOwnPasswordPa
 
 // ---------------- Tables ----------------
 
+export const getTableById = async (id: string) => {
+  const res = await api.get(`/tables/${id}`);
+
+  return res.data.table as RestaurantTable;
+};
+
 export const getTables = async (token: string) => {
   const res = await api.get("/tables", {
     headers: {

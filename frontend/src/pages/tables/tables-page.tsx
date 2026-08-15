@@ -266,7 +266,10 @@ export function TablesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {tables.map((table) => (
+          {tables.map((table) => {
+            const qrUrl = table.qrCodeUrl ?? `${tableOrigin}/t/${table.id}`;
+
+            return (
             <div
               key={table.id}
               className="flex flex-col gap-4 rounded-xl bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover"
@@ -286,14 +289,14 @@ export function TablesPage() {
               </div>
 
               <a
-                href={`${tableOrigin}/t/${table.id}`}
+                href={qrUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="mx-auto block rounded-xl bg-white p-4 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover"
                 aria-label={`Open QR menu for table ${table.tableNumber}`}
               >
                 <QRCodeSVG
-                  value={`${tableOrigin}/t/${table.id}`}
+                  value={qrUrl}
                   size={132}
                   fgColor="#1d1c18"
                   bgColor="transparent"
@@ -312,7 +315,7 @@ export function TablesPage() {
                 onClick={() =>
                   printQrCode({
                     tableNumber: table.tableNumber,
-                    url: `${tableOrigin}/t/${table.id}`,
+                    url: qrUrl,
                   })
                 }
               >
@@ -328,7 +331,8 @@ export function TablesPage() {
                 <DeleteTableButton table={table} onDone={() => void loadTables()} />
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

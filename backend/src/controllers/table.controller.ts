@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createTableSchema, updateTableSchema } from "../validations/table.validation.js";
-import { createtable, deleteTableById, getAllTables, updatetable } from "../services/table.service.js";
+import { createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, updatetable } from "../services/table.service.js";
 import logger from "../config/logger.js";
 
 export const createTable = async (req: Request, res: Response) => {
@@ -23,7 +23,9 @@ export const createTable = async (req: Request, res: Response) => {
     return res.status(201).json({ message: "Table created successfully", table });
   } catch (error) {
     logger.error(`Error in createTable controller: ${error}`);
-    return res.status(500).json({ error: "Internal server error" });
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode = message === "Table with this number already exists" ? 409 : 500;
+    return res.status(statusCode).json({ error: message });
   }
 };
 
@@ -41,6 +43,26 @@ export const getTables = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error(`Error in getTables controller: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getTableById = async (req: Request, res: Response) => {
+  try {
+    const tableId = typeof req.params.id === "string" ? req.params.id : undefined;
+
+    if (!tableId) {
+      return res.status(400).json({ error: "Table id is required" });
+    }
+
+    const table = await getTableByIdService(tableId);
+
+    logger.info(`Retrieved table with ID: ${tableId} successfully`);
+    return res.status(200).json({ message: "Table retrieved successfully", table });
+  } catch (error) {
+    logger.error(`Error in getTableById controller: ${error}`);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode = message === "Table not found" ? 404 : 500;
+    return res.status(statusCode).json({ error: message });
   }
 };
 
@@ -79,7 +101,10 @@ export const updateTable = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Table updated successfully", table });
   } catch (error) {
     logger.error(`Error in updateTable controller: ${error}`);
-    return res.status(500).json({ error: "Internal server error" });
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode =
+      message === "Table with this number already exists" ? 409 : message === "Table not found" ? 404 : 500;
+    return res.status(statusCode).json({ error: message });
   }
 };
 
@@ -103,6 +128,8 @@ export const deleteTable = async (req: Request, res: Response) => {
         return res.status(200).json({ message: "Table deleted successfully", table });
     } catch (error) {
         logger.error(`Error in deleteTable controller: ${error}`);
-        return res.status(500).json({ error: "Internal server error" });
+        const message = error instanceof Error ? error.message : "Internal server error";
+        const statusCode = message === "Table not found" ? 404 : 500;
+        return res.status(statusCode).json({ error: message });
     }
 };

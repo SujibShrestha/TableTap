@@ -8,6 +8,7 @@ import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { UsersPage } from "@/pages/users/users-page";
 import { UserFormPage } from "@/pages/users/user-form-page";
 import { TablesPage } from "@/pages/tables/tables-page";
+import { TableLandingPage } from "@/pages/customer/table-landing-page";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/t/:id" element={<TableLandingPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>
