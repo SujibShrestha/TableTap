@@ -58,3 +58,33 @@ export interface UpdateTablePayload {
   tableNumber?: string;
   isActive?: boolean;
 }
+
+export interface MenuCategory {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  price: string;
+  costPrice: string;
+  categoryId: string;
+  isAvailable: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMenuItemPayload {
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price: number;
+  costPrice: number;
+  isAvailable?: boolean;
+  categoryId: string;
+}

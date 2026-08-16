@@ -1,8 +1,11 @@
 import axios from "axios";
 import type {
   AuthSession,
+  CreateMenuItemPayload,
   CreateTablePayload,
   ListUsersParams,
+  MenuCategory,
+  MenuItem,
   PaginatedUsers,
   RestaurantTable,
   Role,
@@ -10,8 +13,10 @@ import type {
   User,
 } from "@/types";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api/v1",
+  baseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -200,6 +205,82 @@ export const deleteTable = async (token: string, id: string) => {
   });
 
   return res.data.table as RestaurantTable;
+};
+
+// ---------------- Menu ----------------
+
+export const getCategories = async () => {
+  const res = await api.get("/categories");
+
+  return res.data.categories as MenuCategory[];
+};
+
+export const createCategory = async (token: string, name: string) => {
+  const res = await api.post(
+    "/categories",
+    { name },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.category as MenuCategory;
+};
+
+export const getMenuItems = async () => {
+  const res = await api.get("/menu");
+
+  return res.data.menuItems as MenuItem[];
+};
+
+export const createMenuItem = async (token: string, data: CreateMenuItemPayload) => {
+  const res = await api.post("/menu", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.menuItem as MenuItem;
+};
+
+export const updateMenuItemAvailability = async (token: string, id: string, isAvailable: boolean) => {
+  const res = await api.patch(
+    `/menu/${id}`,
+    { isAvailable },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.updatedMenuItem as MenuItem;
+};
+
+export const deleteMenuItem = async (token: string, id: string) => {
+  const res = await api.delete(`/menu/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.deletedMenuItem as MenuItem;
+};
+
+// ---------------- Upload ----------------
+
+export const uploadImage = async (token: string, file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await axios.post(`${baseURL}/upload`, formData, {
+    headers: { Authorization: `Bearer ${token}` },
+    withCredentials: true,
+  });
+
+  return res.data.imageUrl as string;
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {

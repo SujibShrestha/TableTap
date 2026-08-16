@@ -8,6 +8,7 @@ import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { UsersPage } from "@/pages/users/users-page";
 import { UserFormPage } from "@/pages/users/user-form-page";
 import { TablesPage } from "@/pages/tables/tables-page";
+import { MenuPage } from "@/pages/menu/menu-page";
 import { TableLandingPage } from "@/pages/customer/table-landing-page";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/users/new" element={<UserFormPage />} />
                 <Route path="/users/:id/edit" element={<UserFormPage />} />
                 <Route path="/tables" element={<TablesPage />} />
+                <Route path="/menu" element={<MenuPage />} />
               </Route>
             </Route>
           </Route>
