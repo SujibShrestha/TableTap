@@ -11,6 +11,7 @@ export const createMenuItemSchema = z.object({
   imageUrl: z.string().url().optional(),
   price: z.number().positive(),
   costPrice: z.number().positive(),
+  isAvailable: z.boolean().optional(),
   categoryId: z.string().uuid(),
 });
 
