@@ -6,3 +6,8 @@ export function formatDate(value: string | null): string {
     day: "numeric",
   });
 }
+
+export function formatMoney(value: string | number): string {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isInteger(number) ? `Rs ${number}` : `Rs ${number.toFixed(2)}`;
+}
