@@ -39,13 +39,20 @@ export const getAllTables = async () => {
   try {
     const tables = await prisma.restaurantTable.findMany({
       orderBy: { tableNumber: 'asc' },
+      include: {
+        sessions: {
+          where: { status: 'ACTIVE' },
+          select: { id: true },
+          take: 1,
+        },
+      },
     });
 
-    if(!tables) {
-      throw new Error("No tables found in the database");
-    }
     logger.info(`Retrieved ${tables.length} tables from the database`);
-    return tables;
+    return tables.map(({ sessions, ...table }) => ({
+      ...table,
+      isOccupied: sessions.length > 0,
+    }));
   }
     catch (error) {
     logger.error(`Error retrieving tables: ${error}`);
@@ -108,6 +115,68 @@ export const deleteTableById = async (id: string) => {
         return table;
     } catch (error) {
         logger.error(`Error deleting table with ID ${id}: ${error}`);
+        throw error;
+    }
+}
+
+export const tableStatus = async (id: string) => {
+    try {
+        const table = await prisma.restaurantTable.findUnique({ where: { id } });
+
+        if (!table || !table.isActive) {
+            throw new Error("Table not found");
+        }
+
+        const session = await prisma.tableSession.findFirst({
+            where: {
+                tableId: table.id,
+                status: "ACTIVE"
+            }
+        });
+
+        return {
+            table: { id: table.id, tableNumber: table.tableNumber },
+            session: session ? { id: session.id, status: session.status } : null
+        };
+
+    } catch (error) {
+        logger.error(`Error retrieving status for table with ID ${id}: ${error}`);
+        throw error;
+    }
+}
+
+export const closeTableSession = async (id: string, closedBy: "SYSTEM" | "STAFF" = "STAFF") => {
+    try {
+        const table = await prisma.restaurantTable.findUnique({ where: { id } });
+
+        if (!table) {
+            throw new Error("Table not found");
+        }
+
+        const session = await prisma.tableSession.findFirst({
+            where: {
+                tableId: table.id,
+                status: "ACTIVE"
+            }
+        });
+
+        if (!session) {
+            throw new Error("No active session for this table");
+        }
+
+        const closedSession = await prisma.tableSession.update({
+            where: { id: session.id },
+            data: {
+                status: "CLOSED",
+                closedBy,
+                closedAt: new Date()
+            }
+        });
+
+        logger.info(`Session ${closedSession.id} closed for table ${id}`);
+        return closedSession;
+    } catch (error) {
+        logger.error(`Error closing session for table with ID ${id}: ${error}`);
         throw error;
     }
 }
