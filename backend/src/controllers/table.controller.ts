@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createTableSchema, updateTableSchema } from "../validations/table.validation.js";
-import { createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, updatetable } from "../services/table.service.js";
+import { closeTableSession as closeTableSessionService, createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, tableStatus, updatetable } from "../services/table.service.js";
 import logger from "../config/logger.js";
 
 export const createTable = async (req: Request, res: Response) => {
@@ -130,6 +130,54 @@ export const deleteTable = async (req: Request, res: Response) => {
         logger.error(`Error in deleteTable controller: ${error}`);
         const message = error instanceof Error ? error.message : "Internal server error";
         const statusCode = message === "Table not found" ? 404 : 500;
+        return res.status(statusCode).json({ error: message });
+    }
+};
+
+export const checkTableStatus = async(req: Request, res: Response) => {
+    try {
+        const tableId = typeof req.params.id === "string" ? req.params.id : undefined;
+
+        if (!tableId) {
+            return res.status(400).json({ error: "Table id is required" });
+        }
+
+        const table = await tableStatus(tableId);
+
+        if (!table) {
+            logger.error(`Failed to retrieve status for table with ID: ${tableId}`);
+            return res.status(404).json({ error: "Table not found" });
+        }
+
+        logger.info(`Retrieved status for table with ID: ${tableId} successfully`);
+        return res.status(200).json({ message: "Table status retrieved successfully", table });
+    } catch (error) {
+        logger.error(`Error in checkTableStatus controller: ${error}`);
+        const message = error instanceof Error ? error.message : "Internal server error";
+        const statusCode = message === "Table not found" ? 404 : 500;
+        return res.status(statusCode).json({ error: message });
+    }
+};
+
+export const closeTableSession = async (req: Request, res: Response) => {
+    try {
+        const tableId = typeof req.params.id === "string" ? req.params.id : undefined;
+
+        if (!tableId) {
+            return res.status(400).json({ error: "Table id is required" });
+        }
+
+        const closedBy = req.body?.closedBy === "SYSTEM" ? "SYSTEM" : "STAFF";
+
+        const session = await closeTableSessionService(tableId, closedBy);
+
+        logger.info(`Closed session for table with ID: ${tableId} successfully`);
+        return res.status(200).json({ message: "Table session closed successfully", session });
+    } catch (error) {
+        logger.error(`Error in closeTableSession controller: ${error}`);
+        const message = error instanceof Error ? error.message : "Internal server error";
+        const statusCode =
+            message === "Table not found" || message === "No active session for this table" ? 404 : 500;
         return res.status(statusCode).json({ error: message });
     }
 };

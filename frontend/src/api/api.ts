@@ -194,7 +194,8 @@ export const updateTable = async (token: string, id: string, data: UpdateTablePa
     },
   });
 
-  return res.data.table as RestaurantTable;
+  return res.da
+ta.table as RestaurantTable;
 };
 
 export const deleteTable = async (token: string, id: string) => {
