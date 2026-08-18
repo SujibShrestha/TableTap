@@ -39,13 +39,20 @@ export const getAllTables = async () => {
   try {
     const tables = await prisma.restaurantTable.findMany({
       orderBy: { tableNumber: 'asc' },
+      include: {
+        sessions: {
+          where: { status: 'ACTIVE' },
+          select: { id: true },
+          take: 1,
+        },
+      },
     });
 
-    if(!tables) {
-      throw new Error("No tables found in the database");
-    }
     logger.info(`Retrieved ${tables.length} tables from the database`);
-    return tables;
+    return tables.map(({ sessions, ...table }) => ({
+      ...table,
+      isOccupied: sessions.length > 0,
+    }));
   }
     catch (error) {
     logger.error(`Error retrieving tables: ${error}`);
@@ -120,26 +127,17 @@ export const tableStatus = async (id: string) => {
             throw new Error("Table not found");
         }
 
-        let session = await prisma.tableSession.findFirst({
-            where:{
+        const session = await prisma.tableSession.findFirst({
+            where: {
                 tableId: table.id,
                 status: "ACTIVE"
             }
-        })
-
-        if(!session) {
-            session = await prisma.tableSession.create({
-                data: {
-                    tableId: table.id,
-                    status: "ACTIVE"
-                }
-            })
-        }
+        });
 
         return {
-            table:{id: table.id, tableNumber: table.tableNumber},
-            session: {id: session.id, status: session.status}
-        }
+            table: { id: table.id, tableNumber: table.tableNumber },
+            session: session ? { id: session.id, status: session.status } : null
+        };
 
     } catch (error) {
         logger.error(`Error retrieving status for table with ID ${id}: ${error}`);

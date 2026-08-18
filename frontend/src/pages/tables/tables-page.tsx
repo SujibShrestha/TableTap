@@ -286,6 +286,19 @@ export function TablesPage() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Created {formatDate(table.createdAt)}
                 </p>
+                {table.isActive ? (
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase">
+                    <span
+                      className={cn(
+                        "size-2 rounded-full",
+                        table.isOccupied ? "bg-emerald-600" : "bg-outline"
+                      )}
+                    />
+                    <span className={table.isOccupied ? "text-emerald-700" : "text-secondary"}>
+                      {table.isOccupied ? "Occupied" : "Free"}
+                    </span>
+                  </span>
+                ) : null}
               </div>
 
               <a

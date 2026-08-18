@@ -46,6 +46,7 @@ export interface RestaurantTable {
   tableNumber: string;
   qrCodeUrl: string | null;
   isActive: boolean;
+  isOccupied?: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -12,15 +12,15 @@ export const createTable = async (req: Request, res: Response) => {
     }
 
     const { tableNumber } = parsed.data;
-    const table = await createtable(tableNumber);
+    const result = await createtable(tableNumber);
 
-    if (!table) {
+    if (!result) {
       logger.error(`Failed to create table with number: ${tableNumber}`);
       return res.status(500).json({ error: "Failed to create table" });
     }
 
     logger.info(`Table created successfully with number: ${tableNumber}`);
-    return res.status(201).json({ message: "Table created successfully", table });
+    return res.status(201).json({ message: "Table created successfully", table: result.table, tableUrl: result.tableUrl });
   } catch (error) {
     logger.error(`Error in createTable controller: ${error}`);
     const message = error instanceof Error ? error.message : "Internal server error";
