@@ -89,3 +89,32 @@ export interface CreateMenuItemPayload {
   isAvailable?: boolean;
   categoryId: string;
 }
+
+export interface OrderItem {
+  id: string;
+  orderId: string;
+  menuItemId: string;
+  quantity: number;
+  unitPrice: string;
+  costPriceAtOrder: string;
+  menuItem?: MenuItem;
+}
+
+export interface Order {
+  id: string;
+  sessionId: string;
+  status: string;
+  specialInstructions: string | null;
+  totalAmount: string;
+  updatedByStaffId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  items?: OrderItem[];
+}
+
+export interface CreateOrderPayload {
+  sessionId?: string;
+  tableId?: string;
+  items: { menuItemId: string; quantity: number }[];
+  specialInstructions?: string;
+}

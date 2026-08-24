@@ -6,6 +6,7 @@ import type {
   ListUsersParams,
   MenuCategory,
   MenuItem,
+  Order,
   PaginatedUsers,
   RestaurantTable,
   Role,
@@ -30,6 +31,7 @@ export interface LoginPayload {
 
 export const loginUser = async (data: LoginPayload): Promise<AuthSession> => {
   const res = await api.post("/auth/login", data);
+  console.log(res)
   return res.data.data;
 };
 
@@ -281,6 +283,16 @@ export const uploadImage = async (token: string, file: File) => {
   });
 
   return res.data.imageUrl as string;
+};
+
+export const createCustomerOrder = async (tableId: string, items: { menuItemId: string; quantity: number }[]) => {
+  const res = await axios.post(`${baseURL}/orders/table/${tableId}`, { items });
+  return res.data.order as Order;
+};
+
+export const getCustomerOrders = async (tableId: string) => {
+  const res = await axios.get(`${baseURL}/orders/table/${tableId}`);
+  return res.data.orders as Order[];
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {
