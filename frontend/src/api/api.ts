@@ -6,6 +6,7 @@ import type {
   ListUsersParams,
   MenuCategory,
   MenuItem,
+  Order,
   PaginatedUsers,
   RestaurantTable,
   Role,
@@ -30,6 +31,7 @@ export interface LoginPayload {
 
 export const loginUser = async (data: LoginPayload): Promise<AuthSession> => {
   const res = await api.post("/auth/login", data);
+  console.log(res)
   return res.data.data;
 };
 
@@ -281,6 +283,42 @@ export const uploadImage = async (token: string, file: File) => {
   });
 
   return res.data.imageUrl as string;
+};
+
+export interface ResolveTableResponse {
+  table: RestaurantTable;
+  session: {
+    id: string;
+    tableId: string;
+    status: string;
+    expiresAt: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export const resolveTable = async (tableId: string): Promise<ResolveTableResponse> => {
+  const res = await api.get(`/tables/${tableId}/resolve`);
+  return res.data;
+};
+
+export const createCustomerOrder = async (
+  sessionId: string,
+  items: { menuItemId: string; quantity: number }[],
+  specialInstructions?: string
+) => {
+  const res = await api.post("/orders", { sessionId, items, specialInstructions });
+  return res.data.order as Order;
+};
+
+export const getCustomerOrders = async (tableId: string) => {
+  const res = await axios.get(`${baseURL}/orders/table/${tableId}`);
+  return res.data.orders as Order[];
+};
+
+export const getOrdersBySession = async (sessionId: string) => {
+  const res = await axios.get(`${baseURL}/orders/session/${sessionId}`);
+  return res.data.orders as Order[];
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {

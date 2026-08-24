@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
 
 import { AuthProvider } from "@/context/auth-context";
 import { AppShell } from "@/components/layout/app-shell";
@@ -9,15 +10,21 @@ import { UsersPage } from "@/pages/users/users-page";
 import { UserFormPage } from "@/pages/users/user-form-page";
 import { TablesPage } from "@/pages/tables/tables-page";
 import { MenuPage } from "@/pages/menu/menu-page";
-import { TableLandingPage } from "@/pages/customer/table-landing-page";
+import { CustomerLandingPage } from "@/pages/customer/customer-landing-page";
+import { SearchPage } from "@/components/customer/search-page";
+import { CustomerLayout } from "@/components/customer/customer-layout";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Toaster position="bottom-right" theme="system" />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/t/:id" element={<TableLandingPage />} />
+          <Route element={<CustomerLayout />}>
+            <Route path="/t/:id" element={<CustomerLandingPage />} />
+            <Route path="/t/:id/search" element={<SearchPage />} />
+          </Route>
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>

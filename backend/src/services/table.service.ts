@@ -145,6 +145,32 @@ export const tableStatus = async (id: string) => {
     }
 }
 
+export const getOrCreateActiveSession = async (tableId: string) => {
+    const table = await prisma.restaurantTable.findUnique({ where: { id: tableId } });
+
+    if (!table || !table.isActive) {
+        throw new Error("Table not found");
+    }
+
+    let session = await prisma.tableSession.findFirst({
+        where: {
+            tableId: table.id,
+            status: "ACTIVE"
+        }
+    });
+
+    if (!session) {
+        session = await prisma.tableSession.create({
+            data: {
+                tableId: table.id,
+                status: "ACTIVE"
+            }
+        });
+    }
+
+    return session;
+};
+
 export const closeTableSession = async (id: string, closedBy: "SYSTEM" | "STAFF" = "STAFF") => {
     try {
         const table = await prisma.restaurantTable.findUnique({ where: { id } });

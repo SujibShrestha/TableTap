@@ -1,5 +1,5 @@
 ---
-name: L'Artiste Editorial
+name: TableTap
 colors:
   surface: '#fef9f2'
   surface-dim: '#ded9d3'
