@@ -1,5 +1,5 @@
 import Router from "express";
-import { createTable, getTableById, getTables, updateTable, deleteTable, checkTableStatus, closeTableSession } from "../controllers/table.controller.js";
+import { createTable, getTableById, getTables, updateTable, deleteTable, checkTableStatus, closeTableSession, resolveTable } from "../controllers/table.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -12,5 +12,7 @@ router.delete("/:id", requireAuth, requireRole("ADMIN"), deleteTable);
 
 router.get("/:id/status", checkTableStatus);
 router.patch("/:id/status", requireAuth, requireRole("ADMIN"), closeTableSession);
+
+router.get("/:id/resolve", resolveTable);
 
 export default router;

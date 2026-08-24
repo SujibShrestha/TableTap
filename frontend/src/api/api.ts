@@ -285,8 +285,29 @@ export const uploadImage = async (token: string, file: File) => {
   return res.data.imageUrl as string;
 };
 
-export const createCustomerOrder = async (tableId: string, items: { menuItemId: string; quantity: number }[]) => {
-  const res = await axios.post(`${baseURL}/orders/table/${tableId}`, { items });
+export interface ResolveTableResponse {
+  table: RestaurantTable;
+  session: {
+    id: string;
+    tableId: string;
+    status: string;
+    expiresAt: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export const resolveTable = async (tableId: string): Promise<ResolveTableResponse> => {
+  const res = await api.get(`/tables/${tableId}/resolve`);
+  return res.data;
+};
+
+export const createCustomerOrder = async (
+  sessionId: string,
+  items: { menuItemId: string; quantity: number }[],
+  specialInstructions?: string
+) => {
+  const res = await api.post("/orders", { sessionId, items, specialInstructions });
   return res.data.order as Order;
 };
 

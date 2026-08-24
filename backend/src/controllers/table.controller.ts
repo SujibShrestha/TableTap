@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createTableSchema, updateTableSchema } from "../validations/table.validation.js";
-import { closeTableSession as closeTableSessionService, createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, tableStatus, updatetable } from "../services/table.service.js";
+import { closeTableSession as closeTableSessionService, createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, getOrCreateActiveSession, tableStatus, updatetable } from "../services/table.service.js";
 import logger from "../config/logger.js";
 
 export const createTable = async (req: Request, res: Response) => {
@@ -178,6 +178,32 @@ export const closeTableSession = async (req: Request, res: Response) => {
         const message = error instanceof Error ? error.message : "Internal server error";
         const statusCode =
             message === "Table not found" || message === "No active session for this table" ? 404 : 500;
+        return res.status(statusCode).json({ error: message });
+    }
+};
+
+export const resolveTable = async (req: Request, res: Response) => {
+    try {
+        const tableId = typeof req.params.id === "string" ? req.params.id : undefined;
+
+        if (!tableId) {
+            return res.status(400).json({ error: "Table id is required" });
+        }
+
+        const table = await getTableByIdService(tableId);
+
+        if (!table || !table.isActive) {
+            return res.status(404).json({ error: "Invalid or inactive table" });
+        }
+
+        const session = await getOrCreateActiveSession(tableId);
+
+        logger.info(`Resolved table with ID: ${tableId} successfully`);
+        return res.status(200).json({ table, session });
+    } catch (error) {
+        logger.error(`Error in resolveTable controller: ${error}`);
+        const message = error instanceof Error ? error.message : "Internal server error";
+        const statusCode = message === "Table not found" ? 404 : 500;
         return res.status(statusCode).json({ error: message });
     }
 };
