@@ -316,6 +316,11 @@ export const getCustomerOrders = async (tableId: string) => {
   return res.data.orders as Order[];
 };
 
+export const getOrdersBySession = async (sessionId: string) => {
+  const res = await axios.get(`${baseURL}/orders/session/${sessionId}`);
+  return res.data.orders as Order[];
+};
+
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as { message?: string; error?: string } | undefined;

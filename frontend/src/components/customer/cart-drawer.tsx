@@ -62,7 +62,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   return (
     <>
       <Sheet>
-        <SheetContent open={open} onOpenChange={onOpenChange} side="bottom" className="max-h-[85vh]">
+        <SheetContent open={open} onOpenChange={onOpenChange} side="bottom" className="max-h-[calc(85vh-6rem)] pb-24">
           <SheetHeader>
             <div className="flex items-start justify-between gap-4 w-full">
               <div>

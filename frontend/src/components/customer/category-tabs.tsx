@@ -18,7 +18,7 @@ export function CategoryTabs({
 }: CategoryTabsProps) {
   return (
     <nav
-      className="sticky top-[64px] z-30 pt-4 pb-4 bg-background px-6"
+      className="sticky top-16 z-30 pt-4 pb-4 bg-background px-6"
       style={{ WebkitOverflowScrolling: "touch" }}
       aria-label="Menu categories"
     >

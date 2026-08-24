@@ -11,6 +11,8 @@ import { UserFormPage } from "@/pages/users/user-form-page";
 import { TablesPage } from "@/pages/tables/tables-page";
 import { MenuPage } from "@/pages/menu/menu-page";
 import { CustomerLandingPage } from "@/pages/customer/customer-landing-page";
+import { SearchPage } from "@/components/customer/search-page";
+import { CustomerLayout } from "@/components/customer/customer-layout";
 
 function App() {
   return (
@@ -19,7 +21,10 @@ function App() {
         <Toaster position="bottom-right" theme="system" />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/t/:id" element={<CustomerLandingPage />} />
+          <Route element={<CustomerLayout />}>
+            <Route path="/t/:id" element={<CustomerLandingPage />} />
+            <Route path="/t/:id/search" element={<SearchPage />} />
+          </Route>
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>
