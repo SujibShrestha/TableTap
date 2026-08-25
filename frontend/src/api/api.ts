@@ -285,6 +285,8 @@ export const uploadImage = async (token: string, file: File) => {
   return res.data.imageUrl as string;
 };
 
+// ---------------- Customer-facing APIs ----------------
+
 export interface ResolveTableResponse {
   table: RestaurantTable;
   session: {
@@ -301,6 +303,8 @@ export const resolveTable = async (tableId: string): Promise<ResolveTableRespons
   const res = await api.get(`/tables/${tableId}/resolve`);
   return res.data;
 };
+
+// ---------------- Orders ----------------
 
 export const createCustomerOrder = async (
   sessionId: string,
@@ -321,9 +325,23 @@ export const getOrdersBySession = async (sessionId: string) => {
   return res.data.orders as Order[];
 };
 
+export const getActiveKitchenOrders = async (token: string) => {
+  const res = await api.get("/orders/kitchen/active", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.orders as Order[];
+};
+
 export const createOnlinePayment = async (sessionId: string) => {
   const res = await api.post(`/payments/session/${sessionId}/pay-online`, { method: "ONLINE" });
   return res.data.payment;
+};
+
+export const updateOrderStatus = async (token: string, orderId: string, status: string) => {
+  const res = await api.patch(`/orders/${orderId}/status`, { status }, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.order as Order;
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {

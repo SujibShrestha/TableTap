@@ -110,6 +110,11 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   items?: OrderItem[];
+  session?: {
+    id: string;
+    tableId: string;
+    table?: RestaurantTable;
+  };
 }
 
 export interface CreateOrderPayload {

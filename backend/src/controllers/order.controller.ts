@@ -5,6 +5,7 @@ import {
   createOrder,
   getOrdersBySession,
   getOrdersByTable,
+  getActiveKitchenOrders,
   updateOrderStatus,
   getOrderById,
 } from "../services/order.service.js";
@@ -106,5 +107,15 @@ export const getOrderByIdController = async (req: Request, res: Response) => {
     const message = error instanceof Error ? error.message : "Internal server error";
     const statusCode = message === "Order not found" ? 404 : 500;
     return res.status(statusCode).json({ error: message });
+  }
+};
+
+export const getActiveKitchenOrdersController = async (req: Request, res: Response) => {
+  try {
+    const orders = await getActiveKitchenOrders();
+    return res.status(200).json({ message: "Active kitchen orders retrieved successfully", orders });
+  } catch (error) {
+    logger.error("Error fetching active kitchen orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

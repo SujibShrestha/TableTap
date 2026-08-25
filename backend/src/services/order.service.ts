@@ -138,3 +138,16 @@ export const getOrderById = async (orderId: string) => {
 
   return order;
 };
+
+export const getActiveKitchenOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      status: { in: ["PENDING", "CONFIRMED", "PREPARING", "READY"] },
+    },
+    include: {
+      items: { include: { menuItem: true } },
+      session: { include: { table: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+};

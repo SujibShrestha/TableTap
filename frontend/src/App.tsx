@@ -15,6 +15,7 @@ import { SearchPage } from "@/components/customer/search-page";
 import { OrdersPage } from "@/components/customer/orders-page";
 import { BillPaymentPage } from "@/components/customer/bill-payment-page";
 import { CustomerLayout } from "@/components/customer/customer-layout";
+import { KitchenBoard } from "@/pages/kitchen/kitchen-board";
 
 function App() {
   return (
@@ -42,6 +43,8 @@ function App() {
                 <Route path="/tables" element={<TablesPage />} />
                 <Route path="/menu" element={<MenuPage />} />
               </Route>
+
+              <Route path="/kitchen" element={<KitchenBoard />} />
             </Route>
           </Route>
 

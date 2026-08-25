@@ -36,7 +36,7 @@ interface SocketContextValue {
 
 const SocketContext = createContext<SocketContextValue | null>(null);
 
-const SOCKET_URL = import.meta.env.DEV ? "" : (import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || "http://localhost:3000");
+const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || "http://localhost:3000";
 
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -45,6 +45,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL, {
+      auth: { token: localStorage.getItem("tabletap.auth") ? JSON.parse(localStorage.getItem("tabletap.auth")!).accessToken : undefined },
       transports: ["websocket", "polling"],
       autoConnect: true,
     });
