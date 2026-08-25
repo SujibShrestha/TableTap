@@ -6,3 +6,7 @@ export const createPaymentSchema = z.object({
   method: z.enum(['CASH', 'CARD', 'ONLINE']),
   gatewayReferenceId: z.string().optional(),
 });
+
+export const createOnlinePaymentSchema = z.object({
+  method: z.enum(['ONLINE']),
+});

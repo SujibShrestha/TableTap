@@ -12,6 +12,7 @@ import { loginUser, logoutUser } from "@/api/api";
 
 interface AuthContextValue {
   user: User | null;
+  accessToken: string | null;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
@@ -20,10 +21,13 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => getAuth()?.user ?? null);
+  const [accessToken, setAccessToken] = useState<string | null>(() => getAuth()?.accessToken ?? null);
 
   useEffect(() => {
     return subscribeAuth(() => {
-      setUser(getAuth()?.user ?? null);
+      const auth = getAuth();
+      setUser(auth?.user ?? null);
+      setAccessToken(auth?.accessToken ?? null);
     });
   }, []);
 
@@ -46,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, accessToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,11 +1,12 @@
 
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import { Menu, Search, ListOrdered } from "lucide-react";
+import { Menu, Search, ListOrdered, CreditCard } from "lucide-react";
 
 const navItems = [
   { path: "/t/:tableId", label: "Menu", icon: Menu },
   { path: "/t/:tableId/search", label: "Search", icon: Search },
   { path: "/t/:tableId/orders", label: "Orders", icon: ListOrdered },
+  { path: "/t/:tableId/bill", label: "Bill", icon: CreditCard },
 ] as const;
 
 export function CustomerFooterNav() {

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { resolveTable, getErrorMessage } from "@/api/api";
 import type { RestaurantTable } from "@/types";
 import { Alert } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
 
 interface TableSessionContextValue {
   table: RestaurantTable | null;
@@ -55,10 +56,7 @@ export function TableSessionProvider({ children, tableId }: TableSessionProvider
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <svg className="size-8 animate-spin text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-          <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <Loader2 className="size-8 animate-spin text-primary" strokeWidth={2} aria-hidden="true" />
       </div>
     );
   }

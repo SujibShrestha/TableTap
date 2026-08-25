@@ -1,53 +1,59 @@
+// src/services/payment.service.ts
 import { prisma } from "../config/db.js";
-import { closeTableSession } from "./table.service.js";
 
-export const createPayment = async (data: {
-  sessionId: string;
-  amount: number;
-  method: "CASH" | "CARD" | "ONLINE";
-  gatewayReferenceId?: string;
-}) => {
+export const createPayment = async (
+  sessionId: string,
+  method: "CASH" | "CARD" | "ONLINE",
+  closedBy: "SYSTEM" | "STAFF"
+) => {
   const session = await prisma.tableSession.findUnique({
-    where: { id: data.sessionId },
-    include: { orders: true },
+    where: { id: sessionId },
+    include: { orders: true, payment: true },
   });
 
   if (!session) {
     throw new Error("Session not found");
   }
-
   if (session.status !== "ACTIVE") {
     throw new Error("Session is not active");
   }
+  if (session.payment) {
+    throw new Error("This session has already been paid");
+  }
 
-  const totalOrderAmount = session.orders.reduce(
+  const totalAmount = session.orders.reduce(
     (sum, order) => sum + Number(order.totalAmount),
     0
   );
 
-  if (data.amount < totalOrderAmount - 0.01) {
-    throw new Error(`Payment amount ${data.amount} is less than total order amount ${totalOrderAmount}`);
+  if (totalAmount <= 0) {
+    throw new Error("No orders to pay for in this session");
   }
 
-  const payment = await prisma.payment.create({
-    data: {
-      sessionId: data.sessionId,
-      amount: data.amount,
-      method: data.method,
-      status: "PAID",
-      gatewayReferenceId: data.gatewayReferenceId ?? null,
-    },
-  });
+  const payment = await prisma.$transaction(async (tx) => {
+    const created = await tx.payment.create({
+      data: {
+        sessionId,
+        amount: totalAmount, // always server-computed, never client input
+        method,
+        status: "PAID",
+        gatewayReferenceId: method === "ONLINE" ? `stub_${Date.now()}` : null,
+      },
+    });
 
-  await closeTableSession(session.tableId, "SYSTEM");
+    await tx.tableSession.update({
+      where: { id: sessionId },
+      data: { status: "CLOSED", closedBy, closedAt: new Date() },
+    });
+
+    return created;
+  });
 
   return payment;
 };
 
 export const getPaymentBySession = async (sessionId: string) => {
-  return prisma.payment.findUnique({
-    where: { sessionId },
-  });
+  return prisma.payment.findUnique({ where: { sessionId } });
 };
 
 export const getPaymentsByTable = async (tableId: string) => {

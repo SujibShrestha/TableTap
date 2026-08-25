@@ -1,4 +1,5 @@
 import { prisma } from "../config/db.js";
+import { getIo } from "../utils/socket.js";
 import { getOrCreateActiveSession } from "./table.service.js";
 
 export const createOrder = async (data: {
@@ -67,6 +68,7 @@ export const createOrder = async (data: {
   if (!order) {
     throw new Error("Failed to create order");
   }
+  getIo().to('kitchen').to('waiter').emit('order:new', order);
 
   return order;
 };
@@ -92,7 +94,7 @@ export const getOrdersByTable = async (tableId: string) => {
   return getOrdersBySession(session.id);
 };
 
-export const updateOrderStatus = async (orderId: string, status: string) => {
+export const updateOrderStatus = async (orderId: string, status: string, updatedByStaffId?: string) => {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
 
   if (!order) {
@@ -106,9 +108,20 @@ export const updateOrderStatus = async (orderId: string, status: string) => {
 
   const updated = await prisma.order.update({
     where: { id: orderId },
-    data: { status: status as any },
-    include: { items: { include: { menuItem: true } } },
+    data: { status: status as any, updatedByStaffId: updatedByStaffId ?? null },
+    include: { items: { include: { menuItem: true } }, session: true },
   });
+
+  // notify the specific customer session, AND the waiter/kitchen rooms
+  try {
+    const io = getIo();
+    io.to(`session:${updated.sessionId}`)
+      .to('waiter')
+      .to('kitchen')
+      .emit('order:statusUpdated', updated);
+  } catch (err) {
+    // socket may not be initialized in some environments; don't fail the operation
+  }
 
   return updated;
 };
@@ -124,4 +137,17 @@ export const getOrderById = async (orderId: string) => {
   }
 
   return order;
+};
+
+export const getActiveKitchenOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      status: { in: ["PENDING", "CONFIRMED", "PREPARING", "READY"] },
+    },
+    include: {
+      items: { include: { menuItem: true } },
+      session: { include: { table: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
 };

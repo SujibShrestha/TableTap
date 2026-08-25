@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { CategoryTabs } from "./category-tabs";
 import { MenuItemCard } from "./menu-item-card";
 import { useCart } from "@/context/cart-context";
+import { Loader2 } from "lucide-react";
 
 export function MenuPage() {
   const { items: cartItems, addItem, updateQuantity } = useCart();
@@ -62,10 +63,7 @@ export function MenuPage() {
   if (loading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
-        <svg className="size-8 animate-spin text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-          <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <Loader2 className="size-8 animate-spin text-primary" strokeWidth={2} aria-hidden="true" />
       </div>
     );
   }

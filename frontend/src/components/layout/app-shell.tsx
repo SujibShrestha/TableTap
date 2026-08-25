@@ -19,29 +19,34 @@ interface NavItem {
   label: string;
   icon: LucideIcon;
   adminOnly?: boolean;
+  hideForRoles?: string[];
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN"] },
   { to: "/users", label: "Staff", icon: Users, adminOnly: true },
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
-  { to: "/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
   { to: "/kitchen", label: "Kitchen", icon: ChefHat },
 ];
 
 const MOBILE_NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN"] },
   { to: "/users", label: "Staff", icon: Users, adminOnly: true },
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
-  { to: "/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
   { to: "/kitchen", label: "Kitchen", icon: ChefHat },
 ];
 
 function SidebarNav() {
   const { user } = useAuth();
-  const items = NAV_ITEMS.filter((item) => !item.adminOnly || user?.role === "ADMIN");
+  const items = NAV_ITEMS.filter(
+    (item) =>
+      (!item.adminOnly || user?.role === "ADMIN") &&
+      (!item.hideForRoles?.includes(user?.role ?? ""))
+  );
 
   return (
     <nav className="flex flex-col gap-1.5">
@@ -137,7 +142,11 @@ function MobileTopBar() {
 
 function MobileBottomNav() {
   const { user } = useAuth();
-  const items = MOBILE_NAV_ITEMS.filter((item) => !item.adminOnly || user?.role === "ADMIN");
+  const items = MOBILE_NAV_ITEMS.filter(
+    (item) =>
+      (!item.adminOnly || user?.role === "ADMIN") &&
+      (!item.hideForRoles?.includes(user?.role ?? ""))
+  );
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-outline-variant/60 bg-surface shadow-[0_-5px_20px_rgba(45,36,30,0.05)] lg:hidden">
