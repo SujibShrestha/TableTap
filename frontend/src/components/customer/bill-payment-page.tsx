@@ -77,7 +77,7 @@ export function BillPaymentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center">
+      <div className="min-h-100 flex items-center justify-center">
         <Loader2 className="size-8 animate-spin text-primary" strokeWidth={2} aria-hidden="true" />
       </div>
     );
@@ -85,7 +85,7 @@ export function BillPaymentPage() {
 
   if (error) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center px-6">
+      <div className="min-h-100 flex items-center justify-center px-6">
         <div className="text-center">
           <p className="font-body-main text-body-main text-on-surface">{error}</p>
         </div>
@@ -94,7 +94,7 @@ export function BillPaymentPage() {
   }
 
   return (
-    <main className="flex-1 max-w-[600px] mx-auto w-full px-6 py-12 flex flex-col gap-12">
+    <main className="flex-1 max-w-150 mx-auto w-full px-6 py-12 flex flex-col gap-12">
       <section className="bg-surface-container rounded-xl p-8 shadow-[0px_10px_30px_rgba(45,36,30,0.05)] flex flex-col gap-6">
         <h2 className="font-menu-item-title text-menu-item-title italic text-on-surface border-b border-surface-variant pb-4">
           Your Check

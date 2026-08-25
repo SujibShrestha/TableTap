@@ -6,13 +6,6 @@ import { Loader2, AlertTriangle, ShoppingBag } from "lucide-react";
 import type { Order } from "@/types";
 import { OrderCard } from "@/components/kitchen/order-card";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-
-const FILTERS = [
-  { id: "all", label: "All Active" },
-  { id: "grill", label: "Grill Station" },
-  { id: "salad", label: "Salad/Cold" },
-] as const;
 
 const STATUS_PRIORITY: Record<string, number> = {
   PENDING: 0,
@@ -26,7 +19,6 @@ export function KitchenBoard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState("all");
 
   const fetchOrders = useCallback(async () => {
     if (!accessToken) return;
@@ -86,11 +78,6 @@ export function KitchenBoard() {
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
-  // Apply filter (placeholder for future station-based filtering)
-  const filteredOrders = activeFilter === "all" 
-    ? sortedOrders 
-    : sortedOrders; // TODO: implement station filtering
-
   if (loading) {
     return (
       <div className="h-screen bg-surface flex items-center justify-center">
@@ -125,28 +112,12 @@ export function KitchenBoard() {
             Service is flowing nicely. {orders.length} active order{orders.length !== 1 ? "s" : ""}.
           </p>
         </div>
-        <div className="flex gap-3 flex-wrap">
-          {FILTERS.map((filter) => (
-            <button
-              key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              className={cn(
-                "font-caption-bold text-caption-bold px-4 py-2 rounded-full transition-colors",
-                activeFilter === filter.id
-                  ? "bg-surface-container-low border border-outline-variant text-on-surface hover:bg-surface-container-high"
-                  : "text-on-surface-variant hover:bg-surface-container-low"
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
       </header>
 
       {/* Feed Grid */}
       <main className="flex-1 overflow-y-auto p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 max-w-[1600px] mx-auto pb-20">
-          {filteredOrders.length === 0 ? (
+          {sortedOrders.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20 text-on-surface-variant/50">
               <div className="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-3">
                 <ShoppingBag className="size-8" strokeWidth={1.5} aria-hidden="true" />
@@ -154,7 +125,7 @@ export function KitchenBoard() {
               <p className="font-body-secondary text-body-secondary">No orders</p>
             </div>
           ) : (
-            filteredOrders.map((order) => (
+            sortedOrders.map((order) => (
               <OrderCard key={order.id} order={order} onStatusChange={handleAction} />
             ))
           )}

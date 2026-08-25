@@ -20,7 +20,7 @@ const COLUMN_COLORS: Record<string, string> = {
 export function KitchenColumn({ title, orders, onStatusChange, count }: KitchenColumnProps) {
   return (
     <section className={cn(
-      "flex flex-col min-h-0 rounded-[1.5rem] border",
+      "flex flex-col min-h-0 rounded-3xl border",
       COLUMN_COLORS[title] ?? "border-outline-variant/20"
     )}>
       {/* Column Header */}
