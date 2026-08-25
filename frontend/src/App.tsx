@@ -12,6 +12,7 @@ import { TablesPage } from "@/pages/tables/tables-page";
 import { MenuPage } from "@/pages/menu/menu-page";
 import { CustomerLandingPage } from "@/pages/customer/customer-landing-page";
 import { SearchPage } from "@/components/customer/search-page";
+import { OrdersPage } from "@/components/customer/orders-page";
 import { CustomerLayout } from "@/components/customer/customer-layout";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route element={<CustomerLayout />}>
             <Route path="/t/:id" element={<CustomerLandingPage />} />
             <Route path="/t/:id/search" element={<SearchPage />} />
+            <Route path="/t/:id/orders" element={<OrdersPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>

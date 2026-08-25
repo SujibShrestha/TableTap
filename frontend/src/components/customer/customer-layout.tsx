@@ -1,17 +1,24 @@
-"use client";
 
 import { Outlet, useParams } from "react-router-dom";
 import { TableSessionProvider } from "@/context/table-session-context";
 import { CartProvider } from "@/context/cart-context";
+import { SocketProvider, useSocket } from "@/context/socket-context";
 import { useTableSession } from "@/context/table-session-context";
 import { CustomerFooterNav } from "./customer-footer-nav";
 import { CartButton } from "./cart-button";
 import { CartDrawer } from "./cart-drawer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function CustomerLayoutContent() {
-  const { table } = useTableSession();
+  const { table, sessionId } = useTableSession();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { joinSession } = useSocket();
+
+  useEffect(() => {
+    if (sessionId) {
+      joinSession(sessionId);
+    }
+  }, [sessionId, joinSession]);
 
   return (
     <div className="relative min-h-screen bg-background flex flex-col">
@@ -53,7 +60,9 @@ export function CustomerLayout() {
   return (
     <TableSessionProvider tableId={tableId}>
       <CartProvider>
-        <CustomerLayoutContent />
+        <SocketProvider>
+          <CustomerLayoutContent />
+        </SocketProvider>
       </CartProvider>
     </TableSessionProvider>
   );

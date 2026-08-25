@@ -321,6 +321,11 @@ export const getOrdersBySession = async (sessionId: string) => {
   return res.data.orders as Order[];
 };
 
+export const createOnlinePayment = async (sessionId: string) => {
+  const res = await api.post(`/payment/session/${sessionId}/pay-online`, { method: "ONLINE" });
+  return res.data.payment;
+};
+
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as { message?: string; error?: string } | undefined;

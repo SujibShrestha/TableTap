@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import axios from "axios";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Image, Minus, Plus } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import { useCart } from "@/context/cart-context";
 import { useTableSession } from "@/context/table-session-context";
@@ -86,10 +86,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               <div key={item.menuItemId} className="flex gap-4">
                 <div className="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden">
                   <div className="w-full h-full flex items-center justify-center">
-                    <svg className="size-6 text-muted-foreground/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                      <polyline points="9 22 9 12 15 12 15 22" />
-                    </svg>
+                    <Image className="size-6 text-muted-foreground/50" strokeWidth={2} aria-hidden="true" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -118,9 +115,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                       className="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors"
                       aria-label="Decrease quantity"
                     >
-                      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
+                      <Minus className="size-4" strokeWidth={2} aria-hidden="true" />
                     </button>
                     <span className="font-body-main text-body-main text-on-surface w-8 text-center font-medium">
                       {item.quantity}
@@ -128,13 +123,10 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.menuItemId, item.quantity + 1)}
-                      className="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors"
+                      className="w-8 h-8 flex items_center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors"
                       aria-label="Increase quantity"
                     >
-                      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
+                      <Plus className="size-4" strokeWidth={2} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
