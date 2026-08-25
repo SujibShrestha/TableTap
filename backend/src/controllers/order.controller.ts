@@ -81,8 +81,9 @@ export const updateOrderStatusController = async (req: Request, res: Response) =
       return res.status(400).json({ error: "Invalid status" });
     }
 
-    const order = await updateOrderStatus(orderId, parsed.data.status);
-    logger.info(`Order ${orderId} status updated to ${parsed.data.status}`);
+    const userId = (req as any).user?.sub;
+    const order = await updateOrderStatus(orderId, parsed.data.status, userId);
+    logger.info(`Order ${orderId} status updated to ${parsed.data.status} by ${userId ?? 'system'}`);
     return res.status(200).json({ message: "Order status updated successfully", order });
   } catch (error) {
     logger.error("Error updating order status:", error);

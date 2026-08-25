@@ -22,4 +22,6 @@ router.get("/session/:sessionId", getOrdersBySessionController);
 router.get("/:orderId", requireAuth, getOrderByIdController);
 router.patch("/:orderId/status", requireAuth, requireRole("ADMIN", "WAITER", "KITCHEN"), updateOrderStatusController);
 
+// real-time socket notifications handled in the service layer
+
 export default router;
