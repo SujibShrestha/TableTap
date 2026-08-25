@@ -40,18 +40,18 @@ export function OrderConfirmation({ order, onClose }: OrderConfirmationProps) {
           >
             <ArrowLeft className="size-5 text-primary" strokeWidth={2.5} />
           </button>
-          <h1 className="text-headline-lg-mobile font-bold italic text-primary">L'Artiste Bistro</h1>
-          <div className="text-primary font-bold italic px-2">Table {table?.tableNumber ?? ""}</div>
+          <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-bold italic text-primary">L'Artiste Bistro</h1>
+          <div className="font-body-main text-body-main text-primary font-bold italic px-2">Table {table?.tableNumber ?? ""}</div>
         </div>
       </header>
 
       <main className="flex-1 max-w-md mx-auto w-full px-6 py-12 pb-32 flex flex-col items-center">
         <div className="text-center mb-12 flex flex-col items-center gap-4 w-full">
-          <h2 className="text-headline-lg-mobile text-on-surface-variant">Estimated Wait</h2>
-          <div className="text-display-lg text-on-surface-variant italic font-bold">
+          <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface-variant">Estimated Wait</h2>
+          <div className="font-display-lg text-display-lg text-on-surface-variant italic font-bold">
             {estimatedMinutes}-{estimatedMinutes + 5} min
           </div>
-          <p className="text-body-secondary text-on-surface-variant/70 italic mt-2 text-center max-w-[250px]">
+          <p className="font-body-secondary text-body-secondary text-on-surface-variant/70 italic mt-2 text-center max-w-[250px]">
             We're crafting your order with care.
           </p>
         </div>
@@ -82,7 +82,7 @@ export function OrderConfirmation({ order, onClose }: OrderConfirmationProps) {
                   )}
                 </div>
                 <span className={cn(
-                  "font-body-secondary text-body-secondary text-xs font-medium whitespace-nowrap",
+                  "font-body-secondary text-body-secondary text-caption-bold font-medium whitespace-nowrap",
                   (isCompleted || isActive) && "text-primary-container italic font-bold",
                   (!isCompleted && !isActive) && "text-on-surface-variant/60"
                 )}>
@@ -95,7 +95,7 @@ export function OrderConfirmation({ order, onClose }: OrderConfirmationProps) {
 
         <div className="w-full bg-surface rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] p-6 border border-surface-variant/50 relative overflow-hidden group hover:shadow-[0px_15px_40px_rgba(45,36,30,0.08)] transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110" aria-hidden="true" />
-          <h3 className="text-menu-item-title text-on-surface-variant mb-6 border-b border-surface-variant pb-4">
+          <h3 className="font-menu-item-title text-menu-item-title text-on-surface-variant mb-6 border-b border-surface-variant pb-4">
             Order #{order.id.slice(0, 8).toUpperCase()}
           </h3>
           <ul className="flex flex-col gap-4">
@@ -106,7 +106,7 @@ export function OrderConfirmation({ order, onClose }: OrderConfirmationProps) {
                     {item.menuItem?.name ?? "Item"}
                   </div>
                   {item.menuItem?.description && (
-                    <div className="font-body-secondary text-body-secondary text-on-surface-variant/70 text-sm">
+                    <div className="font-body-secondary text-body-secondary text-on-surface-variant/70">
                       {item.menuItem.description}
                     </div>
                   )}

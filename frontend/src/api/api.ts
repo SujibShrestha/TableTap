@@ -322,7 +322,7 @@ export const getOrdersBySession = async (sessionId: string) => {
 };
 
 export const createOnlinePayment = async (sessionId: string) => {
-  const res = await api.post(`/payment/session/${sessionId}/pay-online`, { method: "ONLINE" });
+  const res = await api.post(`/payments/session/${sessionId}/pay-online`, { method: "ONLINE" });
   return res.data.payment;
 };
 

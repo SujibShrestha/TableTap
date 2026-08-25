@@ -13,6 +13,7 @@ import { MenuPage } from "@/pages/menu/menu-page";
 import { CustomerLandingPage } from "@/pages/customer/customer-landing-page";
 import { SearchPage } from "@/components/customer/search-page";
 import { OrdersPage } from "@/components/customer/orders-page";
+import { BillPaymentPage } from "@/components/customer/bill-payment-page";
 import { CustomerLayout } from "@/components/customer/customer-layout";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/t/:id" element={<CustomerLandingPage />} />
             <Route path="/t/:id/search" element={<SearchPage />} />
             <Route path="/t/:id/orders" element={<OrdersPage />} />
+            <Route path="/t/:id/bill" element={<BillPaymentPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>

@@ -1,6 +1,6 @@
 // src/controllers/payment.controller.ts
 import type { Request, Response } from "express";
-import { createPaymentSchema } from "../validations/payment.validation.js";
+import { createPaymentSchema, createOnlinePaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
 import { createPayment, getPaymentBySession, getPaymentsByTable } from "../services/payment.service.js";
 
@@ -19,7 +19,7 @@ function paramToString(param?: string | string[]) {
 // Customer-facing — no auth, sessionId from URL is the credential
 export const createOnlinePaymentController = async (req: Request, res: Response) => {
   try {
-    const parsed = createPaymentSchema.safeParse(req.body);
+    const parsed = createOnlinePaymentSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: "Invalid payment data", details: parsed.error.flatten() });
     }
