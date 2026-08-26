@@ -1,8 +1,11 @@
 import Router from "express";
-import { createTable, getTableById, getTables, updateTable, deleteTable, checkTableStatus, closeTableSession, resolveTable } from "../controllers/table.controller.js";
+import { createTable, getTableById, getTables, updateTable, deleteTable, checkTableStatus, closeTableSession, resolveTable, getActiveSessions } from "../controllers/table.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
+
+// NOTE: static paths must come before /:id routes so "sessions" isn't swallowed as an id
+router.get("/sessions/active", requireAuth, requireRole("ADMIN", "WAITER", "CASHIER"), getActiveSessions);
 
 router.get("/:id", getTableById);
 router.post("/", requireAuth, requireRole("ADMIN"), createTable);

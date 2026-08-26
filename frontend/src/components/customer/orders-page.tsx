@@ -2,10 +2,11 @@
 import { useEffect, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import { useTableSession } from "@/context/table-session-context";
-import { getOrdersBySession } from "@/api/api";
+import { getOrdersBySession, cancelOrder } from "@/api/api";
 import { cn } from "@/lib/utils";
 import { useSocket } from "@/context/socket-context";
-import { Check, Loader2, AlertCircle, ShoppingBag } from "lucide-react";
+import { Check, Loader2, AlertCircle, ShoppingBag, X } from "lucide-react";
+import { toast } from "sonner";
 import type { Order } from "@/types";
 
 const ORDER_STEPS = [
@@ -18,8 +19,40 @@ const ORDER_STEPS = [
 
 type OrderStatus = (typeof ORDER_STEPS)[number]["key"];
 
-function OrderCard({ order, isLatest }: { order: Order; isLatest: boolean }) {
+function OrderCard({
+  order,
+  isLatest,
+  onCancel,
+  cancelling,
+}: {
+  order: Order;
+  isLatest: boolean;
+  onCancel?: (orderId: string) => void;
+  cancelling?: boolean;
+}) {
   const currentStatus = order.status as OrderStatus;
+
+  // Cancelled orders aren't part of the progress tracker — show a settled banner instead
+  if (order.status === "CANCELLED") {
+    return (
+      <article className="rounded-2xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] p-4 md:p-6 bg-surface border border-outline-variant/40 opacity-70">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="font-menu-item-title text-menu-item-title text-on-surface-variant italic">
+              Order #{order.id.slice(0, 8).toUpperCase()}
+            </h3>
+            <p className="font-body-secondary text-body-secondary text-on-surface-variant/70 mt-1">
+              {new Date(order.createdAt).toLocaleString()}
+            </p>
+          </div>
+          <span className="px-3 py-1 bg-surface-container-high text-on-surface-variant text-caption-bold rounded-full line-through">
+            Cancelled
+          </span>
+        </div>
+      </article>
+    );
+  }
+
   const statusIndex = ORDER_STEPS.findIndex((step) => step.key === currentStatus);
   const activeIndex = statusIndex >= 0 ? statusIndex : 0;
 
@@ -107,6 +140,21 @@ function OrderCard({ order, isLatest }: { order: Order; isLatest: boolean }) {
           );
         })}
       </div>
+
+      {order.status === "PENDING" && onCancel && (
+        <button
+          onClick={() => onCancel(order.id)}
+          disabled={cancelling}
+          className="mt-5 w-full flex items-center justify-center gap-2 font-cta-label text-cta-label py-3 rounded-full border border-error/40 text-error hover:bg-error/5 transition-colors disabled:opacity-50 disabled:cursor-wait"
+        >
+          {cancelling ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <X className="size-4" aria-hidden="true" />
+          )}
+          Cancel Order
+        </button>
+      )}
     </article>
   );
 }
@@ -117,6 +165,7 @@ export function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     if (!sessionId) return;
@@ -146,6 +195,21 @@ export function OrdersPage() {
       unsubscribe();
     };
   }, [sessionId, onOrderStatusUpdate]);
+
+  const handleCancel = async (orderId: string) => {
+    if (!sessionId || cancellingId) return;
+    if (!window.confirm("Cancel this order? This can't be undone.")) return;
+    setCancellingId(orderId);
+    try {
+      await cancelOrder(orderId, sessionId);
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: "CANCELLED" } : o)));
+      toast.success("Order cancelled");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to cancel order");
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   if (loading && orders.length === 0) {
     return (
@@ -189,7 +253,13 @@ export function OrdersPage() {
       ) : (
         <div className="flex flex-col gap-4">
           {orders.map((order, index) => (
-            <OrderCard key={order.id} order={order} isLatest={index === 0} />
+            <OrderCard
+              key={order.id}
+              order={order}
+              isLatest={index === 0}
+              onCancel={handleCancel}
+              cancelling={cancellingId === order.id}
+            />
           ))}
         </div>
       )}

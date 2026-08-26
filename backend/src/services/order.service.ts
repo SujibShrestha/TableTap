@@ -139,6 +139,27 @@ export const getOrderById = async (orderId: string) => {
   return order;
 };
 
+/**
+ * Customer-facing cancel — no staff auth. The sessionId acts as the credential
+ * (same pattern as the other public customer endpoints).
+ */
+export const cancelOrderAsCustomer = async (orderId: string, sessionId: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { session: { select: { id: true, status: true } } },
+  });
+
+  if (!order || order.sessionId !== sessionId || !order.session || order.session.status !== "ACTIVE") {
+    throw new Error("Order not found");
+  }
+  if (order.status !== "PENDING") {
+    throw new Error("Only pending orders can be cancelled");
+  }
+
+  // reuses updateOrderStatus so existing socket broadcasts fire
+  return updateOrderStatus(orderId, "CANCELLED");
+};
+
 export const getActiveKitchenOrders = async () => {
   return prisma.order.findMany({
     where: {
@@ -163,4 +184,52 @@ export const getReadyWaiterOrders = async () => {
     },
     orderBy: { updatedAt: "asc" },
   });
+};
+
+export const listOrders = async ({
+  page,
+  limit,
+  status,
+  tableId,
+  from,
+  to,
+}: {
+  page: number;
+  limit: number;
+  status?: string;
+  tableId?: string;
+  from?: Date;
+  to?: Date;
+}) => {
+  const where: Record<string, unknown> = {};
+  if (status) where.status = status;
+  if (tableId) where.session = { tableId };
+  if (from || to) {
+    where.createdAt = {
+      ...(from && { gte: from }),
+      ...(to && { lte: to }),
+    };
+  }
+
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      include: {
+        items: { include: { menuItem: true } },
+        session: { include: { table: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.order.count({ where }),
+  ]);
+
+  return {
+    orders,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 };

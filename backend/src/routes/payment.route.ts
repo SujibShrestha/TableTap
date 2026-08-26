@@ -12,8 +12,8 @@ const router = Router();
 // Customer pays online — no auth, session ID is the credential
 router.post("/session/:sessionId/pay-online", createOnlinePaymentController);
 
-// Cashier marks a session as paid via cash — staff only
-router.post("/session/:sessionId/mark-cash-paid", requireAuth, requireRole("ADMIN", "CASHIER"), markCashPaymentController);
+// Staff marks a session as paid via cash/card — staff only
+router.post("/session/:sessionId/mark-cash-paid", requireAuth, requireRole("ADMIN", "CASHIER", "WAITER"), markCashPaymentController);
 
 router.get("/session/:sessionId", requireAuth, getPaymentBySessionController);
 router.get("/table/:tableId", requireAuth, getPaymentsByTableController);

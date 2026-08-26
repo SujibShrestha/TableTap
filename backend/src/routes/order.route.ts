@@ -5,8 +5,10 @@ import {
   getOrdersByTableController,
   getActiveKitchenOrdersController,
   getReadyWaiterOrdersController,
+  listOrdersController,
   updateOrderStatusController,
   getOrderByIdController,
+  cancelOrderAsCustomerController,
 } from "../controllers/order.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
@@ -20,11 +22,17 @@ router.get("/table/:tableId", getOrdersByTableController);
 // Public endpoint for customer to view order by session (no auth required)
 router.get("/session/:sessionId", getOrdersBySessionController);
 
+// Public customer cancel — sessionId in body is the credential; PENDING orders only
+router.patch("/:orderId/cancel", cancelOrderAsCustomerController);
+
 // Kitchen dashboard - get all active orders (kitchen/admin only)
 router.get("/kitchen/active", requireAuth, requireRole("ADMIN", "KITCHEN"), getActiveKitchenOrdersController);
 
 // Waiter dashboard - get all orders ready to be served (waiter/admin only)
 router.get("/waiter/ready", requireAuth, requireRole("ADMIN", "WAITER"), getReadyWaiterOrdersController);
+
+// Staff orders page - paginated list of all orders with filters (waiter/admin only)
+router.get("/all", requireAuth, requireRole("ADMIN", "WAITER"), listOrdersController);
 
 // Protected endpoints - admin/waiter/kitchen only
 router.get("/:orderId", requireAuth, getOrderByIdController);

@@ -4,6 +4,7 @@ import { Lock, LogIn, Mail } from "lucide-react";
 
 import { useAuth } from "@/context/auth-context";
 import { getErrorMessage } from "@/api/api";
+import { getHomePath } from "@/components/layout/route-guards";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Alert } from "@/components/ui/alert";
@@ -19,15 +20,15 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/dashboard";
+  const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      const loggedInUser = await login(email, password);
+      navigate(from ?? getHomePath(loggedInUser.role), { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, "Invalid email or password"));
     } finally {

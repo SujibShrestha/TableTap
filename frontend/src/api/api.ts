@@ -339,6 +339,65 @@ export const getReadyWaiterOrders = async (token: string) => {
   return res.data.orders as Order[];
 };
 
+export interface ListOrdersParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  tableId?: string;
+  /** ISO timestamp — lower bound on order createdAt */
+  from?: string;
+  /** ISO timestamp — upper bound on order createdAt */
+  to?: string;
+}
+
+export interface PaginatedOrders {
+  orders: Order[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export const getAllOrders = async (token: string, params?: ListOrdersParams) => {
+  const res = await api.get("/orders/all", {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
+  return res.data.data as PaginatedOrders;
+};
+
+export interface ActiveSession {
+  sessionId: string;
+  tableId: string;
+  tableNumber: string;
+  startedAt: string;
+  orderCount: number;
+  itemCount: number;
+  totalDue: number;
+  hasPayment: boolean;
+}
+
+export const getActiveSessions = async (token: string) => {
+  const res = await api.get("/tables/sessions/active", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.sessions as ActiveSession[];
+};
+
+export const markStaffPayment = async (token: string, sessionId: string, method: "CASH" | "CARD") => {
+  const res = await api.post(
+    `/payments/session/${sessionId}/mark-cash-paid`,
+    { method },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data.payment;
+};
+
+export const cancelOrder = async (orderId: string, sessionId: string) => {
+  const res = await axios.patch(`${baseURL}/orders/${orderId}/cancel`, { sessionId });
+  return res.data.order as Order;
+};
+
 export const createOnlinePayment = async (sessionId: string) => {
   const res = await api.post(`/payments/session/${sessionId}/pay-online`, { method: "ONLINE" });
   return res.data.payment;

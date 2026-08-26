@@ -1,5 +1,6 @@
 // src/services/payment.service.ts
 import { prisma } from "../config/db.js";
+import { getIo } from "../utils/socket.js";
 
 export const createPayment = async (
   sessionId: string,
@@ -42,14 +43,28 @@ export const createPayment = async (
     });
 
     await tx.tableSession.update({
-      where: { id: sessionId },
-      data: { status: "CLOSED", closedBy, closedAt: new Date() },
+        where: { id: sessionId },
+        data: { status: "CLOSED", closedBy, closedAt: new Date() },
     });
 
     return created;
-  });
+});
 
-  return payment;
+// notify the customer session and staff rooms that the table closed
+try {
+    getIo().to(`session:${sessionId}`)
+        .to('waiter')
+        .to('kitchen')
+        .emit('session:closed', {
+            sessionId,
+            closedAt: new Date(),
+            paidAmount: payment.amount,
+        });
+} catch {
+    // socket may not be initialized in some environments; don't fail the payment
+}
+
+return payment;
 };
 
 export const getPaymentBySession = async (sessionId: string) => {

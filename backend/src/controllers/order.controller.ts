@@ -7,9 +7,13 @@ import {
   getOrdersByTable,
   getActiveKitchenOrders,
   getReadyWaiterOrders,
+  listOrders,
   updateOrderStatus,
   getOrderById,
+  cancelOrderAsCustomer,
 } from "../services/order.service.js";
+
+const VALID_STATUSES = ["PENDING", "CONFIRMED", "PREPARING", "READY", "SERVED", "CANCELLED"];
 
 export const createOrderController = async (req: Request, res: Response) => {
   try {
@@ -111,6 +115,25 @@ export const getOrderByIdController = async (req: Request, res: Response) => {
   }
 };
 
+export const cancelOrderAsCustomerController = async (req: Request, res: Response) => {
+  try {
+    const orderId = Array.isArray(req.params.orderId) ? req.params.orderId[0] : req.params.orderId;
+    const sessionId = typeof req.body?.sessionId === "string" ? req.body.sessionId : "";
+    if (!orderId || !sessionId) {
+      return res.status(400).json({ error: "orderId and sessionId are required" });
+    }
+
+    const order = await cancelOrderAsCustomer(orderId, sessionId);
+    logger.info(`Order ${orderId} cancelled by customer session ${sessionId.slice(0, 8)}`);
+    return res.status(200).json({ message: "Order cancelled successfully", order });
+  } catch (error) {
+    logger.error("Error cancelling order:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode = message === "Order not found" ? 404 : message === "Only pending orders can be cancelled" ? 409 : 500;
+    return res.status(statusCode).json({ error: message });
+  }
+};
+
 export const getActiveKitchenOrdersController = async (req: Request, res: Response) => {
   try {
     const orders = await getActiveKitchenOrders();
@@ -127,6 +150,39 @@ export const getReadyWaiterOrdersController = async (req: Request, res: Response
     return res.status(200).json({ message: "Ready waiter orders retrieved successfully", orders });
   } catch (error) {
     logger.error("Error fetching ready waiter orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const listOrdersController = async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const status = typeof req.query.status === "string" && VALID_STATUSES.includes(req.query.status)
+      ? req.query.status
+      : undefined;
+    const tableId = typeof req.query.tableId === "string" ? req.query.tableId : undefined;
+
+    const parseDate = (value: unknown): Date | undefined => {
+      if (typeof value !== "string" || value.length === 0) return undefined;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? undefined : date;
+    };
+    const from = parseDate(req.query.from);
+    const to = parseDate(req.query.to);
+
+    const data = await listOrders({
+      page,
+      limit,
+      ...(status && { status }),
+      ...(tableId && { tableId }),
+      ...(from && { from }),
+      ...(to && { to }),
+    });
+
+    return res.status(200).json({ message: "Orders fetched successfully", data });
+  } catch (error) {
+    logger.error("Error fetching orders:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -1,5 +1,6 @@
 import { prisma } from "../config/db.js";
 import logger from "../config/logger.js";
+import { getIo } from "../utils/socket.js";
 
 export const createtable = async (tableNumber: string) => {
  try {
@@ -171,6 +172,36 @@ export const getOrCreateActiveSession = async (tableId: string) => {
     return session;
 };
 
+export const getActiveSessionsWithTotals = async () => {
+    const sessions = await prisma.tableSession.findMany({
+        where: { status: "ACTIVE" },
+        include: {
+            table: true,
+            orders: { include: { items: { select: { quantity: true } } } },
+            payment: true,
+        },
+        orderBy: { createdAt: "asc" },
+    });
+
+    return sessions.map((session) => {
+        const totalDue = session.orders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
+        const itemCount = session.orders.reduce(
+            (sum, order) => sum + order.items.reduce((q, item) => q + item.quantity, 0),
+            0
+        );
+        return {
+            sessionId: session.id,
+            tableId: session.tableId,
+            tableNumber: session.table?.tableNumber ?? "?",
+            startedAt: session.createdAt,
+            orderCount: session.orders.length,
+            itemCount,
+            totalDue,
+            hasPayment: Boolean(session.payment),
+        };
+    });
+};
+
 export const closeTableSession = async (id: string, closedBy: "SYSTEM" | "STAFF" = "STAFF") => {
     try {
         const table = await prisma.restaurantTable.findUnique({ where: { id } });
@@ -198,6 +229,20 @@ export const closeTableSession = async (id: string, closedBy: "SYSTEM" | "STAFF"
                 closedAt: new Date()
             }
         });
+
+        // notify the customer session and staff rooms that the table closed
+        try {
+            getIo().to(`session:${closedSession.id}`)
+                .to('waiter')
+                .to('kitchen')
+                .emit('session:closed', {
+                    sessionId: closedSession.id,
+                    tableId: closedSession.tableId,
+                    closedAt: closedSession.closedAt,
+                });
+        } catch {
+            // socket may not be initialized in some environments; don't fail the close
+        }
 
         logger.info(`Session ${closedSession.id} closed for table ${id}`);
         return closedSession;

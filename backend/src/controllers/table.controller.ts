@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createTableSchema, updateTableSchema } from "../validations/table.validation.js";
-import { closeTableSession as closeTableSessionService, createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, getOrCreateActiveSession, tableStatus, updatetable } from "../services/table.service.js";
+import { closeTableSession as closeTableSessionService, createtable, deleteTableById, getAllTables, getTableById as getTableByIdService, getActiveSessionsWithTotals, getOrCreateActiveSession, tableStatus, updatetable } from "../services/table.service.js";
 import logger from "../config/logger.js";
 
 export const createTable = async (req: Request, res: Response) => {
@@ -42,6 +42,16 @@ export const getTables = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Tables retrieved successfully", table });
   } catch (error) {
     logger.error(`Error in getTables controller: ${error}`);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getActiveSessions = async (req: Request, res: Response) => {
+  try {
+    const sessions = await getActiveSessionsWithTotals();
+    return res.status(200).json({ message: "Active sessions retrieved successfully", sessions });
+  } catch (error) {
+    logger.error(`Error in getActiveSessions controller: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

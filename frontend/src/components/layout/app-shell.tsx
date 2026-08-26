@@ -8,6 +8,7 @@ import {
   ChefHat,
   ConciergeBell,
   ShoppingBag,
+  Receipt,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,23 +25,25 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN"] },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN", "WAITER"] },
   { to: "/users", label: "Staff", icon: Users, adminOnly: true },
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER"] },
-  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN"] },
+  { to: "/bills", label: "Bills", icon: Receipt, hideForRoles: ["KITCHEN"] },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN"] },
 ];
 
 const MOBILE_NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN"] },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, hideForRoles: ["KITCHEN", "WAITER"] },
   { to: "/users", label: "Staff", icon: Users, adminOnly: true },
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
+  { to: "/bills", label: "Bills", icon: Receipt, hideForRoles: ["KITCHEN"] },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER"] },
-  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN"] },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN"] },
 ];
 
 function SidebarNav() {
