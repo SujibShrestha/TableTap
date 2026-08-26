@@ -332,6 +332,13 @@ export const getActiveKitchenOrders = async (token: string) => {
   return res.data.orders as Order[];
 };
 
+export const getReadyWaiterOrders = async (token: string) => {
+  const res = await api.get("/orders/waiter/ready", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.orders as Order[];
+};
+
 export const createOnlinePayment = async (sessionId: string) => {
   const res = await api.post(`/payments/session/${sessionId}/pay-online`, { method: "ONLINE" });
   return res.data.payment;

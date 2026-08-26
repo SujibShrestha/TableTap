@@ -6,6 +6,7 @@ import {
   Users,
   UtensilsCrossed,
   ChefHat,
+  ConciergeBell,
   ShoppingBag,
   type LucideIcon,
 } from "lucide-react";
@@ -28,7 +29,8 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN"] },
 ];
 
 const MOBILE_NAV_ITEMS: NavItem[] = [
@@ -37,7 +39,8 @@ const MOBILE_NAV_ITEMS: NavItem[] = [
   { to: "/tables", label: "Tables", icon: Table2, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN"] },
 ];
 
 function SidebarNav() {

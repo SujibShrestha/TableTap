@@ -151,3 +151,16 @@ export const getActiveKitchenOrders = async () => {
     orderBy: { createdAt: "asc" },
   });
 };
+
+export const getReadyWaiterOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      status: "READY",
+    },
+    include: {
+      items: { include: { menuItem: true } },
+      session: { include: { table: true } },
+    },
+    orderBy: { updatedAt: "asc" },
+  });
+};

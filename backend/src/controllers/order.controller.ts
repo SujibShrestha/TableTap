@@ -6,6 +6,7 @@ import {
   getOrdersBySession,
   getOrdersByTable,
   getActiveKitchenOrders,
+  getReadyWaiterOrders,
   updateOrderStatus,
   getOrderById,
 } from "../services/order.service.js";
@@ -116,6 +117,16 @@ export const getActiveKitchenOrdersController = async (req: Request, res: Respon
     return res.status(200).json({ message: "Active kitchen orders retrieved successfully", orders });
   } catch (error) {
     logger.error("Error fetching active kitchen orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getReadyWaiterOrdersController = async (req: Request, res: Response) => {
+  try {
+    const orders = await getReadyWaiterOrders();
+    return res.status(200).json({ message: "Ready waiter orders retrieved successfully", orders });
+  } catch (error) {
+    logger.error("Error fetching ready waiter orders:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -4,6 +4,7 @@ import {
   getOrdersBySessionController,
   getOrdersByTableController,
   getActiveKitchenOrdersController,
+  getReadyWaiterOrdersController,
   updateOrderStatusController,
   getOrderByIdController,
 } from "../controllers/order.controller.js";
@@ -21,6 +22,9 @@ router.get("/session/:sessionId", getOrdersBySessionController);
 
 // Kitchen dashboard - get all active orders (kitchen/admin only)
 router.get("/kitchen/active", requireAuth, requireRole("ADMIN", "KITCHEN"), getActiveKitchenOrdersController);
+
+// Waiter dashboard - get all orders ready to be served (waiter/admin only)
+router.get("/waiter/ready", requireAuth, requireRole("ADMIN", "WAITER"), getReadyWaiterOrdersController);
 
 // Protected endpoints - admin/waiter/kitchen only
 router.get("/:orderId", requireAuth, getOrderByIdController);

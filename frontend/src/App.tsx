@@ -16,6 +16,7 @@ import { OrdersPage } from "@/components/customer/orders-page";
 import { BillPaymentPage } from "@/components/customer/bill-payment-page";
 import { CustomerLayout } from "@/components/customer/customer-layout";
 import { KitchenBoard } from "@/pages/kitchen/kitchen-board";
+import { WaiterBoard } from "@/pages/waiter/waiter-board";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               </Route>
 
               <Route path="/kitchen" element={<KitchenBoard />} />
+              <Route path="/waiter" element={<WaiterBoard />} />
             </Route>
           </Route>
 
