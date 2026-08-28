@@ -267,9 +267,6 @@ export const createOrderWithPayment = async (data: {
   if (session.status !== "ACTIVE") {
     throw new Error("Invalid or inactive session");
   }
-  if (session.payments.length > 0) {
-    throw new Error("This session has already been paid");
-  }
 
   // Validate items
   const menuItemIds = items.map((i) => i.menuItemId);
@@ -309,39 +306,54 @@ export const createOrderWithPayment = async (data: {
   }
 
   return prisma.$transaction(async (tx) => {
-    // 1. Create payment record
-    const payment = await tx.payment.create({
-      data: {
-        sessionId,
-        amount: totalAmount,
-        method: "ONLINE", // Will be updated to CASH/CARD for AT_COUNTER
-        status: "PAID",
-        gatewayReferenceId: "stub_" + Date.now(),
-      },
-    });
+    if (paymentMethod === "ONLINE") {
+      // ONLINE: Create payment + order with PAID status
+      const payment = await tx.payment.create({
+        data: {
+          sessionId,
+          amount: totalAmount,
+          method: "ONLINE",
+          status: "PAID",
+          gatewayReferenceId: "stub_" + Date.now(),
+        },
+      });
 
-    // 2. Create order with payment link
-    const paymentStatus = "PAID"; // Both ONLINE and AT_COUNTER create payment upfront
-    const order = await tx.order.create({
-      data: {
-        sessionId,
-        specialInstructions: specialInstructions ?? null,
-        totalAmount,
-        status: "PENDING",
-        paymentStatus,
-        paymentId: payment.id,
-        items: { create: orderItemsData },
-      },
-      include: { items: { include: { menuItem: true } } },
-    });
+      const order = await tx.order.create({
+        data: {
+          sessionId,
+          specialInstructions: specialInstructions ?? null,
+          totalAmount,
+          status: "PENDING",
+          paymentStatus: "PAID",
+          paymentId: payment.id,
+          items: { create: orderItemsData },
+        },
+        include: { items: { include: { menuItem: true } } },
+      });
 
-    // 3. Link payment to order
-    await tx.payment.update({
-      where: { id: payment.id },
-      data: { orderId: order.id },
-    });
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: { orderId: order.id },
+      });
 
-    return { order, payment };
+      return { order, payment };
+    } else {
+      // AT_COUNTER: Create order with AWAITING_PAYMENT, no payment yet
+      const order = await tx.order.create({
+        data: {
+          sessionId,
+          specialInstructions: specialInstructions ?? null,
+          totalAmount,
+          status: "PENDING",
+          paymentStatus: "AWAITING_PAYMENT",
+          paymentId: null,
+          items: { create: orderItemsData },
+        },
+        include: { items: { include: { menuItem: true } } },
+      });
+
+      return { order, payment: null };
+    }
   });
 };
 

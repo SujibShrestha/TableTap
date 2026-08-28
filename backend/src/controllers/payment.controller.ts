@@ -1,9 +1,10 @@
 // src/controllers/payment.controller.ts
 import type { Request, Response } from "express";
-import { createPaymentSchema, createOnlinePaymentSchema } from "../validations/payment.validation.js";
+import { createPaymentSchema, createOnlinePaymentSchema, markCashPaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
 import { createPayment, getPaymentBySession, getPaymentsByTable, linkPaymentToOrder } from "../services/payment.service.js";
 import { getAwaitingPaymentOrders } from "../services/order.service.js";
+import { prisma } from "../config/db.js";
 
 function statusCodeForError(message: string) {
   if (message.includes("not found")) return 404;
@@ -44,7 +45,7 @@ export const createOnlinePaymentController = async (req: Request, res: Response)
 // Staff-facing — cashier/waiter marks a session/order as paid via cash/card, requires auth
 export const markCashPaymentController = async (req: Request, res: Response) => {
   try {
-    const parsed = createPaymentSchema.safeParse(req.body); // still just { method }, typically "CASH"
+    const parsed = markCashPaymentSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: "Invalid payment data", details: parsed.error.flatten() });
     }
@@ -62,10 +63,23 @@ export const markCashPaymentController = async (req: Request, res: Response) => 
     if (sessionAwaitingOrders.length > 0) {
       // Link payment to the first awaiting order
       const order = sessionAwaitingOrders[0]!; // length > 0 guarantees this exists
-      if (!order.paymentId) {
-        return res.status(400).json({ error: "Awaiting payment order has no paymentId" });
+      
+      // Check if order already has a payment in the database
+      const existingPayment = await prisma.payment.findFirst({
+        where: { orderId: order.id },
+      });
+      
+      if (existingPayment) {
+        // Payment already exists, just link it
+        payment = await linkPaymentToOrder(existingPayment.id, order.id);
+      } else if (order.paymentId) {
+        // Order already has a paymentId (ONLINE flow), link it
+        payment = await linkPaymentToOrder(order.paymentId, order.id);
+      } else {
+        // AT_COUNTER flow - create payment and link to order
+        payment = await createPayment(sessionId, method, "STAFF", order.id);
+        await linkPaymentToOrder(payment.id, order.id);
       }
-      payment = await linkPaymentToOrder(order.paymentId, order.id);
     } else {
       // Legacy flow - create payment and close session
       payment = await createPayment(sessionId, method, "STAFF");

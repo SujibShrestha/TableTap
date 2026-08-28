@@ -7,6 +7,10 @@ export const createPaymentSchema = z.object({
   gatewayReferenceId: z.string().optional(),
 });
 
+export const markCashPaymentSchema = z.object({
+  method: z.enum(['CASH', 'CARD']),
+});
+
 export const createOnlinePaymentSchema = z.object({
   method: z.enum(['ONLINE']),
 });
