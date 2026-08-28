@@ -5,11 +5,12 @@ import { getIo } from "../utils/socket.js";
 export const createPayment = async (
   sessionId: string,
   method: "CASH" | "CARD" | "ONLINE",
-  closedBy: "SYSTEM" | "STAFF"
+  closedBy: "SYSTEM" | "STAFF",
+  orderId?: string
 ) => {
   const session = await prisma.tableSession.findUnique({
     where: { id: sessionId },
-    include: { orders: true, payment: true },
+    include: { orders: true },
   });
 
   if (!session) {
@@ -17,9 +18,6 @@ export const createPayment = async (
   }
   if (session.status !== "ACTIVE") {
     throw new Error("Session is not active");
-  }
-  if (session.payment) {
-    throw new Error("This session has already been paid");
   }
 
   const totalAmount = session.orders.reduce(
@@ -35,6 +33,7 @@ export const createPayment = async (
     const created = await tx.payment.create({
       data: {
         sessionId,
+        orderId: orderId ?? null,
         amount: totalAmount, // always server-computed, never client input
         method,
         status: "PAID",
@@ -42,16 +41,19 @@ export const createPayment = async (
       },
     });
 
-    await tx.tableSession.update({
+    // Only close session if no orderId provided (legacy flow)
+    if (!orderId) {
+      await tx.tableSession.update({
         where: { id: sessionId },
         data: { status: "CLOSED", closedBy, closedAt: new Date() },
-    });
+      });
+    }
 
     return created;
-});
+  });
 
-// notify the customer session and staff rooms that the table closed
-try {
+  // notify the customer session and staff rooms that the table closed
+  try {
     getIo().to(`session:${sessionId}`)
         .to('waiter')
         .to('kitchen')
@@ -60,15 +62,41 @@ try {
             closedAt: new Date(),
             paidAmount: payment.amount,
         });
-} catch {
+  } catch {
     // socket may not be initialized in some environments; don't fail the payment
-}
+  }
 
-return payment;
+  return payment;
+};
+
+export const linkPaymentToOrder = async (paymentId: string, orderId: string) => {
+  const payment = await prisma.payment.update({
+    where: { id: paymentId },
+    data: { orderId },
+  });
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { paymentId, paymentStatus: "PAID" },
+  });
+
+  // Emit order:new since the order is now paid and ready for kitchen
+  try {
+    getIo().to('kitchen').to('waiter').emit('order:new', {
+      id: orderId,
+      sessionId: payment.sessionId,
+      status: "PENDING",
+      // Order will be fetched by frontend via websocket or refetch
+    });
+  } catch {
+    // socket may not be initialized
+  }
+
+  return payment;
 };
 
 export const getPaymentBySession = async (sessionId: string) => {
-  return prisma.payment.findUnique({ where: { sessionId } });
+  return prisma.payment.findMany({ where: { sessionId }, orderBy: { createdAt: "desc" } });
 };
 
 export const getPaymentsByTable = async (tableId: string) => {

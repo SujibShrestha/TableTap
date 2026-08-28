@@ -184,6 +184,8 @@ exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
   status: 'status',
+  paymentStatus: 'paymentStatus',
+  paymentId: 'paymentId',
   specialInstructions: 'specialInstructions',
   totalAmount: 'totalAmount',
   updatedByStaffId: 'updatedByStaffId',
@@ -204,6 +206,7 @@ exports.Prisma.OrderItemScalarFieldEnum = {
 exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
+  orderId: 'orderId',
   amount: 'amount',
   method: 'method',
   status: 'status',
@@ -250,6 +253,12 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   READY: 'READY',
   SERVED: 'SERVED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.OrderPaymentStatus = exports.$Enums.OrderPaymentStatus = {
+  UNPAID: 'UNPAID',
+  AWAITING_PAYMENT: 'AWAITING_PAYMENT',
+  PAID: 'PAID'
 };
 
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {

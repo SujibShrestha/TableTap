@@ -17,6 +17,8 @@ interface CartContextValue {
   clearCart: () => void;
   total: number;
   itemCount: number;
+  pendingOrderData: { items: CartItem[]; specialInstructions?: string; total: number } | null;
+  setPendingOrderData: (data: { items: CartItem[]; specialInstructions?: string; total: number } | null) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -27,6 +29,7 @@ interface CartProviderProps {
 
 export function CartProvider({ children }: CartProviderProps) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [pendingOrderData, setPendingOrderData] = useState<{ items: CartItem[]; specialInstructions?: string; total: number } | null>(null);
 
   const addItem = useCallback((menuItem: MenuItem) => {
     setItems((current) => {
@@ -86,6 +89,8 @@ export function CartProvider({ children }: CartProviderProps) {
         clearCart,
         total,
         itemCount,
+        pendingOrderData,
+        setPendingOrderData,
       }}
     >
       {children}

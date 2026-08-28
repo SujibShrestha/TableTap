@@ -2,7 +2,8 @@
 import type { Request, Response } from "express";
 import { createPaymentSchema, createOnlinePaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
-import { createPayment, getPaymentBySession, getPaymentsByTable } from "../services/payment.service.js";
+import { createPayment, getPaymentBySession, getPaymentsByTable, linkPaymentToOrder } from "../services/payment.service.js";
+import { getAwaitingPaymentOrders } from "../services/order.service.js";
 
 function statusCodeForError(message: string) {
   if (message.includes("not found")) return 404;
@@ -40,7 +41,7 @@ export const createOnlinePaymentController = async (req: Request, res: Response)
   }
 };
 
-// Staff-facing — cashier marks a session as paid via cash, requires auth
+// Staff-facing — cashier/waiter marks a session/order as paid via cash/card, requires auth
 export const markCashPaymentController = async (req: Request, res: Response) => {
   try {
     const parsed = createPaymentSchema.safeParse(req.body); // still just { method }, typically "CASH"
@@ -53,7 +54,22 @@ export const markCashPaymentController = async (req: Request, res: Response) => 
 
     const { method } = parsed.data;
 
-    const payment = await createPayment(sessionId, method, "STAFF");
+    // First check if there are AWAITING_PAYMENT orders for this session
+    const awaitingOrders = await getAwaitingPaymentOrders();
+    const sessionAwaitingOrders = awaitingOrders.filter((o) => o.sessionId === sessionId);
+
+    let payment;
+    if (sessionAwaitingOrders.length > 0) {
+      // Link payment to the first awaiting order
+      const order = sessionAwaitingOrders[0]!; // length > 0 guarantees this exists
+      if (!order.paymentId) {
+        return res.status(400).json({ error: "Awaiting payment order has no paymentId" });
+      }
+      payment = await linkPaymentToOrder(order.paymentId, order.id);
+    } else {
+      // Legacy flow - create payment and close session
+      payment = await createPayment(sessionId, method, "STAFF");
+    }
 
     logger.info("Cash payment marked by staff");
     return res.status(201).json({ message: "Payment marked as paid", payment });

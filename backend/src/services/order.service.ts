@@ -7,6 +7,8 @@ export const createOrder = async (data: {
   tableId?: string;
   items: { menuItemId: string; quantity: number }[];
   specialInstructions?: string;
+  paymentStatus?: "UNPAID" | "AWAITING_PAYMENT" | "PAID";
+  paymentId?: string;
 }) => {
   let sessionId = data.sessionId;
 
@@ -60,6 +62,8 @@ export const createOrder = async (data: {
       specialInstructions: data.specialInstructions ?? null,
       totalAmount,
       status: "PENDING",
+      paymentStatus: data.paymentStatus ?? "UNPAID",
+      paymentId: data.paymentId ?? null,
       items: { create: orderItemsData },
     },
     include: { items: { include: { menuItem: true } } },
@@ -68,7 +72,11 @@ export const createOrder = async (data: {
   if (!order) {
     throw new Error("Failed to create order");
   }
-  getIo().to('kitchen').to('waiter').emit('order:new', order);
+
+  // Only emit to kitchen/waiter if paymentStatus is PAID (order is ready for kitchen)
+  if (order.paymentStatus === "PAID") {
+    getIo().to('kitchen').to('waiter').emit('order:new', order);
+  }
 
   return order;
 };
@@ -163,6 +171,7 @@ export const cancelOrderAsCustomer = async (orderId: string, sessionId: string) 
 export const getActiveKitchenOrders = async () => {
   return prisma.order.findMany({
     where: {
+      paymentStatus: "PAID",
       status: { in: ["PENDING", "CONFIRMED", "PREPARING", "READY"] },
     },
     include: {
@@ -176,6 +185,7 @@ export const getActiveKitchenOrders = async () => {
 export const getReadyWaiterOrders = async () => {
   return prisma.order.findMany({
     where: {
+      paymentStatus: "PAID",
       status: "READY",
     },
     include: {
@@ -232,4 +242,122 @@ export const listOrders = async ({
     limit,
     totalPages: Math.ceil(total / limit),
   };
+};
+
+/**
+ * Create order with payment in a single atomic transaction.
+ * Used by customer-facing "pay first" flow.
+ */
+export const createOrderWithPayment = async (data: {
+  sessionId: string;
+  items: { menuItemId: string; quantity: number }[];
+  specialInstructions?: string;
+  paymentMethod: "ONLINE" | "AT_COUNTER";
+}) => {
+  const { sessionId, items, specialInstructions, paymentMethod } = data;
+
+  const session = await prisma.tableSession.findUnique({
+    where: { id: sessionId },
+    include: { orders: true, payments: true },
+  });
+
+  if (!session) {
+    throw new Error("Session not found");
+  }
+  if (session.status !== "ACTIVE") {
+    throw new Error("Invalid or inactive session");
+  }
+  if (session.payments.length > 0) {
+    throw new Error("This session has already been paid");
+  }
+
+  // Validate items
+  const menuItemIds = items.map((i) => i.menuItemId);
+  const menuItems = await prisma.menuItem.findMany({
+    where: { id: { in: menuItemIds } },
+  });
+
+  const unavailable: string[] = [];
+  for (const item of items) {
+    const menuItem = menuItems.find((m) => m.id === item.menuItemId);
+    if (!menuItem || !menuItem.isAvailable) {
+      unavailable.push(menuItem?.name || item.menuItemId);
+    }
+  }
+
+  if (unavailable.length > 0) {
+    throw new Error(`The following menu items are unavailable: ${unavailable.join(", ")}`);
+  }
+
+  let totalAmount = 0;
+  const orderItemsData = items.map((item) => {
+    const menuItem = menuItems.find((m) => m.id === item.menuItemId)!;
+    const lineTotal = Number(menuItem.price) * item.quantity;
+    totalAmount += lineTotal;
+
+    return {
+      menuItemId: menuItem.id,
+      quantity: item.quantity,
+      unitPrice: menuItem.price,
+      costPriceAtOrder: menuItem.costPrice,
+    };
+  });
+
+  // Validate total
+  if (totalAmount <= 0) {
+    throw new Error("No orders to pay for");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    // 1. Create payment record
+    const payment = await tx.payment.create({
+      data: {
+        sessionId,
+        amount: totalAmount,
+        method: "ONLINE", // Will be updated to CASH/CARD for AT_COUNTER
+        status: "PAID",
+        gatewayReferenceId: "stub_" + Date.now(),
+      },
+    });
+
+    // 2. Create order with payment link
+    const paymentStatus = "PAID"; // Both ONLINE and AT_COUNTER create payment upfront
+    const order = await tx.order.create({
+      data: {
+        sessionId,
+        specialInstructions: specialInstructions ?? null,
+        totalAmount,
+        status: "PENDING",
+        paymentStatus,
+        paymentId: payment.id,
+        items: { create: orderItemsData },
+      },
+      include: { items: { include: { menuItem: true } } },
+    });
+
+    // 3. Link payment to order
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: { orderId: order.id },
+    });
+
+    return { order, payment };
+  });
+};
+
+/**
+ * Get orders awaiting payment (AT_COUNTER) for staff bills page
+ */
+export const getAwaitingPaymentOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      paymentStatus: "AWAITING_PAYMENT",
+      status: { in: ["PENDING", "CONFIRMED", "PREPARING", "READY"] },
+    },
+    include: {
+      items: { include: { menuItem: true } },
+      session: { include: { table: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
 };

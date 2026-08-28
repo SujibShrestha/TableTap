@@ -10,6 +10,7 @@ export const createOrderSchema = z.object({
     })
   ).min(1),
   specialInstructions: z.string().trim().max(500).optional(),
+  paymentMethod: z.enum(["ONLINE", "AT_COUNTER"]).optional(),
 }).refine((data) => data.sessionId || data.tableId, {
   message: "Either sessionId or tableId is required",
   path: ["sessionId"],
