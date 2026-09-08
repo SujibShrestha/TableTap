@@ -1,18 +1,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import axios from "axios";
-import { X, Loader2, Image, Minus, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X, Image, Minus, Plus } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import { useCart } from "@/context/cart-context";
 import { useTableSession } from "@/context/table-session-context";
-import { createCustomerOrder, getErrorMessage } from "@/api/api";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { UnavailableItemsDialog } from "./unavailable-items-dialog";
-import { OrderConfirmation } from "./order-confirmation";
-import { toast } from "sonner";
 import type { Order } from "@/types";
 
 interface CartDrawerProps {
@@ -21,41 +18,19 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const { items, updateQuantity, removeItem, clearCart, total } = useCart();
-  const { sessionId } = useTableSession();
-  const [submitting, setSubmitting] = useState(false);
+  const { items, updateQuantity, removeItem, total, setPendingOrderData } = useCart();
+  const { sessionId, table } = useTableSession();
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [unavailableItems, setUnavailableItems] = useState<string[] | null>(null);
-  const [orderResult, setOrderResult] = useState<Order | null>(null);
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
-  const handleSubmit = useCallback(async () => {
-    if (!sessionId || items.length === 0) return;
-
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      const order = await createCustomerOrder(
-        sessionId,
-        items.map((item) => ({ menuItemId: item.menuItemId, quantity: item.quantity }))
-      );
-      clearCart();
-      setOrderResult(order);
-      setSuccess(true);
-      toast.success("Order placed successfully");
-      onOpenChange(false);
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.status === 409) {
-        const data = err.response.data as { unavailableItems?: string[] };
-        setUnavailableItems(data.unavailableItems ?? []);
-      } else {
-        setError(getErrorMessage(err, "Failed to place order"));
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  }, [sessionId, items, clearCart, onOpenChange]);
+  const handleSubmit = useCallback(() => {
+    if (!sessionId || items.length === 0 || !table) return;
+    setPendingOrderData({ items, specialInstructions, total: items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0) });
+    onOpenChange(false);
+    navigate(`/t/${table.id}/payment`);
+  }, [sessionId, items, table, onOpenChange, navigate]);
 
   if (items.length === 0) return null;
 
@@ -138,6 +113,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                 Special Instructions (optional)
               </label>
               <textarea
+                value={specialInstructions}
+                onChange={(e) => setSpecialInstructions(e.target.value)}
                 className="w-full h-20 p-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-surface placeholder-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
                 placeholder="e.g., No onions, extra spicy, allergy info..."
                 maxLength={500}
@@ -149,23 +126,16 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             <div className="flex justify-between items-center w-full">
               <span className="font-body-main text-body-main text-on-surface">Total</span>
               <span className="text-display-lg text-primary font-bold italic">
-                {formatMoney(total)}
+                {formatMoney(items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0).toString())}
               </span>
             </div>
             <Button
               className="w-full"
               size="lg"
               onClick={handleSubmit}
-              disabled={submitting}
+              disabled={items.length === 0}
             >
-              {submitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="size-4 animate-spin" />
-                  Placing Order...
-                </span>
-              ) : (
-                `Place Order • ${formatMoney(total)}`
-              )}
+              Proceed to Payment
             </Button>
           </SheetFooter>
         </SheetContent>
@@ -175,12 +145,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
         <UnavailableItemsDialog
           unavailableItems={unavailableItems}
           onClose={() => setUnavailableItems(null)}
-          onRetry={handleSubmit}
+          onRetry={() => navigate(`/t/${table.id}/payment`)}
         />
-      )}
-
-      {success && orderResult && (
-        <OrderConfirmation order={orderResult} onClose={() => setSuccess(false)} />
       )}
     </>
   );

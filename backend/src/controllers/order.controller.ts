@@ -8,6 +8,8 @@ import {
   getActiveKitchenOrders,
   getReadyWaiterOrders,
   listOrders,
+  createOrderWithPayment,
+  getAwaitingPaymentOrders,
   updateOrderStatus,
   getOrderById,
   cancelOrderAsCustomer,
@@ -154,35 +156,76 @@ export const getReadyWaiterOrdersController = async (req: Request, res: Response
   }
 };
 
+export const createOrderWithPaymentController = async (req: Request, res: Response) => {
+  try {
+    const body = { ...req.body };
+    if (req.params.tableId && !body.tableId) {
+      body.tableId = req.params.tableId;
+    }
+
+    const parsed = createOrderSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Invalid order data", details: parsed.error.flatten() });
+    }
+
+    const { sessionId, tableId, items, specialInstructions, paymentMethod } = parsed.data;
+
+    if (!paymentMethod) {
+      return res.status(400).json({ error: "paymentMethod is required (ONLINE or AT_COUNTER)" });
+    }
+    if (!sessionId) {
+      return res.status(400).json({ error: "sessionId is required" });
+    }
+
+    const orderData = {
+      sessionId,
+      items,
+      paymentMethod,
+      ...(specialInstructions && { specialInstructions }),
+    };
+
+    const result = await createOrderWithPayment(orderData);
+
+    logger.info("Order with payment created successfully");
+    return res.status(201).json({ message: "Order created successfully", order: result.order, payment: result.payment });
+  } catch (error) {
+    logger.error("Error creating order with payment:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode = message.includes("unavailable") ? 400 : message.includes("not found") ? 404 : message.includes("already been paid") ? 409 : 500;
+    return res.status(statusCode).json({ error: message });
+  }
+};
+
+export const getAwaitingPaymentOrdersController = async (req: Request, res: Response) => {
+  try {
+    const orders = await getAwaitingPaymentOrders();
+    return res.status(200).json({ message: "Awaiting payment orders retrieved successfully", orders });
+  } catch (error) {
+    logger.error("Error fetching awaiting payment orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const listOrdersController = async (req: Request, res: Response) => {
   try {
     const page = Math.max(Number(req.query.page) || 1, 1);
     const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
-    const status = typeof req.query.status === "string" && VALID_STATUSES.includes(req.query.status)
-      ? req.query.status
-      : undefined;
+    const status = typeof req.query.status === "string" ? req.query.status : undefined;
     const tableId = typeof req.query.tableId === "string" ? req.query.tableId : undefined;
+    const from = typeof req.query.from === "string" ? new Date(req.query.from) : undefined;
+    const to = typeof req.query.to === "string" ? new Date(req.query.to) : undefined;
 
-    const parseDate = (value: unknown): Date | undefined => {
-      if (typeof value !== "string" || value.length === 0) return undefined;
-      const date = new Date(value);
-      return Number.isNaN(date.getTime()) ? undefined : date;
-    };
-    const from = parseDate(req.query.from);
-    const to = parseDate(req.query.to);
+    const opts: { page: number; limit: number; status?: string; tableId?: string; from?: Date; to?: Date } = { page, limit };
+    if (status) opts.status = status;
+    if (tableId) opts.tableId = tableId;
+    if (from && !Number.isNaN(from.getTime())) opts.from = from;
+    if (to && !Number.isNaN(to.getTime())) opts.to = to;
 
-    const data = await listOrders({
-      page,
-      limit,
-      ...(status && { status }),
-      ...(tableId && { tableId }),
-      ...(from && { from }),
-      ...(to && { to }),
-    });
-
-    return res.status(200).json({ message: "Orders fetched successfully", data });
+    const data = await listOrders(opts);
+    return res.status(200).json({ data });
   } catch (error) {
-    logger.error("Error fetching orders:", error);
+    logger.error("Error listing orders:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTableSession } from "@/context/table-session-context";
-import { getOrdersBySession, createOnlinePayment } from "@/api/api";
-import { CreditCard, Banknote, Loader2 } from "lucide-react";
+import { getOrdersBySession } from "@/api/api";
+import { Banknote, Loader2, Info } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import type { Order, OrderItem } from "@/types";
 import { toast } from "sonner";
-
-
+import { Alert } from "@/components/ui/alert";
 
 function BillItem({ item }: { item: OrderItem }) {
   const lineTotal = Number(item.unitPrice) * item.quantity;
@@ -33,7 +32,6 @@ export function BillPaymentPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [payingOnline, setPayingOnline] = useState(false);
 
   const subtotal = orders.reduce((sum, order) => sum + Number(order.totalAmount ?? "0"), 0);
   const total = subtotal;
@@ -54,26 +52,6 @@ export function BillPaymentPage() {
   useEffect(() => {
     fetchOrders();
   }, [sessionId]);
-
-  const handlePayOnline = async () => {
-    if (!sessionId) return;
-    setPayingOnline(true);
-    try {
-      await createOnlinePayment(sessionId);
-      toast.success("Payment successful");
-      setTimeout(() => window.location.href = `/t/${tableId}`, 1500);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Payment failed";
-      toast.error(message);
-    } finally {
-      setPayingOnline(false);
-    }
-  };
-
-  const handlePayAtCounter = () => {
-    toast.success("Staff will process your payment at the counter");
-    setTimeout(() => window.location.href = `/t/${tableId}`, 1500);
-  };
 
   if (loading) {
     return (
@@ -121,30 +99,22 @@ export function BillPaymentPage() {
       </section>
 
       <section className="flex flex-col gap-4">
+        <Alert className="bg-primary-container/20 border-primary-container/30">
+          <Info className="size-4 text-primary" strokeWidth={2} aria-hidden="true" />
+          <div className="flex-1">
+            <p className="font-body-main text-body-main text-on-surface font-medium">
+              Payment is handled before ordering
+            </p>
+            <p className="font-body-secondary text-body-secondary text-on-surface-variant">
+              You already paid when placing your order. This check is for reference only.
+            </p>
+          </div>
+        </Alert>
         <button
-          onClick={handlePayOnline}
-          disabled={payingOnline}
-          className="w-full bg-primary text-on-primary font-cta-label text-cta-label italic uppercase py-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {payingOnline ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="size-5 animate-spin" strokeWidth={2} aria-hidden="true" />
-              Processing...
-            </span>
-          ) : (
-            <>
-              <CreditCard className="size-5 inline-block mr-2" strokeWidth={2} aria-hidden="true" />
-              Pay Online
-            </>
-          )}
-        </button>
-        <button
-          onClick={handlePayAtCounter}
-          disabled={payingOnline}
-          className="w-full bg-surface-container text-on-surface border border-outline-variant font-cta-label text-cta-label italic uppercase py-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+          className="w-full bg-surface-container text-on-surface border border-outline-variant font-cta-label text-cta-label italic uppercase py-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all"
         >
           <Banknote className="size-5 inline-block mr-2" strokeWidth={2} aria-hidden="true" />
-          Pay at Counter
+          Done
         </button>
       </section>
     </main>

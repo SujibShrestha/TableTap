@@ -14,7 +14,7 @@ router.put("/:id", requireAuth, requireRole("ADMIN"), updateTable);
 router.delete("/:id", requireAuth, requireRole("ADMIN"), deleteTable);
 
 router.get("/:id/status", checkTableStatus);
-router.patch("/:id/status", requireAuth, requireRole("ADMIN", "WAITER"), closeTableSession);
+router.patch("/:id/status", requireAuth, requireRole("ADMIN", "WAITER", "CASHIER"), closeTableSession);
 
 router.get("/:id/resolve", resolveTable);
 

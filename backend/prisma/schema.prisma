@@ -36,6 +36,7 @@ enum OrderStatus {
 enum PaymentStatus {
   UNPAID
   PROCESSING
+  PENDING_VERIFICATION
   PAID
   FAILED
   REFUNDED
@@ -45,6 +46,13 @@ enum PaymentMethod {
   CASH
   CARD
   ONLINE
+}
+
+enum OrderPaymentStatus {
+  UNPAID
+  AWAITING_PAYMENT
+  PENDING_VERIFICATION
+  PAID
 }
 
 model User {
@@ -98,7 +106,7 @@ model TableSession {
   closedBy    ClosedBy?
 
   orders      Order[]
-  payment     Payment?
+  payments    Payment[]
 
   createdAt   DateTime        @default(now())
   closedAt    DateTime?
@@ -143,6 +151,9 @@ model Order {
   session             TableSession  @relation(fields: [sessionId], references: [id])
 
   status              OrderStatus   @default(PENDING)
+  paymentStatus       OrderPaymentStatus @default(UNPAID)
+  paymentId           String?       @unique
+  payment             Payment?      @relation("OrderPayment", fields: [paymentId], references: [id])
   specialInstructions String?
   totalAmount         Decimal       @db.Decimal(10, 2)
 
@@ -175,8 +186,11 @@ model OrderItem {
 
 model Payment {
   id                  String        @id @default(uuid())
-  sessionId           String        @unique
+  sessionId           String
   session             TableSession  @relation(fields: [sessionId], references: [id])
+
+  orderId             String?       @unique
+  order               Order?        @relation("OrderPayment")
 
   amount              Decimal       @db.Decimal(10, 2)
   method              PaymentMethod
@@ -186,4 +200,6 @@ model Payment {
 
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
+
+  @@index([sessionId])
 }

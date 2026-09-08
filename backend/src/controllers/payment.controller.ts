@@ -1,8 +1,10 @@
 // src/controllers/payment.controller.ts
 import type { Request, Response } from "express";
-import { createPaymentSchema, createOnlinePaymentSchema } from "../validations/payment.validation.js";
+import { createPaymentSchema, createOnlinePaymentSchema, markCashPaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
-import { createPayment, getPaymentBySession, getPaymentsByTable } from "../services/payment.service.js";
+import { createPayment, getPaymentBySession, getPaymentsByTable, linkPaymentToOrder, verifyPayment } from "../services/payment.service.js";
+import { getAwaitingPaymentOrders } from "../services/order.service.js";
+import { prisma } from "../config/db.js";
 
 function statusCodeForError(message: string) {
   if (message.includes("not found")) return 404;
@@ -40,10 +42,10 @@ export const createOnlinePaymentController = async (req: Request, res: Response)
   }
 };
 
-// Staff-facing — cashier marks a session as paid via cash, requires auth
+// Staff-facing — cashier/waiter marks a session/order as paid via cash/card, requires auth
 export const markCashPaymentController = async (req: Request, res: Response) => {
   try {
-    const parsed = createPaymentSchema.safeParse(req.body); // still just { method }, typically "CASH"
+    const parsed = markCashPaymentSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: "Invalid payment data", details: parsed.error.flatten() });
     }
@@ -53,10 +55,55 @@ export const markCashPaymentController = async (req: Request, res: Response) => 
 
     const { method } = parsed.data;
 
-    const payment = await createPayment(sessionId, method, "STAFF");
+    // Check if a payment already exists for this session
+    const existingPayment = await prisma.payment.findFirst({
+      where: { sessionId, orderId: { not: null } },
+      orderBy: { createdAt: "asc" },
+    });
+
+    let payment;
+    if (existingPayment) {
+      // Payment already exists — mark all awaiting orders as PENDING_VERIFICATION
+      const awaitingOrders = await getAwaitingPaymentOrders();
+      const sessionAwaitingOrders = awaitingOrders.filter((o) => o.sessionId === sessionId);
+      for (const order of sessionAwaitingOrders) {
+        if (order.paymentStatus !== "PENDING_VERIFICATION") {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { paymentStatus: "PENDING_VERIFICATION" },
+          });
+        }
+      }
+      payment = existingPayment;
+    } else {
+      // No payment yet — create one and mark all awaiting orders as PENDING_VERIFICATION
+      const awaitingOrders = await getAwaitingPaymentOrders();
+      const sessionAwaitingOrders = awaitingOrders.filter((o) => o.sessionId === sessionId);
+
+      if (sessionAwaitingOrders.length > 0) {
+        // Link payment to first order, mark rest as PENDING_VERIFICATION
+        payment = await createPayment(sessionId, method, "STAFF", sessionAwaitingOrders[0]!.id, true);
+        await linkPaymentToOrder(payment.id, sessionAwaitingOrders[0]!.id);
+
+        for (let i = 1; i < sessionAwaitingOrders.length; i++) {
+          await prisma.order.update({
+            where: { id: sessionAwaitingOrders[i]!.id },
+            data: { paymentStatus: "PENDING_VERIFICATION" },
+          });
+        }
+      } else {
+        // No awaiting orders found — cannot process payment
+        return res.status(400).json({ error: "No pending orders found for this session" });
+      }
+    }
 
     logger.info("Cash payment marked by staff");
-    return res.status(201).json({ message: "Payment marked as paid", payment });
+    return res.status(201).json({ 
+      message: payment.status === "PENDING_VERIFICATION" 
+        ? "Payment recorded — pending cashier verification" 
+        : "Payment marked as paid", 
+      payment 
+    });
   } catch (error) {
     logger.error("Error marking cash payment:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
@@ -90,5 +137,21 @@ export const getPaymentsByTableController = async (req: Request, res: Response) 
   } catch (error) {
     logger.error("Error fetching payments:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const verifyPaymentController = async (req: Request, res: Response) => {
+  try {
+    const paymentId = paramToString(req.params.paymentId);
+    if (!paymentId) return res.status(400).json({ error: "Missing or invalid paymentId parameter" });
+
+    const payment = await verifyPayment(paymentId);
+
+    logger.info("Payment verified by cashier");
+    return res.status(200).json({ message: "Payment verified successfully", payment });
+  } catch (error) {
+    logger.error("Error verifying payment:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return res.status(statusCodeForError(message)).json({ error: message });
   }
 };

@@ -19,6 +19,7 @@ import { KitchenBoard } from "@/pages/kitchen/kitchen-board";
 import { WaiterBoard } from "@/pages/waiter/waiter-board";
 import { StaffOrdersPage } from "@/pages/orders/orders-page";
 import { BillsPage } from "@/pages/bills/bills-page";
+import { PaymentPage } from "@/pages/customer/payment-page";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/t/:id/search" element={<SearchPage />} />
             <Route path="/t/:id/orders" element={<OrdersPage />} />
             <Route path="/t/:id/bill" element={<BillPaymentPage />} />
+            <Route path="/t/:id/payment" element={<PaymentPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>
@@ -52,8 +54,10 @@ function App() {
               <Route element={<RoleRoute allowed={["WAITER"]} />}>
                 <Route path="/waiter" element={<WaiterBoard />} />
               </Route>
+              <Route element={<RoleRoute allowed={["ADMIN", "WAITER", "CASHIER"]} />}>
+                <Route path="/bills" element={<BillsPage />} />
+              </Route>
               <Route path="/orders" element={<StaffOrdersPage />} />
-              <Route path="/bills" element={<BillsPage />} />
             </Route>
           </Route>
 

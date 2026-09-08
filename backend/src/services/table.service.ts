@@ -178,7 +178,7 @@ export const getActiveSessionsWithTotals = async () => {
         include: {
             table: true,
             orders: { include: { items: { select: { quantity: true } } } },
-            payment: true,
+            payments: true,
         },
         orderBy: { createdAt: "asc" },
     });
@@ -197,7 +197,7 @@ export const getActiveSessionsWithTotals = async () => {
             orderCount: session.orders.length,
             itemCount,
             totalDue,
-            hasPayment: Boolean(session.payment),
+            hasPayment: session.payments.length > 0,
         };
     });
 };

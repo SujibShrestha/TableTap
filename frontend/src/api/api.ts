@@ -315,6 +315,16 @@ export const createCustomerOrder = async (
   return res.data.order as Order;
 };
 
+export const createOrderWithPayment = async (
+  sessionId: string,
+  items: { menuItemId: string; quantity: number }[],
+  specialInstructions: string | undefined,
+  paymentMethod: "ONLINE" | "AT_COUNTER"
+) => {
+  const res = await api.post("/orders/with-payment", { sessionId, items, specialInstructions, paymentMethod });
+  return res.data.order as Order;
+};
+
 export const getCustomerOrders = async (tableId: string) => {
   const res = await axios.get(`${baseURL}/orders/table/${tableId}`);
   return res.data.orders as Order[];
@@ -384,10 +394,35 @@ export const getActiveSessions = async (token: string) => {
   return res.data.sessions as ActiveSession[];
 };
 
+export const closeTableSession = async (token: string, tableId: string) => {
+  const res = await api.patch(
+    `/tables/${tableId}/status`,
+    { closedBy: "STAFF" },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data;
+};
+
+export const getAwaitingPaymentOrders = async (token: string) => {
+  const res = await api.get("/orders/awaiting-payment", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.orders as Order[];
+};
+
 export const markStaffPayment = async (token: string, sessionId: string, method: "CASH" | "CARD") => {
   const res = await api.post(
     `/payments/session/${sessionId}/mark-cash-paid`,
     { method },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data.payment;
+};
+
+export const verifyPayment = async (token: string, paymentId: string) => {
+  const res = await api.post(
+    `/payments/${paymentId}/verify`,
+    {},
     { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data.payment;
