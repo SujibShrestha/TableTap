@@ -11,6 +11,7 @@ import categoryRoute from "./routes/category.route.js";
 import menuRoute from "./routes/menu.route.js";
 import orderRoute from "./routes/order.route.js";
 import paymentRoute from "./routes/payment.route.js";
+import analyticsRoute from "./routes/analytics.route.js";
 
 
 const app:Application = express();
@@ -41,6 +42,7 @@ app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/menu", menuRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/payments", paymentRoute);
+app.use("/api/v1/analytics", analyticsRoute);
 
 
 app.get("/", (req:Request, res:Response) => {
