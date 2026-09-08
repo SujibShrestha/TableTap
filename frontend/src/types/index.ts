@@ -104,6 +104,7 @@ export interface Order {
   id: string;
   sessionId: string;
   status: string;
+  paymentStatus?: string;
   specialInstructions: string | null;
   totalAmount: string;
   updatedByStaffId: string | null;
@@ -115,6 +116,11 @@ export interface Order {
     tableId: string;
     table?: RestaurantTable;
   };
+  payment?: {
+    id: string;
+    status: string;
+    method: string;
+  } | null;
 }
 
 export interface CreateOrderPayload {

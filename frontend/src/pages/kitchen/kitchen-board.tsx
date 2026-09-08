@@ -41,6 +41,7 @@ export function KitchenBoard() {
   useKitchenSocket({
     accessToken: accessToken ?? "",
     onNewOrder: (newOrder: Order) => {
+      if (newOrder.paymentStatus && newOrder.paymentStatus !== "PAID") return;
       setOrders((prev) => {
         if (prev.some((o) => o.id === newOrder.id)) return prev;
         return [...prev, newOrder].sort((a, b) => {

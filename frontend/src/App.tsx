@@ -54,8 +54,10 @@ function App() {
               <Route element={<RoleRoute allowed={["WAITER"]} />}>
                 <Route path="/waiter" element={<WaiterBoard />} />
               </Route>
+              <Route element={<RoleRoute allowed={["ADMIN", "WAITER", "CASHIER"]} />}>
+                <Route path="/bills" element={<BillsPage />} />
+              </Route>
               <Route path="/orders" element={<StaffOrdersPage />} />
-              <Route path="/bills" element={<BillsPage />} />
             </Route>
           </Route>
 

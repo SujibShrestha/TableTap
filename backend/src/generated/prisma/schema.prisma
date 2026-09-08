@@ -36,6 +36,7 @@ enum OrderStatus {
 enum PaymentStatus {
   UNPAID
   PROCESSING
+  PENDING_VERIFICATION
   PAID
   FAILED
   REFUNDED
@@ -50,6 +51,7 @@ enum PaymentMethod {
 enum OrderPaymentStatus {
   UNPAID
   AWAITING_PAYMENT
+  PENDING_VERIFICATION
   PAID
 }
 

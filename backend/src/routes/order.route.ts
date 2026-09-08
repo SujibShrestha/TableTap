@@ -10,6 +10,7 @@ import {
   cancelOrderAsCustomerController,
   createOrderWithPaymentController,
   getAwaitingPaymentOrdersController,
+  listOrdersController,
 } from "../controllers/order.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
@@ -25,6 +26,9 @@ router.get("/session/:sessionId", getOrdersBySessionController);
 
 // Pay-first workflow: create order with payment (no auth, sessionId in body)
 router.post("/with-payment", createOrderWithPaymentController);
+
+// Staff orders page - paginated list with filters (staff only)
+router.get("/all", requireAuth, listOrdersController);
 
 // Staff orders page - awaiting payment (admin/waiter/cashier)
 router.get("/awaiting-payment", requireAuth, requireRole("ADMIN", "WAITER", "CASHIER"), getAwaitingPaymentOrdersController);

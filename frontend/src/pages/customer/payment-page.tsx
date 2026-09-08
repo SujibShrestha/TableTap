@@ -83,7 +83,9 @@ export function PaymentPage() {
             </div>
             <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">Order Confirmed!</h2>
             <p className="font-body-secondary text-body-secondary text-on-surface-variant">
-              Your order has been sent to the kitchen.
+              {paymentMethod === "AT_COUNTER"
+                ? "Your order has been placed. Please pay at the counter."
+                : "Your order has been sent to the kitchen."}
             </p>
           </div>
           <div className="bg-surface-container-lowest rounded-xl p-4 mb-6">

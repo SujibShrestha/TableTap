@@ -9,6 +9,8 @@ export function getHomePath(role?: string | null): string {
       return "/kitchen";
     case "WAITER":
       return "/waiter";
+    case "CASHIER":
+      return "/bills";
     default:
       return "/dashboard";
   }

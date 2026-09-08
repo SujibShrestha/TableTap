@@ -394,6 +394,15 @@ export const getActiveSessions = async (token: string) => {
   return res.data.sessions as ActiveSession[];
 };
 
+export const closeTableSession = async (token: string, tableId: string) => {
+  const res = await api.patch(
+    `/tables/${tableId}/status`,
+    { closedBy: "STAFF" },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data;
+};
+
 export const getAwaitingPaymentOrders = async (token: string) => {
   const res = await api.get("/orders/awaiting-payment", {
     headers: { Authorization: `Bearer ${token}` },
@@ -405,6 +414,15 @@ export const markStaffPayment = async (token: string, sessionId: string, method:
   const res = await api.post(
     `/payments/session/${sessionId}/mark-cash-paid`,
     { method },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data.payment;
+};
+
+export const verifyPayment = async (token: string, paymentId: string) => {
+  const res = await api.post(
+    `/payments/${paymentId}/verify`,
+    {},
     { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data.payment;

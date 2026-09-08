@@ -206,3 +206,26 @@ export const getAwaitingPaymentOrdersController = async (req: Request, res: Resp
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const listOrdersController = async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const status = typeof req.query.status === "string" ? req.query.status : undefined;
+    const tableId = typeof req.query.tableId === "string" ? req.query.tableId : undefined;
+    const from = typeof req.query.from === "string" ? new Date(req.query.from) : undefined;
+    const to = typeof req.query.to === "string" ? new Date(req.query.to) : undefined;
+
+    const opts: { page: number; limit: number; status?: string; tableId?: string; from?: Date; to?: Date } = { page, limit };
+    if (status) opts.status = status;
+    if (tableId) opts.tableId = tableId;
+    if (from && !Number.isNaN(from.getTime())) opts.from = from;
+    if (to && !Number.isNaN(to.getTime())) opts.to = to;
+
+    const data = await listOrders(opts);
+    return res.status(200).json({ data });
+  } catch (error) {
+    logger.error("Error listing orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};

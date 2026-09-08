@@ -258,6 +258,7 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
 exports.OrderPaymentStatus = exports.$Enums.OrderPaymentStatus = {
   UNPAID: 'UNPAID',
   AWAITING_PAYMENT: 'AWAITING_PAYMENT',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
   PAID: 'PAID'
 };
 
@@ -270,6 +271,7 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   UNPAID: 'UNPAID',
   PROCESSING: 'PROCESSING',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
   PAID: 'PAID',
   FAILED: 'FAILED',
   REFUNDED: 'REFUNDED'

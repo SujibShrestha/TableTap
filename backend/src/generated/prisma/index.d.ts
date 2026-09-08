@@ -104,6 +104,7 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 export const PaymentStatus: {
   UNPAID: 'UNPAID',
   PROCESSING: 'PROCESSING',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
   PAID: 'PAID',
   FAILED: 'FAILED',
   REFUNDED: 'REFUNDED'
@@ -124,6 +125,7 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 export const OrderPaymentStatus: {
   UNPAID: 'UNPAID',
   AWAITING_PAYMENT: 'AWAITING_PAYMENT',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
   PAID: 'PAID'
 };
 

@@ -358,17 +358,19 @@ export const createOrderWithPayment = async (data: {
 };
 
 /**
- * Get orders awaiting payment (AT_COUNTER) for staff bills page
+ * Get orders awaiting payment (AT_COUNTER) or pending verification for staff bills page
  */
 export const getAwaitingPaymentOrders = async () => {
   return prisma.order.findMany({
     where: {
-      paymentStatus: "AWAITING_PAYMENT",
+      paymentStatus: { in: ["AWAITING_PAYMENT", "PENDING_VERIFICATION"] },
       status: { in: ["PENDING", "CONFIRMED", "PREPARING", "READY"] },
+      session: { status: "ACTIVE" },
     },
     include: {
       items: { include: { menuItem: true } },
       session: { include: { table: true } },
+      payment: true,
     },
     orderBy: { createdAt: "asc" },
   });
