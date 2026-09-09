@@ -18,6 +18,7 @@ export const ordersummary = async ({ createdAt }: { createdAt: Prisma.DateTimeFi
 
 
 
+
     const totalRevenue = orderItems.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0);
     
     const totalProfit = orderItems.reduce((sum, item) => sum + (Number(item.unitPrice)- Number(item.costPriceAtOrder)) * item.quantity, 0);
@@ -39,3 +40,38 @@ export const ordersummary = async ({ createdAt }: { createdAt: Prisma.DateTimeFi
     }
 
 }
+
+
+export const bestSeller = async ({ createdAt }: { createdAt: Prisma.DateTimeFilter<never> | undefined; }) => {
+    try {
+       const orderItems = await prisma.orderItem.findMany({
+            where: {
+                order: {
+                    status: { in: [...PAID_ORDER_STATUSES] },
+                    ...(createdAt && { createdAt }),
+                }
+            },
+            include: {
+                menuItem: true,
+            },
+        });
+
+        const grouped = new Map<string, {  name: string; quantitySold: number; revenue: number; }>();
+
+        for (const item of orderItems) {
+            const key = item.menuItemId;
+            const existing = grouped.get(key) ?? { name: item.menuItem.name, quantitySold: 0, revenue: 0 };
+            existing.quantitySold += item.quantity;
+            existing.revenue += Number(item.unitPrice) * item.quantity;
+            grouped.set(key, existing);
+        }
+        
+        const bestSellers = Array.from(grouped.values())
+            .sort((a, b) => b.quantitySold - a.quantitySold)
+            .slice(0, 10);
+        return bestSellers;
+    } catch (error) {
+        logger.error("Error fetching best sellers:", error);
+        throw error;
+    }
+} 
