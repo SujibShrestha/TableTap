@@ -113,10 +113,24 @@ export const updateMenuItem = async (req: Request, res: Response) => {
 
         const parsed = updateMenuItemSchema.parse(req.body);
 
-        const updatedMenuItem = await updatemenuItem({
-            id,
-            ...parsed,
-        });
+        const data: {
+            name?: string;
+            description?: string;
+            price?: number;
+            costPrice?: number;
+            categoryId?: string;
+            imageUrl?: string;
+            isAvailable?: boolean;
+        } = {};
+        if (parsed.name !== undefined) data.name = parsed.name;
+        if (parsed.description !== undefined) data.description = parsed.description;
+        if (parsed.price !== undefined) data.price = parsed.price;
+        if (parsed.costPrice !== undefined) data.costPrice = parsed.costPrice;
+        if (parsed.categoryId !== undefined) data.categoryId = parsed.categoryId;
+        if (parsed.imageUrl !== undefined) data.imageUrl = parsed.imageUrl;
+        if (parsed.isAvailable !== undefined) data.isAvailable = parsed.isAvailable;
+
+        const updatedMenuItem = await updatemenuItem({ id, ...data });
 
         if(!updatedMenuItem) {
             return res.status(404).json({ message: "Menu item not found" });

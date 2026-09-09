@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import { ImagePlus, Loader2, Plus, Trash2, UtensilsCrossed } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Trash2, UtensilsCrossed } from "lucide-react";
 
 import { getAuth } from "@/lib/auth-store";
 import {
   createCategory,
   createMenuItem,
+  deleteCategory,
   deleteMenuItem,
   getCategories,
   getErrorMessage,
   getMenuItems,
+  updateMenuItem,
   updateMenuItemAvailability,
   uploadImage,
 } from "@/api/api";
@@ -135,6 +137,66 @@ function DeleteMenuItemButton({ item, onDone }: { item: MenuItem; onDone: () => 
   );
 }
 
+function DeleteCategoryButton({
+  category,
+  isActive,
+  onDone,
+}: {
+  category: MenuCategory;
+  isActive: boolean;
+  onDone: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!confirming) {
+      setConfirming(true);
+      setTimeout(() => setConfirming(false), 3500);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteCategory(getAuth()?.accessToken ?? "", category.id);
+      setConfirming(false);
+      onDone();
+    } catch (err) {
+      setError(getErrorMessage(err));
+      setConfirming(false);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (error) {
+    return (
+      <span className="ml-1 text-[10px] text-destructive">{error}</span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      aria-label={`Delete ${category.name}`}
+      disabled={busy}
+      onClick={(e) => void handleClick(e)}
+      className={cn(
+        "ml-1 inline-flex items-center rounded p-0.5 transition-colors",
+        confirming
+          ? "text-destructive"
+          : isActive
+            ? "text-primary/50 hover:text-destructive"
+            : "text-muted-foreground/50 hover:text-destructive"
+      )}
+    >
+      <Trash2 className="size-3" />
+    </button>
+  );
+}
+
 function CategoryFormModal({
   onClose,
   onDone,
@@ -223,14 +285,31 @@ const EMPTY_ITEM_FORM: ItemFormValues = {
 
 function MenuItemFormModal({
   categories,
+  editingItem,
   onClose,
   onDone,
 }: {
   categories: MenuCategory[];
+  editingItem?: MenuItem | null;
   onClose: () => void;
   onDone: () => void;
 }) {
-  const [form, setForm] = useState<ItemFormValues>(EMPTY_ITEM_FORM);
+  const isEditing = Boolean(editingItem);
+
+  const [form, setForm] = useState<ItemFormValues>(() => {
+    if (editingItem) {
+      return {
+        name: editingItem.name,
+        description: editingItem.description ?? "",
+        imageUrl: editingItem.imageUrl ?? "",
+        price: editingItem.price,
+        costPrice: editingItem.costPrice,
+        categoryId: editingItem.categoryId,
+        isAvailable: editingItem.isAvailable,
+      };
+    }
+    return EMPTY_ITEM_FORM;
+  });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -296,11 +375,15 @@ function MenuItemFormModal({
 
     setSaving(true);
     try {
-      await createMenuItem(getAuth()?.accessToken ?? "", payload);
+      if (isEditing && editingItem) {
+        await updateMenuItem(getAuth()?.accessToken ?? "", editingItem.id, payload);
+      } else {
+        await createMenuItem(getAuth()?.accessToken ?? "", payload);
+      }
       onClose();
       onDone();
     } catch (err) {
-      setError(getErrorMessage(err, "Failed to create menu item"));
+      setError(getErrorMessage(err, isEditing ? "Failed to update menu item" : "Failed to create menu item"));
     } finally {
       setSaving(false);
     }
@@ -310,8 +393,8 @@ function MenuItemFormModal({
     <Modal
       open
       onClose={onClose}
-      title="Add New Item"
-      description="Add a new dish to the menu."
+      title={isEditing ? "Edit Item" : "Add New Item"}
+      description={isEditing ? "Update the details of this dish." : "Add a new dish to the menu."}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <FormField label="Item name" htmlFor="item-name" required>
@@ -455,7 +538,7 @@ function MenuItemFormModal({
             Cancel
           </Button>
           <Button type="submit" variant="container" disabled={saving}>
-            Create item
+            {isEditing ? "Save changes" : "Create item"}
           </Button>
         </div>
       </form>
@@ -471,6 +554,7 @@ export function MenuPage() {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [itemModalOpen, setItemModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
 
   async function loadMenu() {
     setLoading(true);
@@ -571,19 +655,33 @@ export function MenuPage() {
                 All Items
               </button>
               {categories?.map((category) => (
-                <button
+                <span
                   key={category.id}
-                  type="button"
-                  onClick={() => setActiveCategoryId(category.id)}
                   className={cn(
-                    "px-1 pb-3 text-sm font-bold tracking-widest uppercase transition-colors",
+                    "flex items-center border-b-2 transition-colors",
                     activeCategoryId === category.id
-                      ? "border-b-2 border-primary text-primary"
-                      : "border-b-2 border-transparent text-muted-foreground hover:text-foreground"
+                      ? "border-primary"
+                      : "border-transparent"
                   )}
                 >
-                  {category.name}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveCategoryId(category.id)}
+                    className={cn(
+                      "px-1 pb-3 text-sm font-bold tracking-widest uppercase transition-colors",
+                      activeCategoryId === category.id
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                  <DeleteCategoryButton
+                    category={category}
+                    isActive={activeCategoryId === category.id}
+                    onDone={() => void loadMenu()}
+                  />
+                </span>
               ))}
               {!hasCategories ? (
                 <span className="px-1 pb-3 text-sm text-muted-foreground">
@@ -647,7 +745,15 @@ export function MenuPage() {
                         {categoryNameById.get(item.categoryId)}
                       </div>
                     ) : null}
-                    <div className="absolute top-2 right-2 z-10">
+                    <div className="absolute top-2 right-2 z-10 flex gap-2">
+                      <button
+                        type="button"
+                        aria-label={`Edit ${item.name}`}
+                        onClick={() => setEditingItem(item)}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/40 bg-surface/90 p-2 text-secondary backdrop-blur-sm transition-colors hover:bg-surface-container-high hover:text-foreground"
+                      >
+                        <Pencil className="size-4" />
+                      </button>
                       <DeleteMenuItemButton item={item} onDone={() => void loadMenu()} />
                     </div>
                   </div>
@@ -729,6 +835,16 @@ export function MenuPage() {
           key="item"
           categories={categories ?? []}
           onClose={() => setItemModalOpen(false)}
+          onDone={() => void loadMenu()}
+        />
+      ) : null}
+
+      {editingItem ? (
+        <MenuItemFormModal
+          key={`edit-${editingItem.id}`}
+          categories={categories ?? []}
+          editingItem={editingItem}
+          onClose={() => setEditingItem(null)}
           onDone={() => void loadMenu()}
         />
       ) : null}

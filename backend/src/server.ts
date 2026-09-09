@@ -4,6 +4,7 @@ import http from "node:http";
 import dotenv from "dotenv";
 import app from "./app.js";
 import { initSocket } from "./utils/socket.js";
+import { startSessionScheduler } from "./schedulers/session-scheduler.js";
 
 dns.setDefaultResultOrder("ipv4first");
 net.setDefaultAutoSelectFamily(false);
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 const httpServer = http.createServer(app);
 initSocket(httpServer);
+startSessionScheduler();
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

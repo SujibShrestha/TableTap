@@ -90,6 +90,8 @@ export interface CreateMenuItemPayload {
   categoryId: string;
 }
 
+export type UpdateMenuItemPayload = Partial<CreateMenuItemPayload>;
+
 export interface OrderItem {
   id: string;
   orderId: string;

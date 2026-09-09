@@ -13,6 +13,7 @@ import type {
   PaginatedUsers,
   RestaurantTable,
   Role,
+  UpdateMenuItemPayload,
   UpdateTablePayload,
   User,
 } from "@/types";
@@ -233,6 +234,13 @@ export const createCategory = async (token: string, name: string) => {
   return res.data.category as MenuCategory;
 };
 
+export const deleteCategory = async (token: string, id: string) => {
+  const res = await api.delete(`/categories/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
 export const getMenuItems = async () => {
   const res = await api.get("/menu");
 
@@ -260,6 +268,13 @@ export const updateMenuItemAvailability = async (token: string, id: string, isAv
     }
   );
 
+  return res.data.updatedMenuItem as MenuItem;
+};
+
+export const updateMenuItem = async (token: string, id: string, data: UpdateMenuItemPayload) => {
+  const res = await api.patch(`/menu/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.data.updatedMenuItem as MenuItem;
 };
 
