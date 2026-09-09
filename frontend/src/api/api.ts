@@ -1,12 +1,15 @@
 import axios from "axios";
 import type {
   AuthSession,
+  BestSellerItem,
   CreateMenuItemPayload,
   CreateTablePayload,
+  DailyTrendItem,
   ListUsersParams,
   MenuCategory,
   MenuItem,
   Order,
+  OrderSummary,
   PaginatedUsers,
   RestaurantTable,
   Role,
@@ -31,7 +34,6 @@ export interface LoginPayload {
 
 export const loginUser = async (data: LoginPayload): Promise<AuthSession> => {
   const res = await api.post("/auth/login", data);
-  console.log(res)
   return res.data.data;
 };
 
@@ -443,6 +445,44 @@ export const updateOrderStatus = async (token: string, orderId: string, status: 
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data.order as Order;
+};
+
+// ---------------- Analytics ----------------
+
+export const getOrderSummary = async (token: string, from?: string, to?: string): Promise<OrderSummary> => {
+  const params: Record<string, string> = {};
+  if (from) params.from = from;
+  if (to) params.to = to;
+
+  const res = await api.get("/analytics/summary", {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
+  return res.data.data;
+};
+
+export const getBestSellers = async (token: string, from?: string, to?: string): Promise<BestSellerItem[]> => {
+  const params: Record<string, string> = {};
+  if (from) params.from = from;
+  if (to) params.to = to;
+
+  const res = await api.get("/analytics/best-sellers", {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
+  return res.data.data;
+};
+
+export const getDailyTrend = async (token: string, from?: string, to?: string): Promise<DailyTrendItem[]> => {
+  const params: Record<string, string> = {};
+  if (from) params.from = from;
+  if (to) params.to = to;
+
+  const res = await api.get("/analytics/daily", {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
+  return res.data.data;
 };
 
 export const getErrorMessage = (error: unknown, fallback = "Something went wrong"): string => {

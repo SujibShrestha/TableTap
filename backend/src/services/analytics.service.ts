@@ -75,3 +75,46 @@ export const bestSeller = async ({ createdAt }: { createdAt: Prisma.DateTimeFilt
         throw error;
     }
 } 
+
+
+export const dailyTrend = async ({ createdAt }: { createdAt: Prisma.DateTimeFilter<never> | undefined; }) => {
+    try {
+        const orderItems = await prisma.orderItem.findMany({
+            where: {
+                order: {
+                    status: { in: [...PAID_ORDER_STATUSES] },
+                    ...(createdAt && { createdAt }),
+                }
+            },
+            select: {
+                unitPrice: true,
+                costPriceAtOrder: true,
+                quantity: true,
+                createdAt: true,
+            },
+        });
+
+        const grouped = new Map<string, { revenue: number; profit: number }>();
+
+        for (const item of orderItems) {
+            const day = item.createdAt.toISOString().slice(0, 10); // YYYY-MM-DD
+            const existing = grouped.get(day) ?? { revenue: 0, profit: 0 };
+            existing.revenue += Number(item.unitPrice) * item.quantity;
+            existing.profit += (Number(item.unitPrice) - Number(item.costPriceAtOrder)) * item.quantity;
+            grouped.set(day, existing);
+        }
+
+        const daily = Array.from(grouped.entries())
+            .map(([date, data]) => ({
+                date,
+                revenue: Number(data.revenue.toFixed(2)),
+                profit: Number(data.profit.toFixed(2)),
+            }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        return daily;
+    } catch (error) {
+        logger.error("Error fetching daily trend:", error);
+        throw error;
+    }
+};

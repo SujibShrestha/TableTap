@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { dateRangeSchema } from "../validations/analytics.validation.js";
 import { buildDateRangeFilter } from "../utils/analytics.js";
-import { bestSeller, ordersummary } from "../services/analytics.service.js";
+import { bestSeller, dailyTrend, ordersummary } from "../services/analytics.service.js";
 import logger from "../config/logger.js";
 
 export const orderSummary = async (req: Request, res: Response) => {
@@ -52,3 +52,23 @@ export const bestSellers = async (req: Request, res: Response) => {
         data: bestSellersData,
     });
 }
+
+
+export const daily = async (req: Request, res: Response) => {
+    const parsed = dateRangeSchema.safeParse(req.query);
+
+    if(!parsed.success) {
+        return res.status(400).json({ error: "Invalid date range" });
+    }
+
+    const { from, to } = parsed.data;
+    const createdAt = buildDateRangeFilter(from, to);
+
+    const dailyData = await dailyTrend({ createdAt });
+
+    logger.info(`Daily trend fetched for date range: ${from} to ${to}`);
+    return res.status(200).json({
+        message: "Daily trend fetched successfully",
+        data: dailyData,
+    });
+};

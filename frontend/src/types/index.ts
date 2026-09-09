@@ -129,3 +129,23 @@ export interface CreateOrderPayload {
   items: { menuItemId: string; quantity: number }[];
   specialInstructions?: string;
 }
+
+// ---------------- Analytics ----------------
+
+export interface OrderSummary {
+  totalRevenue: number;
+  totalProfit: number;
+  totalOrders: number;
+}
+
+export interface BestSellerItem {
+  name: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+export interface DailyTrendItem {
+  date: string;
+  revenue: number;
+  profit: number;
+}
