@@ -17,6 +17,7 @@ import { BillPaymentPage } from "@/components/customer/bill-payment-page";
 import { CustomerLayout } from "@/components/customer/customer-layout";
 import { KitchenBoard } from "@/pages/kitchen/kitchen-board";
 import { WaiterBoard } from "@/pages/waiter/waiter-board";
+import { CashierBoard } from "@/pages/cashier/cashier-board";
 import { StaffOrdersPage } from "@/pages/orders/orders-page";
 import { BillsPage } from "@/pages/bills/bills-page";
 import { PaymentPage } from "@/pages/customer/payment-page";
@@ -53,6 +54,9 @@ function App() {
               </Route>
               <Route element={<RoleRoute allowed={["WAITER"]} />}>
                 <Route path="/waiter" element={<WaiterBoard />} />
+              </Route>
+              <Route element={<RoleRoute allowed={["CASHIER", "ADMIN"]} />}>
+                <Route path="/cashier" element={<CashierBoard />} />
               </Route>
               <Route element={<RoleRoute allowed={["ADMIN", "WAITER", "CASHIER"]} />}>
                 <Route path="/bills" element={<BillsPage />} />

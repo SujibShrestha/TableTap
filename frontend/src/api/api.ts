@@ -447,6 +447,39 @@ export const updateOrderStatus = async (token: string, orderId: string, status: 
   return res.data.order as Order;
 };
 
+// ---------------- Cashier ----------------
+
+export interface TodayPayment {
+  id: string;
+  sessionId: string;
+  orderId: string | null;
+  amount: string;
+  method: string;
+  status: string;
+  createdAt: string;
+  session: {
+    id: string;
+    tableId: string;
+    table: { tableNumber: string };
+  };
+  order: { id: string; totalAmount: string } | null;
+}
+
+export interface TodayPaymentsSummary {
+  totalCollected: number;
+  totalCash: number;
+  totalCard: number;
+  totalOnline: number;
+  transactionCount: number;
+}
+
+export const getTodayPayments = async (token: string): Promise<{ payments: TodayPayment[]; summary: TodayPaymentsSummary }> => {
+  const res = await api.get("/payments/today", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.data;
+};
+
 // ---------------- Analytics ----------------
 
 export const getOrderSummary = async (token: string, from?: string, to?: string): Promise<OrderSummary> => {
