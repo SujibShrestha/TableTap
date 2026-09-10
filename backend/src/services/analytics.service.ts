@@ -53,21 +53,24 @@ export const bestSeller = async ({ createdAt }: { createdAt: Prisma.DateTimeFilt
             },
             include: {
                 menuItem: true,
+                order: { select: { sessionId: true } },
             },
         });
 
-        const grouped = new Map<string, {  name: string; quantitySold: number; revenue: number; }>();
+        const grouped = new Map<string, { name: string; quantitySold: number; revenue: number; sessionIds: Set<string> }>();
 
         for (const item of orderItems) {
             const key = item.menuItemId;
-            const existing = grouped.get(key) ?? { name: item.menuItem.name, quantitySold: 0, revenue: 0 };
+            const existing = grouped.get(key) ?? { name: item.menuItem.name, quantitySold: 0, revenue: 0, sessionIds: new Set() };
             existing.quantitySold += item.quantity;
             existing.revenue += Number(item.unitPrice) * item.quantity;
+            existing.sessionIds.add(item.order.sessionId);
             grouped.set(key, existing);
         }
         
         const bestSellers = Array.from(grouped.values())
-            .sort((a, b) => b.quantitySold - a.quantitySold)
+            .map(({ sessionIds, ...rest }) => ({ ...rest, sessionCount: sessionIds.size }))
+            .sort((a, b) => b.sessionCount - a.sessionCount || b.quantitySold - a.quantitySold)
             .slice(0, 10);
         return bestSellers;
     } catch (error) {

@@ -144,6 +144,7 @@ export interface BestSellerItem {
   name: string;
   quantitySold: number;
   revenue: number;
+  sessionCount: number;
 }
 
 export interface DailyTrendItem {

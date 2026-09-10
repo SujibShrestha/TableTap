@@ -117,7 +117,23 @@ function BarChartSkeleton() {
   );
 }
 
-function BarChart({ data, loading }: { data: DailyTrendItem[]; loading: boolean }) {
+function BarChart({
+  data,
+  loading,
+  preset,
+  onPresetChange,
+  customFrom,
+  customTo,
+  onCustomDateChange,
+}: {
+  data: DailyTrendItem[];
+  loading: boolean;
+  preset: DatePreset;
+  onPresetChange: (p: DatePreset) => void;
+  customFrom: string;
+  customTo: string;
+  onCustomDateChange: (field: "from" | "to", value: string) => void;
+}) {
   if (loading) return <BarChartSkeleton />;
 
   const hasData = data.length > 0;
@@ -137,19 +153,53 @@ function BarChart({ data, loading }: { data: DailyTrendItem[]; loading: boolean 
             Sales &amp; Profit Trends
           </h2>
         </div>
-        {/* Legend */}
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-primary" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Sales
-            </span>
+        <div className="flex items-center gap-4">
+          {/* Date presets */}
+          <div className="flex items-center gap-1.5">
+            {DATE_PRESETS.map((p) => (
+              <button
+                key={p.value}
+                onClick={() => onPresetChange(p.value)}
+                className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  preset === p.value
+                    ? "bg-surface-container-low border border-border text-foreground"
+                    : "text-secondary hover:bg-surface-container-low"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-outline" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Profit
-            </span>
+          {/* Custom date range */}
+          <div className="flex items-center gap-2 border-l border-border/30 pl-4">
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => onCustomDateChange("from", e.target.value)}
+              className="rounded-lg border border-border/50 bg-surface-container-low px-2.5 py-1 text-[11px] font-medium text-foreground outline-none focus:border-primary transition-colors"
+            />
+            <span className="text-[10px] font-bold text-muted-foreground">to</span>
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => onCustomDateChange("to", e.target.value)}
+              className="rounded-lg border border-border/50 bg-surface-container-low px-2.5 py-1 text-[11px] font-medium text-foreground outline-none focus:border-primary transition-colors"
+            />
+          </div>
+          {/* Legend */}
+          <div className="flex gap-4 border-l border-border/30 pl-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Sales
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-outline" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Profit
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -248,12 +298,26 @@ function BarChart({ data, loading }: { data: DailyTrendItem[]; loading: boolean 
 export function DashboardPage() {
   const { accessToken } = useAuth();
   const [preset, setPreset] = useState<DatePreset>("all");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
 
   const [summary, setSummary] = useState<OrderSummary | null>(null);
   const [bestSellers, setBestSellers] = useState<BestSellerItem[]>([]);
   const [dailyData, setDailyData] = useState<DailyTrendItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  function handlePresetChange(value: DatePreset) {
+    setPreset(value);
+    setCustomFrom("");
+    setCustomTo("");
+  }
+
+  function handleCustomDateChange(field: "from" | "to", value: string) {
+    if (field === "from") setCustomFrom(value);
+    else setCustomTo(value);
+    setPreset(null as unknown as DatePreset);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -263,7 +327,12 @@ export function DashboardPage() {
       setError(null);
 
       try {
-        const { from, to } = getPresetRange(preset);
+        const { from, to } = customFrom || customTo
+          ? {
+              from: customFrom ? new Date(customFrom + "T00:00:00Z").toISOString() : undefined,
+              to: customTo ? new Date(customTo + "T23:59:59Z").toISOString() : undefined,
+            }
+          : getPresetRange(preset);
         const [summaryData, sellersData, dailyResult] = await Promise.allSettled([
           getOrderSummary(accessToken, from, to),
           getBestSellers(accessToken, from, to),
@@ -301,7 +370,7 @@ export function DashboardPage() {
     }
     load();
     return () => { cancelled = true; };
-  }, [accessToken, preset]);
+  }, [accessToken, preset, customFrom, customTo]);
 
   const totalOrders = summary?.totalOrders ?? 0;
   const avgOrderValue = totalOrders > 0 ? (summary?.totalRevenue ?? 0) / totalOrders : 0;
@@ -353,27 +422,16 @@ export function DashboardPage() {
         />
       </section>
 
-      {/* Date Range Selector */}
-      <section>
-        <div className="flex items-center gap-2 mb-6">
-          {DATE_PRESETS.map((p) => (
-            <button
-              key={p.value}
-              onClick={() => setPreset(p.value)}
-              className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
-                preset === p.value
-                  ? "bg-surface-container-low border border-border text-foreground"
-                  : "text-secondary hover:bg-surface-container-low"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </section>
-
       {/* Sales & Profit Trends Bar Chart */}
-      <BarChart data={dailyData} loading={loading} />
+      <BarChart
+        data={dailyData}
+        loading={loading}
+        preset={preset}
+        onPresetChange={handlePresetChange}
+        customFrom={customFrom}
+        customTo={customTo}
+        onCustomDateChange={handleCustomDateChange}
+      />
 
       {/* Top Performing Items */}
       <section className="rounded-xl bg-card p-8 border border-border/40 shadow-card">
@@ -403,13 +461,13 @@ export function DashboardPage() {
                     Item
                   </th>
                   <th className="py-4 px-2 text-xs font-bold uppercase tracking-wider text-right">
-                    Quantity Sold
+                    Sessions
+                  </th>
+                  <th className="py-4 px-2 text-xs font-bold uppercase tracking-wider text-right">
+                    Qty Sold
                   </th>
                   <th className="py-4 px-2 text-xs font-bold uppercase tracking-wider text-right">
                     Revenue
-                  </th>
-                  <th className="py-4 px-2 text-xs font-bold uppercase tracking-wider text-center">
-                    Trend
                   </th>
                 </tr>
               </thead>
@@ -422,13 +480,13 @@ export function DashboardPage() {
                       </span>
                     </td>
                     <td className="py-4 px-2 text-right text-secondary">
+                      {item.sessionCount}
+                    </td>
+                    <td className="py-4 px-2 text-right text-secondary">
                       {item.quantitySold}
                     </td>
                     <td className="py-4 px-2 text-right text-base font-medium text-foreground">
                       Rs {item.revenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </td>
-                    <td className="py-4 px-2 text-center">
-                      <TrendingUp className="size-5 text-primary inline-block" />
                     </td>
                   </tr>
                 ))}
