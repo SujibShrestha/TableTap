@@ -176,3 +176,43 @@ export const getPaymentsByTable = async (tableId: string) => {
     orderBy: { createdAt: "desc" },
   });
 };
+
+export const getTodayPayments = async () => {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const payments = await prisma.payment.findMany({
+    where: {
+      status: "PAID",
+      createdAt: { gte: startOfDay },
+    },
+    include: {
+      session: { include: { table: true } },
+      order: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const totalCash = payments
+    .filter((p) => p.method === "CASH")
+    .reduce((sum, p) => sum + Number(p.amount), 0);
+
+  const totalCard = payments
+    .filter((p) => p.method === "CARD")
+    .reduce((sum, p) => sum + Number(p.amount), 0);
+
+  const totalOnline = payments
+    .filter((p) => p.method === "ONLINE")
+    .reduce((sum, p) => sum + Number(p.amount), 0);
+
+  return {
+    payments,
+    summary: {
+      totalCollected: totalCash + totalCard + totalOnline,
+      totalCash,
+      totalCard,
+      totalOnline,
+      transactionCount: payments.length,
+    },
+  };
+};

@@ -4,6 +4,7 @@ import {
   markCashPaymentController,       // staff-facing, cashier/admin only
   getPaymentBySessionController,
   getPaymentsByTableController,
+  getTodayPaymentsController,
   verifyPaymentController,         // cashier-only verification
 } from "../controllers/payment.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
@@ -21,5 +22,6 @@ router.post("/:paymentId/verify", requireAuth, requireRole("ADMIN", "CASHIER", "
 
 router.get("/session/:sessionId", requireAuth, getPaymentBySessionController);
 router.get("/table/:tableId", requireAuth, getPaymentsByTableController);
+router.get("/today", requireAuth, requireRole("ADMIN", "CASHIER"), getTodayPaymentsController);
 
 export default router;

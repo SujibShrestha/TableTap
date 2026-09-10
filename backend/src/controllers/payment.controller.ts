@@ -2,7 +2,7 @@
 import type { Request, Response } from "express";
 import { createPaymentSchema, createOnlinePaymentSchema, markCashPaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
-import { createPayment, getPaymentBySession, getPaymentsByTable, linkPaymentToOrder, verifyPayment } from "../services/payment.service.js";
+import { createPayment, getPaymentBySession, getPaymentsByTable, getTodayPayments, linkPaymentToOrder, verifyPayment } from "../services/payment.service.js";
 import { getAwaitingPaymentOrders } from "../services/order.service.js";
 import { prisma } from "../config/db.js";
 
@@ -153,5 +153,15 @@ export const verifyPaymentController = async (req: Request, res: Response) => {
     logger.error("Error verifying payment:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
     return res.status(statusCodeForError(message)).json({ error: message });
+  }
+};
+
+export const getTodayPaymentsController = async (_req: Request, res: Response) => {
+  try {
+    const data = await getTodayPayments();
+    return res.status(200).json({ message: "Today's payments fetched successfully", data });
+  } catch (error) {
+    logger.error("Error fetching today's payments:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

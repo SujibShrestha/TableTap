@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
-import { createMenuItemSchema } from "../validations/menu.validation.js";
+import { createMenuItemSchema, updateMenuItemSchema } from "../validations/menu.validation.js";
 import { createmenuItem, deletemenuItem, getmenuItems, getmenuItemsByCategoryId, updatemenuItem } from "../services/menu.service.js";
+import { prisma } from "../config/db.js";
 import logger from "../config/logger.js";
 
 export const createMenuItem = async (req: Request, res: Response) => {
@@ -76,21 +77,60 @@ export const getMenuItemByCategoryId = async (req: Request, res: Response) => {
 };
 
 
-export const updateMenuItem = async (req: Request, res: Response) => {
-
+export const getMenuItemById = async (req: Request, res: Response) => {
     try {
         const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-        const { isAvailable } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: "Invalid input: id is required" });
         }
 
-        if (typeof isAvailable !== 'boolean') {
-            return res.status(400).json({ message: "Invalid input: isAvailable must be a boolean" });
+        const menuItem = await prisma.menuItem.findUnique({ where: { id } });
+
+        if(!menuItem) {
+            return res.status(404).json({ message: "Menu item not found" });
         }
 
-        const updatedMenuItem = await updatemenuItem({ id, isAvailable });
+        logger.info(`Fetched menu item: ${menuItem.id}`);
+        return res.status(200).json({ message: "Menu item fetched successfully", menuItem });
+    } catch (error) {
+        logger.error(`Error fetching menu item: ${error instanceof Error ? error.message : "Unknown error"}`);
+        return res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to fetch menu item",
+        });
+    }
+};
+
+
+export const updateMenuItem = async (req: Request, res: Response) => {
+
+    try {
+        const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+        if (!id) {
+            return res.status(400).json({ message: "Invalid input: id is required" });
+        }
+
+        const parsed = updateMenuItemSchema.parse(req.body);
+
+        const data: {
+            name?: string;
+            description?: string;
+            price?: number;
+            costPrice?: number;
+            categoryId?: string;
+            imageUrl?: string;
+            isAvailable?: boolean;
+        } = {};
+        if (parsed.name !== undefined) data.name = parsed.name;
+        if (parsed.description !== undefined) data.description = parsed.description;
+        if (parsed.price !== undefined) data.price = parsed.price;
+        if (parsed.costPrice !== undefined) data.costPrice = parsed.costPrice;
+        if (parsed.categoryId !== undefined) data.categoryId = parsed.categoryId;
+        if (parsed.imageUrl !== undefined) data.imageUrl = parsed.imageUrl;
+        if (parsed.isAvailable !== undefined) data.isAvailable = parsed.isAvailable;
+
+        const updatedMenuItem = await updatemenuItem({ id, ...data });
 
         if(!updatedMenuItem) {
             return res.status(404).json({ message: "Menu item not found" });

@@ -31,8 +31,8 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
   { to: "/bills", label: "Bills", icon: Receipt, hideForRoles: ["KITCHEN"] },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN"] },
-  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN"] },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN", "CASHIER"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN", "CASHIER"] },
 ];
 
 const MOBILE_NAV_ITEMS: NavItem[] = [
@@ -42,8 +42,8 @@ const MOBILE_NAV_ITEMS: NavItem[] = [
   { to: "/orders", label: "Orders", icon: ShoppingBag, hideForRoles: ["KITCHEN"] },
   { to: "/bills", label: "Bills", icon: Receipt, hideForRoles: ["KITCHEN"] },
   { to: "/menu", label: "Menu", icon: UtensilsCrossed, adminOnly: true },
-  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN"] },
-  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN"] },
+  { to: "/kitchen", label: "Kitchen", icon: ChefHat, hideForRoles: ["WAITER", "ADMIN", "CASHIER"] },
+  { to: "/waiter", label: "Waiter", icon: ConciergeBell, hideForRoles: ["KITCHEN", "ADMIN", "CASHIER"] },
 ];
 
 function SidebarNav() {

@@ -67,15 +67,36 @@ export const getmenuItemsByCategoryId = async (categoryId: string) => {
 
 export const updatemenuItem = async ({
     id,
+    name,
+    description,
+    price,
+    costPrice,
+    categoryId,
+    imageUrl,
     isAvailable,
 }: {
     id: string;
-    isAvailable: boolean;
+    name?: string;
+    description?: string;
+    price?: number;
+    costPrice?: number;
+    categoryId?: string;
+    imageUrl?: string;
+    isAvailable?: boolean;
 }) => {
     try {
+        const data: Record<string, unknown> = {};
+        if (name !== undefined) data.name = name;
+        if (description !== undefined) data.description = description;
+        if (price !== undefined) data.price = price;
+        if (costPrice !== undefined) data.costPrice = costPrice;
+        if (categoryId !== undefined) data.categoryId = categoryId;
+        if (imageUrl !== undefined) data.imageUrl = imageUrl;
+        if (isAvailable !== undefined) data.isAvailable = isAvailable;
+
         const menuItem = await prisma.menuItem.update({
             where: { id },
-            data: { isAvailable },
+            data,
         });
         if(!menuItem) {
             throw new Error("Menu item update failed");

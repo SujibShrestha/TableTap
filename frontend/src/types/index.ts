@@ -90,6 +90,8 @@ export interface CreateMenuItemPayload {
   categoryId: string;
 }
 
+export type UpdateMenuItemPayload = Partial<CreateMenuItemPayload>;
+
 export interface OrderItem {
   id: string;
   orderId: string;
@@ -128,4 +130,24 @@ export interface CreateOrderPayload {
   tableId?: string;
   items: { menuItemId: string; quantity: number }[];
   specialInstructions?: string;
+}
+
+// ---------------- Analytics ----------------
+
+export interface OrderSummary {
+  totalRevenue: number;
+  totalProfit: number;
+  totalOrders: number;
+}
+
+export interface BestSellerItem {
+  name: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+export interface DailyTrendItem {
+  date: string;
+  revenue: number;
+  profit: number;
 }
