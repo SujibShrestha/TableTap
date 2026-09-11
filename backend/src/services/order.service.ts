@@ -335,7 +335,8 @@ export const createOrderWithPayment = async (data: {
 
   return prisma.$transaction(async (tx) => {
     if (paymentMethod === "ONLINE") {
-      // ONLINE: Create payment + order with PAID status
+      // ONLINE: Create order with AWAITING_PAYMENT.
+      // Actual payment status is confirmed later via verify-esewa.
 
       const order = await tx.order.create({
         data: {
@@ -343,7 +344,7 @@ export const createOrderWithPayment = async (data: {
           specialInstructions: specialInstructions ?? null,
           totalAmount,
           status: "PENDING",
-          paymentStatus: "PAID",
+          paymentStatus: "AWAITING_PAYMENT",
           paymentId: null,
           items: { create: orderItemsData },
         },
@@ -354,6 +355,10 @@ export const createOrderWithPayment = async (data: {
         amount: totalAmount,
         transactionUuid: order.id,
       });
+
+      const successUrl = `${process.env.FRONTEND_SUCCESS_URL}/${order.id}`;
+      const failureUrl = `${process.env.FRONTEND_FAILURE_URL}/${order.id}`;
+
       return {
         order,
         payment: null,
@@ -361,15 +366,15 @@ export const createOrderWithPayment = async (data: {
           paymentUrl: process.env.ESEWA_PAYMENT_URL!,
           fields: {
             amount: totalAmount.toFixed(2),
-            taxAmount: "0.00",
-            totalAmount: totalAmount.toFixed(2),
-            transactionUuid: order.id,
-            productCode: process.env.ESEWA_MERCHANT_CODE!,
-            productServiceCharge: "0.00",
-            productDeliveryCharge: "0.00",
-            successUrl: process.env.FRONTEND_SUCCESS_URL!,
-            failureUrl: process.env.FRONTEND_FAILURE_URL!,
-            signedFieldNames: "total_amount,transaction_uuid,product_code",
+            tax_amount: "0.00",
+            total_amount: totalAmount.toFixed(2),
+            transaction_uuid: order.id,
+            product_code: process.env.ESEWA_MERCHANT_CODE!,
+            product_service_charge: "0.00",
+            product_delivery_charge: "0.00",
+            success_url: successUrl,
+            failure_url: failureUrl,
+            signed_field_names: "total_amount,transaction_uuid,product_code",
             signature,
           },
         },
@@ -426,53 +431,57 @@ export const verifyEsewaPayment = async (orderId: string) => {
       throw new Error("Order not found");
     }
 
-     if (order.paymentStatus === "PAID") {
-    // already verified previously — idempotent, don't double-process
-    return { order, alreadyVerified: true };
-  }
-   if (order.paymentStatus !== "AWAITING_PAYMENT") {
-    throw new Error("Order is not awaiting online payment");
-  }
-  const amount = Number(order.totalAmount).toFixed(2);
+    if (order.paymentStatus === "PAID") {
+      // already verified previously — idempotent, don't double-process
+      return { order, alreadyVerified: true } as const;
+    }
 
-  const statusRes = await fetch(
-    `${process.env.ESEWA_STATUS_CHECK_URL}?product_code=${process.env.ESEWA_MERCHANT_CODE}&total_amount=${amount}&transaction_uuid=${order.id}`
-  );
-  const statusData = await statusRes.json();
+    if (order.paymentStatus !== "AWAITING_PAYMENT") {
+      throw new Error("Order is not awaiting online payment");
+    }
 
-  if (statusData.status !== "COMPLETE") {
-    throw new Error(`Payment not completed (status: ${statusData.status})`);
-  }
+    const amount = Number(order.totalAmount).toFixed(2);
+    const statusUrl = `${process.env.ESEWA_STATUS_CHECK_URL}?product_code=${process.env.ESEWA_MERCHANT_CODE}&total_amount=${amount}&transaction_uuid=${order.id}`;
 
-  const result = await prisma.$transaction(async (tx) => {
-    const payment = await tx.payment.create({
-      data: {
-        sessionId: order.sessionId,
-        orderId: order.id,
-        method: "ONLINE",
-        amount: order.totalAmount,
-        status: "PAID",
-        gatewayReferenceId: statusData.ref_id,
-      },
+    logger.info(`eSewa status check: ${statusUrl}`);
+
+    const statusRes = await fetch(statusUrl);
+    const statusData = await statusRes.json();
+
+    if (statusData.status !== "COMPLETE") {
+      return { order, payment: null, status: statusData.status } as const;
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.create({
+        data: {
+          sessionId: order.sessionId,
+          orderId: order.id,
+          method: "ONLINE",
+          amount: order.totalAmount,
+          status: "PAID",
+          gatewayReferenceId: statusData.ref_id,
+        },
+      });
+      const updatedOrder = await tx.order.update({
+        where: { id: order.id },
+        data: { paymentStatus: "PAID", paymentId: payment.id },
+        include: { items: { include: { menuItem: true } } },
+      });
+
+      logger.info(`Esewa payment verified for order ${order.id}, payment ${payment.id}`);
+      return { order: updatedOrder, payment };
     });
-     const updatedOrder = await tx.order.update({
-      where: { id: order.id },
-      data: { paymentStatus: "PAID", paymentId: payment.id },
-      include: { items: { include: { menuItem: true } } },
-    });
 
-    logger.info(`Esewa payment verified for order ${order.id}, payment ${payment.id}`);
-    return { order: updatedOrder, payment };
-  });
- try {
-    getIo().to("kitchen").to("waiter").emit("order:new", result.order);
-  } catch {
-    // socket may not be initialized
-  }
+    try {
+      getIo().to("kitchen").to("waiter").emit("order:new", result.order);
+    } catch {
+      // socket may not be initialized
+    }
 
-  return result;
+    return result;
   } catch (error) {
     logger.error(`Error verifying Esewa payment for order ${orderId}:`, error);
     throw error;
   }
-}
+};

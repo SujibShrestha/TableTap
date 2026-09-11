@@ -189,7 +189,12 @@ export const createOrderWithPaymentController = async (req: Request, res: Respon
     const result = await createOrderWithPayment(orderData);
 
     logger.info("Order with payment created successfully");
-    return res.status(201).json({ message: "Order created successfully", order: result.order, payment: result.payment });
+    return res.status(201).json({
+      message: "Order created successfully",
+      order: result.order,
+      payment: result.payment,
+      ...(result.esewa && { esewa: result.esewa }),
+    });
   } catch (error) {
     logger.error("Error creating order with payment:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
@@ -239,20 +244,35 @@ export const verifyEsewapayment = async (req: Request, res: Response) => {
     }
 
     const result = await verifyEsewaPayment(orderId);
-    logger.info(`Esewa payment verified for order ${orderId}}`);
-    if ("payment" in result) {
-      return res.status(200).json({ message: "Esewa payment verified successfully", order: result.order, payment: result.payment });
+    logger.info(`Esewa payment verified for order ${orderId}`);
+
+    // Already verified (idempotent)
+    if ("alreadyVerified" in result && result.alreadyVerified) {
+      return res.status(200).json({
+        message: "Esewa payment already verified",
+        order: result.order,
+        alreadyVerified: true,
+      });
     }
 
+    // Payment not yet complete (eSewa status is not COMPLETE)
+    if ("status" in result && result.status !== undefined) {
+      return res.status(402).json({
+        error: `Payment not completed (status: ${result.status})`,
+        status: result.status,
+      });
+    }
+
+    // Payment freshly verified
     return res.status(200).json({
-      message: "Esewa payment already verified",
+      message: "Esewa payment verified successfully",
       order: result.order,
-      alreadyVerified: result.alreadyVerified,
+      payment: result.payment,
     });
   } catch (error) {
     logger.error("Error verifying Esewa payment:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
-    const statusCode = message === "Order not found" ? 404 : message === "Payment verification failed" ? 400 : 500;
+    const statusCode = message === "Order not found" ? 404 : message === "Order is not awaiting online payment" ? 400 : 500;
     return res.status(statusCode).json({ error: message });
   }
 };

@@ -332,14 +332,51 @@ export const createCustomerOrder = async (
   return res.data.order as Order;
 };
 
-export const createOrderWithPayment = async (
+// ---------------- Checkout (eSewa + AT_COUNTER) ----------------
+
+export interface EsewaFields {
+  amount: string;
+  tax_amount: string;
+  total_amount: string;
+  transaction_uuid: string;
+  product_code: string;
+  product_service_charge: string;
+  product_delivery_charge: string;
+  success_url: string;
+  failure_url: string;
+  signed_field_names: string;
+  signature: string;
+}
+
+export interface CheckoutResponse {
+  order: Order;
+  payment: { id: string; status: string; method: string } | null;
+  esewa?: {
+    paymentUrl: string;
+    fields: EsewaFields;
+  };
+}
+
+export const checkoutOrder = async (
   sessionId: string,
   items: { menuItemId: string; quantity: number }[],
-  specialInstructions: string | undefined,
-  paymentMethod: "ONLINE" | "AT_COUNTER"
-) => {
-  const res = await api.post("/orders/with-payment", { sessionId, items, specialInstructions, paymentMethod });
-  return res.data.order as Order;
+  paymentMethod: "ONLINE" | "AT_COUNTER",
+  specialInstructions?: string
+): Promise<CheckoutResponse> => {
+  const res = await api.post("/orders/checkout", {
+    sessionId,
+    items,
+    specialInstructions,
+    paymentMethod,
+  });
+  return res.data;
+};
+
+export const verifyEsewaPayment = async (
+  orderId: string
+): Promise<{ order: Order; payment: { id: string; status: string; method: string }; alreadyVerified?: boolean }> => {
+  const res = await api.get(`/orders/${orderId}/verify-esewa`);
+  return res.data;
 };
 
 export const getCustomerOrders = async (tableId: string) => {
