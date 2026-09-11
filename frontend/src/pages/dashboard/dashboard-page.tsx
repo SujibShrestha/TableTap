@@ -125,6 +125,8 @@ function BarChart({
   customFrom,
   customTo,
   onCustomDateChange,
+  onApply,
+  hasChanges,
 }: {
   data: DailyTrendItem[];
   loading: boolean;
@@ -133,6 +135,8 @@ function BarChart({
   customFrom: string;
   customTo: string;
   onCustomDateChange: (field: "from" | "to", value: string) => void;
+  onApply: () => void;
+  hasChanges: boolean;
 }) {
   if (loading) return <BarChartSkeleton />;
 
@@ -185,6 +189,14 @@ function BarChart({
               onChange={(e) => onCustomDateChange("to", e.target.value)}
               className="rounded-lg border border-border/50 bg-surface-container-low px-2.5 py-1 text-[11px] font-medium text-foreground outline-none focus:border-primary transition-colors"
             />
+            {hasChanges && (
+              <button
+                onClick={onApply}
+                className="rounded-lg bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Apply
+              </button>
+            )}
           </div>
           {/* Legend */}
           <div className="flex gap-4 border-l border-border/30 pl-4">
@@ -298,8 +310,10 @@ function BarChart({
 export function DashboardPage() {
   const { accessToken } = useAuth();
   const [preset, setPreset] = useState<DatePreset>("all");
-  const [customFrom, setCustomFrom] = useState("");
-  const [customTo, setCustomTo] = useState("");
+  const [draftFrom, setDraftFrom] = useState("");
+  const [draftTo, setDraftTo] = useState("");
+  const [appliedFrom, setAppliedFrom] = useState("");
+  const [appliedTo, setAppliedTo] = useState("");
 
   const [summary, setSummary] = useState<OrderSummary | null>(null);
   const [bestSellers, setBestSellers] = useState<BestSellerItem[]>([]);
@@ -309,13 +323,20 @@ export function DashboardPage() {
 
   function handlePresetChange(value: DatePreset) {
     setPreset(value);
-    setCustomFrom("");
-    setCustomTo("");
+    setDraftFrom("");
+    setDraftTo("");
+    setAppliedFrom("");
+    setAppliedTo("");
   }
 
   function handleCustomDateChange(field: "from" | "to", value: string) {
-    if (field === "from") setCustomFrom(value);
-    else setCustomTo(value);
+    if (field === "from") setDraftFrom(value);
+    else setDraftTo(value);
+  }
+
+  function applyCustomDates() {
+    setAppliedFrom(draftFrom);
+    setAppliedTo(draftTo);
     setPreset(null as unknown as DatePreset);
   }
 
@@ -327,10 +348,10 @@ export function DashboardPage() {
       setError(null);
 
       try {
-        const { from, to } = customFrom || customTo
+        const { from, to } = appliedFrom || appliedTo
           ? {
-              from: customFrom ? new Date(customFrom + "T00:00:00Z").toISOString() : undefined,
-              to: customTo ? new Date(customTo + "T23:59:59Z").toISOString() : undefined,
+              from: appliedFrom ? new Date(appliedFrom + "T00:00:00Z").toISOString() : undefined,
+              to: appliedTo ? new Date(appliedTo + "T23:59:59Z").toISOString() : undefined,
             }
           : getPresetRange(preset);
         const [summaryData, sellersData, dailyResult] = await Promise.allSettled([
@@ -370,7 +391,7 @@ export function DashboardPage() {
     }
     load();
     return () => { cancelled = true; };
-  }, [accessToken, preset, customFrom, customTo]);
+  }, [accessToken, preset, appliedFrom, appliedTo]);
 
   const totalOrders = summary?.totalOrders ?? 0;
   const avgOrderValue = totalOrders > 0 ? (summary?.totalRevenue ?? 0) / totalOrders : 0;
@@ -428,9 +449,11 @@ export function DashboardPage() {
         loading={loading}
         preset={preset}
         onPresetChange={handlePresetChange}
-        customFrom={customFrom}
-        customTo={customTo}
+        customFrom={draftFrom}
+        customTo={draftTo}
         onCustomDateChange={handleCustomDateChange}
+        onApply={applyCustomDates}
+        hasChanges={draftFrom !== appliedFrom || draftTo !== appliedTo}
       />
 
       {/* Top Performing Items */}
