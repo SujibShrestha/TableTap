@@ -11,6 +11,7 @@ import {
   createOrderWithPaymentController,
   getAwaitingPaymentOrdersController,
   listOrdersController,
+  verifyEsewapayment,
 } from "../controllers/order.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
@@ -46,6 +47,6 @@ router.get("/waiter/ready", requireAuth, requireRole("ADMIN", "WAITER"), getRead
 router.get("/:orderId", requireAuth, getOrderByIdController);
 router.patch("/:orderId/status", requireAuth, requireRole("ADMIN", "WAITER", "KITCHEN"), updateOrderStatusController);
 
-// real-time socket notifications handled in the service layer
+router.get("/:id/verify-esewa",verifyEsewapayment)
 
 export default router;

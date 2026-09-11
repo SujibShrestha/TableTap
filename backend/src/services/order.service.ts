@@ -1,6 +1,9 @@
+import { log } from "node:console";
 import { prisma } from "../config/db.js";
+import { generateEsewaSignature } from "../utils/esewa.js";
 import { getIo } from "../utils/socket.js";
 import { getOrCreateActiveSession } from "./table.service.js";
+import logger from "../config/logger.js";
 
 export const createOrder = async (data: {
   sessionId?: string;
@@ -19,7 +22,9 @@ export const createOrder = async (data: {
     const session = await getOrCreateActiveSession(data.tableId);
     sessionId = session.id;
   } else {
-    const session = await prisma.tableSession.findUnique({ where: { id: sessionId } });
+    const session = await prisma.tableSession.findUnique({
+      where: { id: sessionId },
+    });
     if (!session || session.status !== "ACTIVE") {
       throw new Error("Invalid or inactive session");
     }
@@ -39,7 +44,9 @@ export const createOrder = async (data: {
   }
 
   if (unavailable.length > 0) {
-    throw new Error(`The following menu items are unavailable: ${unavailable.join(", ")}`);
+    throw new Error(
+      `The following menu items are unavailable: ${unavailable.join(", ")}`,
+    );
   }
 
   let totalAmount = 0;
@@ -75,7 +82,7 @@ export const createOrder = async (data: {
 
   // Only emit to kitchen/waiter if paymentStatus is PAID (order is ready for kitchen)
   if (order.paymentStatus === "PAID") {
-    getIo().to('kitchen').to('waiter').emit('order:new', order);
+    getIo().to("kitchen").to("waiter").emit("order:new", order);
   }
 
   return order;
@@ -102,14 +109,25 @@ export const getOrdersByTable = async (tableId: string) => {
   return getOrdersBySession(session.id);
 };
 
-export const updateOrderStatus = async (orderId: string, status: string, updatedByStaffId?: string) => {
+export const updateOrderStatus = async (
+  orderId: string,
+  status: string,
+  updatedByStaffId?: string,
+) => {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
 
   if (!order) {
     throw new Error("Order not found");
   }
 
-  const validStatuses = ["PENDING", "CONFIRMED", "PREPARING", "READY", "SERVED", "CANCELLED"];
+  const validStatuses = [
+    "PENDING",
+    "CONFIRMED",
+    "PREPARING",
+    "READY",
+    "SERVED",
+    "CANCELLED",
+  ];
   if (!validStatuses.includes(status)) {
     throw new Error("Invalid status");
   }
@@ -124,9 +142,9 @@ export const updateOrderStatus = async (orderId: string, status: string, updated
   try {
     const io = getIo();
     io.to(`session:${updated.sessionId}`)
-      .to('waiter')
-      .to('kitchen')
-      .emit('order:statusUpdated', updated);
+      .to("waiter")
+      .to("kitchen")
+      .emit("order:statusUpdated", updated);
   } catch (err) {
     // socket may not be initialized in some environments; don't fail the operation
   }
@@ -151,13 +169,21 @@ export const getOrderById = async (orderId: string) => {
  * Customer-facing cancel — no staff auth. The sessionId acts as the credential
  * (same pattern as the other public customer endpoints).
  */
-export const cancelOrderAsCustomer = async (orderId: string, sessionId: string) => {
+export const cancelOrderAsCustomer = async (
+  orderId: string,
+  sessionId: string,
+) => {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { session: { select: { id: true, status: true } } },
   });
 
-  if (!order || order.sessionId !== sessionId || !order.session || order.session.status !== "ACTIVE") {
+  if (
+    !order ||
+    order.sessionId !== sessionId ||
+    !order.session ||
+    order.session.status !== "ACTIVE"
+  ) {
     throw new Error("Order not found");
   }
   if (order.status !== "PENDING") {
@@ -283,7 +309,9 @@ export const createOrderWithPayment = async (data: {
   }
 
   if (unavailable.length > 0) {
-    throw new Error(`The following menu items are unavailable: ${unavailable.join(", ")}`);
+    throw new Error(
+      `The following menu items are unavailable: ${unavailable.join(", ")}`,
+    );
   }
 
   let totalAmount = 0;
@@ -308,15 +336,6 @@ export const createOrderWithPayment = async (data: {
   return prisma.$transaction(async (tx) => {
     if (paymentMethod === "ONLINE") {
       // ONLINE: Create payment + order with PAID status
-      const payment = await tx.payment.create({
-        data: {
-          sessionId,
-          amount: totalAmount,
-          method: "ONLINE",
-          status: "PAID",
-          gatewayReferenceId: "stub_" + Date.now(),
-        },
-      });
 
       const order = await tx.order.create({
         data: {
@@ -325,18 +344,36 @@ export const createOrderWithPayment = async (data: {
           totalAmount,
           status: "PENDING",
           paymentStatus: "PAID",
-          paymentId: payment.id,
+          paymentId: null,
           items: { create: orderItemsData },
         },
         include: { items: { include: { menuItem: true } } },
       });
 
-      await tx.payment.update({
-        where: { id: payment.id },
-        data: { orderId: order.id },
+      const signature = generateEsewaSignature({
+        amount: totalAmount,
+        transactionUuid: order.id,
       });
-
-      return { order, payment };
+      return {
+        order,
+        payment: null,
+        esewa: {
+          paymentUrl: process.env.ESEWA_PAYMENT_URL!,
+          fields: {
+            amount: totalAmount.toFixed(2),
+            taxAmount: "0.00",
+            totalAmount: totalAmount.toFixed(2),
+            transactionUuid: order.id,
+            productCode: process.env.ESEWA_MERCHANT_CODE!,
+            productServiceCharge: "0.00",
+            productDeliveryCharge: "0.00",
+            successUrl: process.env.FRONTEND_SUCCESS_URL!,
+            failureUrl: process.env.FRONTEND_FAILURE_URL!,
+            signedFieldNames: "total_amount,transaction_uuid,product_code",
+            signature,
+          },
+        },
+      };
     } else {
       // AT_COUNTER: Create order with AWAITING_PAYMENT, no payment yet
       const order = await tx.order.create({
@@ -375,3 +412,67 @@ export const getAwaitingPaymentOrders = async () => {
     orderBy: { createdAt: "asc" },
   });
 };
+
+
+//verify esewa payment
+export const verifyEsewaPayment = async (orderId: string) => {
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { session: true },
+    });
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+     if (order.paymentStatus === "PAID") {
+    // already verified previously — idempotent, don't double-process
+    return { order, alreadyVerified: true };
+  }
+   if (order.paymentStatus !== "AWAITING_PAYMENT") {
+    throw new Error("Order is not awaiting online payment");
+  }
+  const amount = Number(order.totalAmount).toFixed(2);
+
+  const statusRes = await fetch(
+    `${process.env.ESEWA_STATUS_CHECK_URL}?product_code=${process.env.ESEWA_MERCHANT_CODE}&total_amount=${amount}&transaction_uuid=${order.id}`
+  );
+  const statusData = await statusRes.json();
+
+  if (statusData.status !== "COMPLETE") {
+    throw new Error(`Payment not completed (status: ${statusData.status})`);
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.create({
+      data: {
+        sessionId: order.sessionId,
+        orderId: order.id,
+        method: "ONLINE",
+        amount: order.totalAmount,
+        status: "PAID",
+        gatewayReferenceId: statusData.ref_id,
+      },
+    });
+     const updatedOrder = await tx.order.update({
+      where: { id: order.id },
+      data: { paymentStatus: "PAID", paymentId: payment.id },
+      include: { items: { include: { menuItem: true } } },
+    });
+
+    logger.info(`Esewa payment verified for order ${order.id}, payment ${payment.id}`);
+    return { order: updatedOrder, payment };
+  });
+ try {
+    getIo().to("kitchen").to("waiter").emit("order:new", result.order);
+  } catch {
+    // socket may not be initialized
+  }
+
+  return result;
+  } catch (error) {
+    logger.error(`Error verifying Esewa payment for order ${orderId}:`, error);
+    throw error;
+  }
+}

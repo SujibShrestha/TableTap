@@ -13,6 +13,7 @@ import {
   updateOrderStatus,
   getOrderById,
   cancelOrderAsCustomer,
+  verifyEsewaPayment,
 } from "../services/order.service.js";
 
 const VALID_STATUSES = ["PENDING", "CONFIRMED", "PREPARING", "READY", "SERVED", "CANCELLED"];
@@ -227,5 +228,31 @@ export const listOrdersController = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error("Error listing orders:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const verifyEsewapayment = async (req: Request, res: Response) => {
+  try {
+    const orderId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    if (!orderId) {
+      return res.status(400).json({ error: "Missing order ID" });
+    }
+
+    const result = await verifyEsewaPayment(orderId);
+    logger.info(`Esewa payment verified for order ${orderId}}`);
+    if ("payment" in result) {
+      return res.status(200).json({ message: "Esewa payment verified successfully", order: result.order, payment: result.payment });
+    }
+
+    return res.status(200).json({
+      message: "Esewa payment already verified",
+      order: result.order,
+      alreadyVerified: result.alreadyVerified,
+    });
+  } catch (error) {
+    logger.error("Error verifying Esewa payment:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const statusCode = message === "Order not found" ? 404 : message === "Payment verification failed" ? 400 : 500;
+    return res.status(statusCode).json({ error: message });
   }
 };
