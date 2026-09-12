@@ -304,7 +304,7 @@ export const uploadImage = async (token: string, file: File) => {
 
 // ---------------- Customer-facing APIs ----------------
 
-export interface ResolveTableResponse {
+interface ResolveTableResponse {
   table: RestaurantTable;
   session: {
     id: string;
@@ -321,30 +321,51 @@ export const resolveTable = async (tableId: string): Promise<ResolveTableRespons
   return res.data;
 };
 
-// ---------------- Orders ----------------
+// ---------------- Checkout (eSewa + AT_COUNTER) ----------------
 
-export const createCustomerOrder = async (
+interface EsewaFields {
+  amount: string;
+  tax_amount: string;
+  total_amount: string;
+  transaction_uuid: string;
+  product_code: string;
+  product_service_charge: string;
+  product_delivery_charge: string;
+  success_url: string;
+  failure_url: string;
+  signed_field_names: string;
+  signature: string;
+}
+
+interface CheckoutResponse {
+  order: Order;
+  payment: { id: string; status: string; method: string } | null;
+  esewa?: {
+    paymentUrl: string;
+    fields: EsewaFields;
+  };
+}
+
+export const checkoutOrder = async (
   sessionId: string,
   items: { menuItemId: string; quantity: number }[],
+  paymentMethod: "ONLINE" | "AT_COUNTER",
   specialInstructions?: string
-) => {
-  const res = await api.post("/orders", { sessionId, items, specialInstructions });
-  return res.data.order as Order;
+): Promise<CheckoutResponse> => {
+  const res = await api.post("/orders/checkout", {
+    sessionId,
+    items,
+    specialInstructions,
+    paymentMethod,
+  });
+  return res.data;
 };
 
-export const createOrderWithPayment = async (
-  sessionId: string,
-  items: { menuItemId: string; quantity: number }[],
-  specialInstructions: string | undefined,
-  paymentMethod: "ONLINE" | "AT_COUNTER"
-) => {
-  const res = await api.post("/orders/with-payment", { sessionId, items, specialInstructions, paymentMethod });
-  return res.data.order as Order;
-};
-
-export const getCustomerOrders = async (tableId: string) => {
-  const res = await axios.get(`${baseURL}/orders/table/${tableId}`);
-  return res.data.orders as Order[];
+export const verifyEsewaPayment = async (
+  orderId: string
+): Promise<{ order: Order; payment: { id: string; status: string; method: string }; alreadyVerified?: boolean }> => {
+  const res = await api.get(`/orders/${orderId}/verify-esewa`);
+  return res.data;
 };
 
 export const getOrdersBySession = async (sessionId: string) => {
@@ -448,11 +469,6 @@ export const verifyPayment = async (token: string, paymentId: string) => {
 export const cancelOrder = async (orderId: string, sessionId: string) => {
   const res = await axios.patch(`${baseURL}/orders/${orderId}/cancel`, { sessionId });
   return res.data.order as Order;
-};
-
-export const createOnlinePayment = async (sessionId: string) => {
-  const res = await api.post(`/payments/session/${sessionId}/pay-online`, { method: "ONLINE" });
-  return res.data.payment;
 };
 
 export const updateOrderStatus = async (token: string, orderId: string, status: string) => {

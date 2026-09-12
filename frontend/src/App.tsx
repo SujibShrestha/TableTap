@@ -21,6 +21,8 @@ import { CashierBoard } from "@/pages/cashier/cashier-board";
 import { StaffOrdersPage } from "@/pages/orders/orders-page";
 import { BillsPage } from "@/pages/bills/bills-page";
 import { PaymentPage } from "@/pages/customer/payment-page";
+import { PaymentSuccessPage } from "@/pages/customer/payment-success-page";
+import { PaymentFailurePage } from "@/pages/customer/payment-failure-page";
 
 function App() {
   return (
@@ -36,6 +38,10 @@ function App() {
             <Route path="/t/:id/bill" element={<BillPaymentPage />} />
             <Route path="/t/:id/payment" element={<PaymentPage />} />
           </Route>
+
+          {/* eSewa payment callback routes — outside CustomerLayout (standalone pages) */}
+          <Route path="/payment/success/:orderId" element={<PaymentSuccessPage />} />
+          <Route path="/payment/failure/:orderId" element={<PaymentFailurePage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>

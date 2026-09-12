@@ -125,13 +125,6 @@ export interface Order {
   } | null;
 }
 
-export interface CreateOrderPayload {
-  sessionId?: string;
-  tableId?: string;
-  items: { menuItemId: string; quantity: number }[];
-  specialInstructions?: string;
-}
-
 // ---------------- Analytics ----------------
 
 export interface OrderSummary {

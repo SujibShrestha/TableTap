@@ -11,6 +11,7 @@ import {
   createOrderWithPaymentController,
   getAwaitingPaymentOrdersController,
   listOrdersController,
+  verifyEsewapayment,
 } from "../controllers/order.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
 
@@ -25,7 +26,10 @@ router.get("/table/:tableId", getOrdersByTableController);
 router.get("/session/:sessionId", getOrdersBySessionController);
 
 // Pay-first workflow: create order with payment (no auth, sessionId in body)
-router.post("/with-payment", createOrderWithPaymentController);
+router.post("/checkout", createOrderWithPaymentController);
+
+// eSewa payment verification (public, no auth)
+router.get("/:id/verify-esewa", verifyEsewapayment);
 
 // Staff orders page - paginated list with filters (staff only)
 router.get("/all", requireAuth, listOrdersController);
@@ -45,7 +49,5 @@ router.get("/waiter/ready", requireAuth, requireRole("ADMIN", "WAITER"), getRead
 // Protected endpoints - admin/waiter/kitchen only
 router.get("/:orderId", requireAuth, getOrderByIdController);
 router.patch("/:orderId/status", requireAuth, requireRole("ADMIN", "WAITER", "KITCHEN"), updateOrderStatusController);
-
-// real-time socket notifications handled in the service layer
 
 export default router;

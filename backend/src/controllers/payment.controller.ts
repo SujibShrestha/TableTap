@@ -1,6 +1,6 @@
 // src/controllers/payment.controller.ts
 import type { Request, Response } from "express";
-import { createPaymentSchema, createOnlinePaymentSchema, markCashPaymentSchema } from "../validations/payment.validation.js";
+import { markCashPaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
 import { createPayment, getPaymentBySession, getPaymentsByTable, getTodayPayments, linkPaymentToOrder, verifyPayment } from "../services/payment.service.js";
 import { getAwaitingPaymentOrders } from "../services/order.service.js";
@@ -17,30 +17,6 @@ function paramToString(param?: string | string[]) {
   if (Array.isArray(param)) return param[0];
   return param;
 }
-
-// Customer-facing — no auth, sessionId from URL is the credential
-export const createOnlinePaymentController = async (req: Request, res: Response) => {
-  try {
-    const parsed = createOnlinePaymentSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ error: "Invalid payment data", details: parsed.error.flatten() });
-    }
-
-    const sessionId = paramToString(req.params.sessionId);
-    if (!sessionId) return res.status(400).json({ error: "Missing or invalid sessionId parameter" });
-
-    const { method } = parsed.data;
-
-    const payment = await createPayment(sessionId, method, "SYSTEM");
-
-    logger.info("Online payment created successfully");
-    return res.status(201).json({ message: "Payment processed successfully", payment });
-  } catch (error) {
-    logger.error("Error creating online payment:", error);
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return res.status(statusCodeForError(message)).json({ error: message });
-  }
-};
 
 // Staff-facing — cashier/waiter marks a session/order as paid via cash/card, requires auth
 export const markCashPaymentController = async (req: Request, res: Response) => {
