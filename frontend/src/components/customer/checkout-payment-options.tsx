@@ -39,7 +39,10 @@ export function CheckoutPaymentOptions({
 
       if (result.esewa) {
         // ONLINE path — redirect browser to eSewa hosted payment page
-        redirectToEsewa(result.esewa);
+        redirectToEsewa({
+          paymentUrl: result.esewa.paymentUrl,
+          fields: result.esewa.fields as unknown as Record<string, string>,
+        });
         // Browser navigates away — no further code runs here
       } else {
         // AT_COUNTER path — order placed, awaiting cashier confirmation

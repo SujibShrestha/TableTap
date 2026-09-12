@@ -424,7 +424,7 @@ export const verifyEsewaPayment = async (orderId: string) => {
   try {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      include: { session: true },
+      include: { session: { include: { table: true } } },
     });
 
     if (!order) {
@@ -466,7 +466,7 @@ export const verifyEsewaPayment = async (orderId: string) => {
       const updatedOrder = await tx.order.update({
         where: { id: order.id },
         data: { paymentStatus: "PAID", paymentId: payment.id },
-        include: { items: { include: { menuItem: true } } },
+        include: { items: { include: { menuItem: true } }, session: { include: { table: true } } },
       });
 
       logger.info(`Esewa payment verified for order ${order.id}, payment ${payment.id}`);

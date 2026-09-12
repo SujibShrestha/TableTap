@@ -17,6 +17,7 @@ export function PaymentSuccessPage() {
   const [error, setError] = useState<string | null>(
     orderId ? null : "No order ID provided."
   );
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     if (!orderId) return;
@@ -39,6 +40,22 @@ export function PaymentSuccessPage() {
     verify();
     return () => { cancelled = true; };
   }, [orderId]);
+
+  // Auto-navigate to the table after 3-second countdown
+  useEffect(() => {
+    if (status !== "success" || !order) return;
+
+    const tableId = order?.session?.table?.id;
+    if (!tableId) return;
+
+    if (countdown <= 0) {
+      navigate(`/t/${tableId}`);
+      return;
+    }
+
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [status, order, countdown, navigate]);
 
   // ── Verifying state ─────────────────────────────────────────────
   if (status === "verifying") {
@@ -158,7 +175,6 @@ export function PaymentSuccessPage() {
             className="w-full"
             size="lg"
             onClick={() => {
-              // Navigate back to the table menu — extract tableId from the order's session if available
               const tableId = order?.session?.table?.id;
               if (tableId) {
                 navigate(`/t/${tableId}`);
@@ -167,7 +183,9 @@ export function PaymentSuccessPage() {
               }
             }}
           >
-            Continue
+            {order?.session?.table?.id
+              ? `Continue to Table (${countdown}s)`
+              : "Continue"}
           </Button>
         </div>
       </div>

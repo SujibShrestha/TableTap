@@ -26,7 +26,6 @@ router.get("/table/:tableId", getOrdersByTableController);
 router.get("/session/:sessionId", getOrdersBySessionController);
 
 // Pay-first workflow: create order with payment (no auth, sessionId in body)
-router.post("/with-payment", createOrderWithPaymentController);
 router.post("/checkout", createOrderWithPaymentController);
 
 // eSewa payment verification (public, no auth)
