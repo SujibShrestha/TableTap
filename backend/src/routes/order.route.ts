@@ -14,8 +14,12 @@ import {
   verifyEsewapayment,
 } from "../controllers/order.controller.js";
 import { requireAuth, requireRole } from "../middlewares/auth.middleware.js";
+import { restrictToRestaurantWifi } from "../middlewares/wifi-restriction.middleware.js";
 
 const router = Router();
+
+router.use("/",restrictToRestaurantWifi)
+
 
 // Public endpoint for customer ordering (no auth required)
 router.post("/", createOrderController);
@@ -49,5 +53,6 @@ router.get("/waiter/ready", requireAuth, requireRole("ADMIN", "WAITER"), getRead
 // Protected endpoints - admin/waiter/kitchen only
 router.get("/:orderId", requireAuth, getOrderByIdController);
 router.patch("/:orderId/status", requireAuth, requireRole("ADMIN", "WAITER", "KITCHEN"), updateOrderStatusController);
+
 
 export default router;
