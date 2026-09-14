@@ -27,7 +27,6 @@ export function KitchenBoard() {
       setOrders(data);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch kitchen orders:", err);
       setError("Failed to load orders");
     } finally {
       setLoading(false);

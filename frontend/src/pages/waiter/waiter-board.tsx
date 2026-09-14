@@ -20,7 +20,6 @@ export function WaiterBoard() {
       setOrders(data);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch ready orders:", err);
       setError("Failed to load ready orders");
     } finally {
       setLoading(false);

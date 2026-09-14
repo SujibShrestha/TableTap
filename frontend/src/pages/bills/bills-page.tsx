@@ -81,7 +81,6 @@ export function BillsPage() {
       setAwaitingOrders(grouped);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch bills:", err);
       setError("Failed to load open tables");
     } finally {
       setLoading(false);

@@ -8,6 +8,7 @@ import { Loader2, AlertTriangle, ReceiptText, ChevronLeft, ChevronRight, Check }
 import type { Order } from "@/types";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatMoney } from "@/lib/format";
 
 const STATUS_TABS = [
   { value: "", label: "All" },
@@ -94,7 +95,6 @@ export function StaffOrdersPage() {
       setTotal(data.total);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch orders:", err);
       setError("Failed to load orders");
     } finally {
       setLoading(false);
@@ -295,7 +295,7 @@ export function StaffOrdersPage() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="font-price-label text-price-label text-on-surface">
-                    ${Number(order.totalAmount).toFixed(2)}
+                    {formatMoney(order.totalAmount)}
                   </span>
                   <span className="font-caption-bold text-caption-bold text-on-surface-variant/70">
                     {formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}
@@ -344,7 +344,7 @@ export function StaffOrdersPage() {
                   {summarizeItems(order)}
                 </p>
                 <span className="font-price-label text-price-label text-on-surface shrink-0">
-                  ${Number(order.totalAmount).toFixed(2)}
+                  {formatMoney(order.totalAmount)}
                 </span>
                 <span
                   className={cn(

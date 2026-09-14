@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/context/auth-context";
 import { AppShell } from "@/components/layout/app-shell";
 import { AdminRoute, ProtectedRoute, HomeRedirect, RoleRoute } from "@/components/layout/route-guards";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { LoginPage } from "@/pages/login/login-page";
 import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { UsersPage } from "@/pages/users/users-page";
@@ -26,6 +27,7 @@ import { PaymentFailurePage } from "@/pages/customer/payment-failure-page";
 
 function App() {
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <BrowserRouter>
         <Toaster position="bottom-right" theme="system" />
@@ -75,6 +77,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -1,4 +1,3 @@
-import { log } from "node:console";
 import { prisma } from "../config/db.js";
 import { generateEsewaSignature } from "../utils/esewa.js";
 import { getIo } from "../utils/socket.js";

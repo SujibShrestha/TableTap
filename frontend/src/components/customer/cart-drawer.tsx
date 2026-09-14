@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Image, Minus, Plus } from "lucide-react";
@@ -30,7 +28,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
     setPendingOrderData({ items, specialInstructions, total: items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0) });
     onOpenChange(false);
     navigate(`/t/${table.id}/payment`);
-  }, [sessionId, items, table, onOpenChange, navigate]);
+  }, [sessionId, items, specialInstructions, table, onOpenChange, navigate]);
 
   if (items.length === 0) return null;
 
@@ -98,7 +96,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.menuItemId, item.quantity + 1)}
-                      className="w-8 h-8 flex items_center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors"
+                      className="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-variant rounded-full transition-colors"
                       aria-label="Increase quantity"
                     >
                       <Plus className="size-4" strokeWidth={2} aria-hidden="true" />

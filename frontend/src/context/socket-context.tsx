@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { io, type Socket } from "socket.io-client";
+import { getAuth } from "@/lib/auth-store";
 
 interface OrderStatusUpdate {
   id: string;
@@ -36,7 +37,7 @@ interface SocketContextValue {
 
 const SocketContext = createContext<SocketContextValue | null>(null);
 
-const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || "http://localhost:3000";
+const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || window.location.origin;
 
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
@@ -44,9 +45,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   const socketRef = useRef<Socket | null>(null);
   if (!socketRef.current) {
-    const accessToken = localStorage.getItem("tabletap.auth")
-      ? JSON.parse(localStorage.getItem("tabletap.auth")!).accessToken
-      : undefined;
+    const accessToken = getAuth()?.accessToken;
 
     socketRef.current = io(SOCKET_URL, {
       auth: { token: accessToken },

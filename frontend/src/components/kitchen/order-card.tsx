@@ -95,8 +95,8 @@ export function OrderCard({ order, onStatusChange, isNew = false }: OrderCardPro
     setIsProcessing(newStatus);
     try {
       await onStatusChange(order.id, newStatus);
-    } catch (error) {
-      console.error("Failed to update status:", error);
+    } catch {
+      // error handled by parent's toast
     } finally {
       setIsProcessing(null);
     }

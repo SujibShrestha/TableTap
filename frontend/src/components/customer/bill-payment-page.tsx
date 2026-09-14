@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTableSession } from "@/context/table-session-context";
 import { getOrdersBySession } from "@/api/api";
 import { Banknote, Loader2, Info } from "lucide-react";
@@ -29,6 +27,7 @@ function BillItem({ item }: { item: OrderItem }) {
 export function BillPaymentPage() {
   const { id: tableId } = useParams<{ id: string }>();
   const { sessionId } = useTableSession();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,6 +110,7 @@ export function BillPaymentPage() {
           </div>
         </Alert>
         <button
+          onClick={() => tableId ? navigate(`/t/${tableId}`) : navigate(-1)}
           className="w-full bg-surface-container text-on-surface border border-outline-variant font-cta-label text-cta-label italic uppercase py-6 rounded-xl shadow-[0px_10px_30px_rgba(45,36,30,0.05)] hover:opacity-90 active:scale-95 transition-all"
         >
           <Banknote className="size-5 inline-block mr-2" strokeWidth={2} aria-hidden="true" />

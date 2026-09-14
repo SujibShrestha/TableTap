@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import type { Order } from "@/types";
 
-const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || "http://localhost:3000";
+const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || window.location.origin;
 
 export interface SessionClosedPayload {
   sessionId: string;
@@ -28,18 +28,29 @@ export function useWaiterSocket({ accessToken, onOrderStatusUpdate, onNewOrder, 
   useEffect(() => { onSessionClosedRef.current = onSessionClosed; }, [onSessionClosed]);
 
   const socketRef = useRef<Socket | null>(null);
-  if (!socketRef.current) {
-    socketRef.current = io(SOCKET_URL, {
+
+  useEffect(() => {
+    const socket = io(SOCKET_URL, {
       auth: { token: accessToken },
       transports: ["websocket", "polling"],
       autoConnect: true,
     });
-  }
+    socketRef.current = socket;
+
+    return () => {
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [accessToken]);
 
   useEffect(() => {
-    const socket = socketRef.current!;
+    const socket = socketRef.current;
+    if (!socket) return;
 
-    const onConnect = () => setIsConnected(true);
+    const onConnect = () => {
+      setIsConnected(true);
+      socket.emit("join-session", "waiter");
+    };
     const onDisconnect = () => setIsConnected(false);
     const handleNewOrder = (order: Order) => onNewOrderRef.current(order);
     const handleStatusUpdate = (order: Order) => onStatusUpdateRef.current(order);

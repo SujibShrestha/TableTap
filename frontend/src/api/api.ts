@@ -294,9 +294,8 @@ export const uploadImage = async (token: string, file: File) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  const res = await axios.post(`${baseURL}/upload`, formData, {
+  const res = await api.post("/upload", formData, {
     headers: { Authorization: `Bearer ${token}` },
-    withCredentials: true,
   });
 
   return res.data.imageUrl as string;
@@ -369,7 +368,7 @@ export const verifyEsewaPayment = async (
 };
 
 export const getOrdersBySession = async (sessionId: string) => {
-  const res = await axios.get(`${baseURL}/orders/session/${sessionId}`);
+  const res = await api.get(`/orders/session/${sessionId}`);
   return res.data.orders as Order[];
 };
 
@@ -467,7 +466,7 @@ export const verifyPayment = async (token: string, paymentId: string) => {
 };
 
 export const cancelOrder = async (orderId: string, sessionId: string) => {
-  const res = await axios.patch(`${baseURL}/orders/${orderId}/cancel`, { sessionId });
+  const res = await api.patch(`/orders/${orderId}/cancel`, { sessionId });
   return res.data.order as Order;
 };
 
