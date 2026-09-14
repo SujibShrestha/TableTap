@@ -16,8 +16,6 @@ import {
   verifyEsewaPayment,
 } from "../services/order.service.js";
 
-const VALID_STATUSES = ["PENDING", "CONFIRMED", "PREPARING", "READY", "SERVED", "CANCELLED"];
-
 export const createOrderController = async (req: Request, res: Response) => {
   try {
     const body = { ...req.body };

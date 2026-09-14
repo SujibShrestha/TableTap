@@ -159,21 +159,17 @@ export const getOrCreateActiveSession = async (tableId: string) => {
     throw new Error("Table not found");
   }
 
-  let session = await prisma.tableSession.findFirst({
-    where: {
-      tableId: table.id,
-      status: "ACTIVE",
-    },
-  });
-
-  if (!session) {
-    session = await prisma.tableSession.create({
-      data: {
-        tableId: table.id,
-        status: "ACTIVE",
-      },
+  const session = await prisma.$transaction(async (tx) => {
+    let s = await tx.tableSession.findFirst({
+      where: { tableId: table.id, status: "ACTIVE" },
     });
-  }
+    if (!s) {
+      s = await tx.tableSession.create({
+        data: { tableId: table.id, status: "ACTIVE" },
+      });
+    }
+    return s;
+  });
 
   return session;
 };

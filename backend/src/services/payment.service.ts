@@ -131,16 +131,10 @@ export const verifyPayment = async (paymentId: string) => {
     });
 
     // Mark ALL orders in this session as PAID (not just the linked one)
-    const sessionOrders = await tx.order.findMany({
+    await tx.order.updateMany({
       where: { sessionId: payment.sessionId, paymentStatus: { in: ["AWAITING_PAYMENT", "PENDING_VERIFICATION"] } },
+      data: { paymentStatus: "PAID" },
     });
-
-    for (const order of sessionOrders) {
-      await tx.order.update({
-        where: { id: order.id },
-        data: { paymentStatus: "PAID" },
-      });
-    }
 
     return p;
   });
@@ -149,6 +143,7 @@ export const verifyPayment = async (paymentId: string) => {
   try {
     const sessionOrders = await prisma.order.findMany({
       where: { sessionId: payment.sessionId },
+      select: { id: true, status: true },
     });
     for (const order of sessionOrders) {
       getIo().to('kitchen').to('waiter').emit('order:new', {

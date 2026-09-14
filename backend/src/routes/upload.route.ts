@@ -5,7 +5,7 @@ import cloudinary from "../config/cloudinary.js";
 import logger from "../config/logger.js";
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() }); // 5MB cap
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
 router.post('/', requireAuth, requireRole('ADMIN'), upload.single('image'), async (req, res) => {
   if (!req.file) {

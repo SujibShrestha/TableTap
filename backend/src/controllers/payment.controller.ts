@@ -3,7 +3,6 @@ import type { Request, Response } from "express";
 import { markCashPaymentSchema } from "../validations/payment.validation.js";
 import logger from "../config/logger.js";
 import { createPayment, getPaymentBySession, getPaymentsByTable, getTodayPayments, linkPaymentToOrder, verifyPayment } from "../services/payment.service.js";
-import { getAwaitingPaymentOrders } from "../services/order.service.js";
 import { prisma } from "../config/db.js";
 
 function statusCodeForError(message: string) {
@@ -40,30 +39,26 @@ export const markCashPaymentController = async (req: Request, res: Response) => 
     let payment;
     if (existingPayment) {
       // Payment already exists — mark all awaiting orders as PENDING_VERIFICATION
-      const awaitingOrders = await getAwaitingPaymentOrders();
-      const sessionAwaitingOrders = awaitingOrders.filter((o) => o.sessionId === sessionId);
-      for (const order of sessionAwaitingOrders) {
-        if (order.paymentStatus !== "PENDING_VERIFICATION") {
-          await prisma.order.update({
-            where: { id: order.id },
-            data: { paymentStatus: "PENDING_VERIFICATION" },
-          });
-        }
-      }
+      await prisma.order.updateMany({
+        where: { sessionId, paymentStatus: { in: ["AWAITING_PAYMENT"], not: "PENDING_VERIFICATION" } },
+        data: { paymentStatus: "PENDING_VERIFICATION" },
+      });
       payment = existingPayment;
     } else {
       // No payment yet — create one and mark all awaiting orders as PENDING_VERIFICATION
-      const awaitingOrders = await getAwaitingPaymentOrders();
-      const sessionAwaitingOrders = awaitingOrders.filter((o) => o.sessionId === sessionId);
+      const sessionAwaitingOrders = await prisma.order.findMany({
+        where: { sessionId, paymentStatus: "AWAITING_PAYMENT" },
+      });
 
       if (sessionAwaitingOrders.length > 0) {
         // Link payment to first order, mark rest as PENDING_VERIFICATION
         payment = await createPayment(sessionId, method, "STAFF", sessionAwaitingOrders[0]!.id, true);
         await linkPaymentToOrder(payment.id, sessionAwaitingOrders[0]!.id);
 
-        for (let i = 1; i < sessionAwaitingOrders.length; i++) {
-          await prisma.order.update({
-            where: { id: sessionAwaitingOrders[i]!.id },
+        if (sessionAwaitingOrders.length > 1) {
+          const remainingIds = sessionAwaitingOrders.slice(1).map((o) => o.id);
+          await prisma.order.updateMany({
+            where: { id: { in: remainingIds } },
             data: { paymentStatus: "PENDING_VERIFICATION" },
           });
         }

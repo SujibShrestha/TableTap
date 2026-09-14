@@ -1,5 +1,4 @@
-import { prisma } from "../config/db.js";
-import { generateEsewaSignature } from "../utils/esewa.js";
+import { prisma } from "../config/db.js";import { generateEsewaSignature } from "../utils/esewa.js";
 import { getIo } from "../utils/socket.js";
 import { getOrCreateActiveSession } from "./table.service.js";
 import logger from "../config/logger.js";
@@ -81,7 +80,11 @@ export const createOrder = async (data: {
 
   // Only emit to kitchen/waiter if paymentStatus is PAID (order is ready for kitchen)
   if (order.paymentStatus === "PAID") {
-    getIo().to("kitchen").to("waiter").emit("order:new", order);
+    try {
+      getIo().to("kitchen").to("waiter").emit("order:new", order);
+    } catch {
+      // socket may not be initialized; order is still created
+    }
   }
 
   return order;
@@ -133,7 +136,7 @@ export const updateOrderStatus = async (
 
   const updated = await prisma.order.update({
     where: { id: orderId },
-    data: { status: status as any, updatedByStaffId: updatedByStaffId ?? null },
+    data: { status: status as "PENDING" | "CONFIRMED" | "PREPARING" | "READY" | "SERVED" | "CANCELLED", updatedByStaffId: updatedByStaffId ?? null },
     include: { items: { include: { menuItem: true } }, session: true },
   });
 
@@ -355,8 +358,9 @@ export const createOrderWithPayment = async (data: {
         transactionUuid: order.id,
       });
 
-      const successUrl = `${process.env.FRONTEND_SUCCESS_URL}/${order.id}`;
-      const failureUrl = `${process.env.FRONTEND_FAILURE_URL}/${order.id}`;
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const successUrl = `${frontendUrl}/payment/success/${order.id}`;
+      const failureUrl = `${frontendUrl}/payment/failure/${order.id}`;
 
       return {
         order,
@@ -440,7 +444,12 @@ export const verifyEsewaPayment = async (orderId: string) => {
     }
 
     const amount = Number(order.totalAmount).toFixed(2);
-    const statusUrl = `${process.env.ESEWA_STATUS_CHECK_URL}?product_code=${process.env.ESEWA_MERCHANT_CODE}&total_amount=${amount}&transaction_uuid=${order.id}`;
+    const params = new URLSearchParams({
+      product_code: process.env.ESEWA_MERCHANT_CODE!,
+      total_amount: amount,
+      transaction_uuid: order.id,
+    });
+    const statusUrl = `${process.env.ESEWA_STATUS_CHECK_URL}?${params.toString()}`;
 
     logger.info(`eSewa status check: ${statusUrl}`);
 

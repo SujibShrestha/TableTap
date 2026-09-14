@@ -1,4 +1,4 @@
-import express, { type Application, type Request, type Response } from "express";
+import express, { type Application, type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import logger from "./config/logger.js";
@@ -17,16 +17,15 @@ import analyticsRoute from "./routes/analytics.route.js";
 const app:Application = express();
 
 
-//  Middlewares
+  //  Middlewares
 app.use(helmet());
 app.use(cors({
-    origin: true,
+    origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
   morgan('combined', {
     stream: { write: message => logger.info(message.trim()) },
@@ -46,12 +45,16 @@ app.use("/api/v1/analytics", analyticsRoute);
 
 
 app.get("/", (req:Request, res:Response) => {
-    logger.info('Hello from TableTap!');
     res.status(200).json({
         success: true,
         message: "Server is running"
     })
+});
 
+// Global error handler
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    logger.error(`Unhandled error: ${err.message}`, { stack: err.stack });
+    res.status(500).json({ success: false, message: "Internal server error" });
 });
 
 

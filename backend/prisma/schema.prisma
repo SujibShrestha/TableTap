@@ -83,6 +83,8 @@ model RefreshToken {
   revoked    Boolean  @default(false)
 
   createdAt  DateTime @default(now())
+
+  @@index([userId])
 }
 
 model RestaurantTable {
@@ -143,6 +145,9 @@ model MenuItem {
 
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+
+  @@index([categoryId])
+  @@index([isAvailable])
 }
 
 model Order {
@@ -166,6 +171,9 @@ model Order {
   updatedAt           DateTime      @updatedAt
 
   @@index([sessionId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -202,4 +210,5 @@ model Payment {
   updatedAt           DateTime      @updatedAt
 
   @@index([sessionId])
+  @@index([status, createdAt])
 }
