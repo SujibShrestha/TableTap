@@ -2,9 +2,12 @@ import type { Request, Response, NextFunction } from 'express';
 import { getClientIp } from 'request-ip';
 
 export function restrictToRestaurantWifi(req: Request, res: Response, next: NextFunction) {
+  if (process.env.NODE_ENV !== "production") {
+    return next();
+  }
+
   const allowedIpsEnv = process.env.RESTAURANT_ALLOWED_IPS;
 
-  // if not configured, skip restriction entirely (useful for local dev)
   if (!allowedIpsEnv) {
     return next();
   }

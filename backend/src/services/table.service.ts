@@ -15,19 +15,15 @@ export const createtable = async (tableNumber: string) => {
       data: { tableNumber },
     });
 
-    const tableUrl = `${process.env.FRONTEND_URL}/t/${table.id}`;
-
-    if (!tableUrl) {
-      throw new Error("Failed to generate table URL");
-    }
+    const tablePath = `/t/${table.id}`;
 
     const tableWithQr = await prisma.restaurantTable.update({
       where: { id: table.id },
-      data: { qrCodeUrl: tableUrl },
+      data: { qrCodeUrl: tablePath },
     });
 
-    logger.info(`Table created with ID: ${table.id} and URL: ${tableUrl}`);
-    return { table: tableWithQr, tableUrl };
+    logger.info(`Table created with ID: ${table.id} and path: ${tablePath}`);
+    return { table: tableWithQr, tableUrl: tablePath };
   } catch (error) {
     logger.error(`Error creating table: ${error}`);
     throw error;
