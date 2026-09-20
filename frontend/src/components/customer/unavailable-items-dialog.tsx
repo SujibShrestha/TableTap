@@ -6,7 +6,7 @@ import { X, AlertCircle } from "lucide-react";
 interface UnavailableItemsDialogProps {
   unavailableItems: string[];
   onClose: () => void;
-  onRetry: () => void;
+  onRetry?: () => void;
 }
 
 export function UnavailableItemsDialog({ unavailableItems, onClose, onRetry }: UnavailableItemsDialogProps) {
@@ -58,7 +58,7 @@ export function UnavailableItemsDialog({ unavailableItems, onClose, onRetry }: U
             <Button variant="outline" className="flex-1" onClick={onClose}>
               Keep Shopping
             </Button>
-            <Button className="flex-1" onClick={onRetry}>
+            <Button className="flex-1" onClick={() => onRetry?.()}>
               Retry Order
             </Button>
           </div>

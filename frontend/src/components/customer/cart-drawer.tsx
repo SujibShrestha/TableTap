@@ -5,10 +5,8 @@ import { formatMoney } from "@/lib/format";
 import { useCart } from "@/context/cart-context";
 import { useTableSession } from "@/context/table-session-context";
 import { Button } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { UnavailableItemsDialog } from "./unavailable-items-dialog";
-import type { Order } from "@/types";
 
 interface CartDrawerProps {
   open: boolean;
@@ -16,10 +14,9 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const { items, updateQuantity, removeItem, total, setPendingOrderData } = useCart();
+  const { items, updateQuantity, removeItem, setPendingOrderData } = useCart();
   const { sessionId, table } = useTableSession();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
   const [unavailableItems, setUnavailableItems] = useState<string[] | null>(null);
   const [specialInstructions, setSpecialInstructions] = useState("");
 
@@ -53,8 +50,6 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {error && <Alert className="mb-4">{error}</Alert>}
-
             {items.map((item) => (
               <div key={item.menuItemId} className="flex gap-4">
                 <div className="w-16 h-16 rounded-lg bg-surface-container-high flex-shrink-0 overflow-hidden">
@@ -143,7 +138,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
         <UnavailableItemsDialog
           unavailableItems={unavailableItems}
           onClose={() => setUnavailableItems(null)}
-          onRetry={() => navigate(`/t/${table.id}/payment`)}
+          onRetry={table ? () => navigate(`/t/${table.id}/payment`) : undefined}
         />
       )}
     </>

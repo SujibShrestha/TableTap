@@ -5,7 +5,6 @@ import { getOrdersBySession } from "@/api/api";
 import { Banknote, Loader2, Info } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import type { Order, OrderItem } from "@/types";
-import { toast } from "sonner";
 import { Alert } from "@/components/ui/alert";
 
 function BillItem({ item }: { item: OrderItem }) {

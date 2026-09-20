@@ -116,6 +116,7 @@ export interface Order {
   session?: {
     id: string;
     tableId: string;
+    createdAt: string;
     table?: RestaurantTable;
   };
   payment?: {
