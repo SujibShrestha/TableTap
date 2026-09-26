@@ -13,3 +13,17 @@ services:
       - ./backend/.env
 
     restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    
+    container_name: tabletap-frontend
+    ports:
+      - "5173:80"
+
+    env_file:
+      - ./frontend/.env
+
+    restart: unless-stopped
