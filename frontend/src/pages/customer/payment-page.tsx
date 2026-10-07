@@ -9,7 +9,7 @@ import { CheckoutPaymentOptions } from "@/components/customer/checkout-payment-o
 
 export function PaymentPage() {
   const { id: tableId } = useParams<{ id: string }>();
-  const { sessionId } = useTableSession();
+  const { table, sessionId } = useTableSession();
   const { items, clearCart, pendingOrderData, setPendingOrderData, total } = useCart();
   const navigate = useNavigate();
 
@@ -87,7 +87,7 @@ export function PaymentPage() {
         <div className="flex-1">
           <h1 className="font-headline-lg text-headline-lg text-on-surface">Payment</h1>
           <p className="font-body-secondary text-body-secondary text-on-surface-variant">
-            Table {tableId}
+            {table ? `Table ${table.tableNumber}` : ""}
           </p>
         </div>
       </header>

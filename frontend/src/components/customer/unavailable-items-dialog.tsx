@@ -1,7 +1,7 @@
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { X, AlertCircle } from "lucide-react";
+import { X } from "lucide-react";
 
 interface UnavailableItemsDialogProps {
   unavailableItems: string[];
@@ -33,7 +33,6 @@ export function UnavailableItemsDialog({ unavailableItems, onClose, onRetry }: U
         <main className="p-6">
           <Alert className="mb-6 border-destructive/30 bg-error-container/50 text-on-error-container">
             <div className="flex items-center gap-2">
-              <AlertCircle className="size-5 text-destructive" strokeWidth={2} aria-hidden="true" />
               <span className="font-medium">Some items in your cart are no longer available</span>
             </div>
           </Alert>

@@ -5,12 +5,16 @@ import { loginSchema, refreshSchema } from "../validations/auth.validation.js";
 
 export const loginController= async(req:Request, res:Response)=> {
     try {
+        const parsed = loginSchema.safeParse(req.body);
 
-        const { email, password } = loginSchema.parse(req.body);
-
-        if(!email || !password) {
-            return res.status(400).json({ message: "Email and password are required" });
+        if (!parsed.success) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and password are required",
+            });
         }
+
+        const { email, password } = parsed.data;
 
         const user = await login({email, password});
         

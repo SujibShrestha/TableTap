@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { formatMoney } from "@/lib/format";
 
 type DatePreset = "today" | "week" | "month" | "all";
 
@@ -262,11 +263,11 @@ function BarChart({
                       <p className="font-bold">{formatDayLabel(day.date)}</p>
                       <p className="mt-1">
                         <span className="inline-block size-1.5 rounded-full bg-primary mr-1.5 align-middle" />
-                        Sales: Rs {day.revenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        Sales: {formatMoney(day.revenue)}
                       </p>
                       <p>
                         <span className="inline-block size-1.5 rounded-full bg-outline mr-1.5 align-middle" />
-                        Profit: Rs {day.profit.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        Profit: {formatMoney(day.profit)}
                       </p>
                       {/* Arrow */}
                       <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-foreground" />
@@ -418,19 +419,19 @@ export function DashboardPage() {
       <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Total Sales"
-          value={`Rs ${(summary?.totalRevenue ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatMoney(summary?.totalRevenue ?? 0)}
           trend={preset === "all" ? undefined : "vs selected period"}
           loading={loading}
         />
         <MetricCard
           label="Net Profit"
-          value={`Rs ${(summary?.totalProfit ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatMoney(summary?.totalProfit ?? 0)}
           trend={preset === "all" ? undefined : "vs selected period"}
           loading={loading}
         />
         <MetricCard
           label="Average Order Value"
-          value={`Rs ${avgOrderValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatMoney(avgOrderValue)}
           trend={preset === "all" ? undefined : "vs selected period"}
           trendUp={false}
           loading={loading}
@@ -509,7 +510,7 @@ export function DashboardPage() {
                       {item.quantitySold}
                     </td>
                     <td className="py-4 px-2 text-right text-base font-medium text-foreground">
-                      Rs {item.revenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {formatMoney(item.revenue)}
                     </td>
                   </tr>
                 ))}

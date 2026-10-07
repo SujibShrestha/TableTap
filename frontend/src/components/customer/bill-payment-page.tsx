@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTableSession } from "@/context/table-session-context";
 import { getOrdersBySession } from "@/api/api";
-import { Banknote, Loader2, Info } from "lucide-react";
+import { Banknote, Loader2 } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import type { Order, OrderItem } from "@/types";
 import { Alert } from "@/components/ui/alert";
@@ -98,7 +98,6 @@ export function BillPaymentPage() {
 
       <section className="flex flex-col gap-4">
         <Alert className="bg-primary-container/20 border-primary-container/30">
-          <Info className="size-4 text-primary" strokeWidth={2} aria-hidden="true" />
           <div className="flex-1">
             <p className="font-body-main text-body-main text-on-surface font-medium">
               Payment is handled before ordering

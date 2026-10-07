@@ -9,5 +9,9 @@ export function formatDate(value: string | null): string {
 
 export function formatMoney(value: string | number): string {
   const number = typeof value === "number" ? value : Number(value);
-  return Number.isInteger(number) ? `Rs ${number}` : `Rs ${number.toFixed(2)}`;
+  if (Number.isNaN(number)) return "Rs 0";
+  return `Rs ${number.toLocaleString("en-IN", {
+    minimumFractionDigits: Number.isInteger(number) ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`;
 }

@@ -29,7 +29,7 @@ export function CategoryTabs({
               type="button"
               onClick={() => onChange("all")}
               className={cn(
-                "px-6 py-2 rounded-full font-bold text-primary whitespace-nowrap transition-colors shadow-sm",
+                "px-6 py-2 font-bold rounded-full font-cta-label text-cta-label italic whitespace-nowrap transition-colors shadow-sm",
                 activeCategoryId === "all"
                   ? "bg-primary-container text-on-primary-container"
                   : "border border-outline bg-transparent text-on-surface-variant hover:bg-surface-container-low"

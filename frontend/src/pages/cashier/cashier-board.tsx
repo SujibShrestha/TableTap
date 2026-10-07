@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatMoney } from "@/lib/format";
 
 type PayMethod = "CASH" | "CARD";
 
@@ -162,7 +163,7 @@ function BillDetailPanel({ sessionId }: { sessionId: string }) {
                         {item.quantity}x {item.menuItem?.name ?? "Item"}
                       </span>
                       <span className="text-muted-foreground shrink-0">
-                        Rs {(Number(item.unitPrice) * item.quantity).toFixed(2)}
+                        {formatMoney(Number(item.unitPrice) * item.quantity)}
                       </span>
                     </div>
                   ))}
@@ -171,7 +172,7 @@ function BillDetailPanel({ sessionId }: { sessionId: string }) {
               <div className="border-t border-border/30 pt-2 flex justify-between text-xs font-bold">
                 <span className="text-foreground">Total</span>
                 <span className="text-primary">
-                  Rs {detail.orders.reduce((sum, o) => sum + Number(o.totalAmount), 0).toFixed(2)}
+                  {formatMoney(detail.orders.reduce((sum, o) => sum + Number(o.totalAmount), 0))}
                 </span>
               </div>
             </div>
@@ -445,13 +446,13 @@ export function CashierBoard() {
       <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Collected Today"
-          value={`Rs ${(todaySummary?.totalCollected ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatMoney(todaySummary?.totalCollected ?? 0)}
           trend="today's shift"
           loading={loading}
         />
         <MetricCard
           label="Cash"
-          value={`Rs ${(todaySummary?.totalCash ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatMoney(todaySummary?.totalCash ?? 0)}
           trend={`${todaySummary?.transactionCount ?? 0} transactions`}
           trendUp={false}
           loading={loading}
@@ -478,7 +479,7 @@ export function CashierBoard() {
               Pending Payments
             </h2>
             <span className="text-sm text-secondary font-medium">
-              Rs {totalPendingDue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} total due
+              {formatMoney(totalPendingDue)} total due
             </span>
           </div>
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -514,7 +515,7 @@ export function CashierBoard() {
                     {awaiting.itemCount} item{awaiting.itemCount !== 1 ? "s" : ""}
                   </span>
                   <span className="text-lg font-bold italic text-primary">
-                    Rs {awaiting.totalDue.toFixed(2)}
+                    {formatMoney(awaiting.totalDue)}
                   </span>
                 </div>
 
@@ -621,7 +622,7 @@ export function CashierBoard() {
                         {session.itemCount}
                       </td>
                       <td className="py-4 px-2 text-right text-base font-medium text-foreground">
-                        Rs {session.totalDue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {formatMoney(session.totalDue)}
                       </td>
                       <td className="py-4 px-2 text-center">
                         {!isAwaiting ? (
@@ -699,7 +700,7 @@ export function CashierBoard() {
                       </span>
                     </td>
                     <td className="py-4 px-2 text-right text-base font-medium text-foreground">
-                      Rs {Number(p.amount).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {formatMoney(Number(p.amount))}
                     </td>
                   </tr>
                 ))}

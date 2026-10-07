@@ -55,10 +55,7 @@ export function SearchPage() {
     });
   }, [allItems, activeCategory, query]);
 
-  const categoryOptions = useMemo(() => [
-    { id: "all", name: "All", createdAt: "", updatedAt: "" },
-    ...categories,
-  ], [categories]);
+  const categoryOptions = useMemo(() => categories, [categories]);
 
   const handleAddToCart = (menuItem: MenuItem) => {
     addItem(menuItem);

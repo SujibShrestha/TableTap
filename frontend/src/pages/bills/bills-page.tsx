@@ -7,6 +7,7 @@ import type { Order } from "@/types";
 import { Loader2, AlertTriangle, Receipt, Banknote, CreditCard, Users, Clock, ShieldCheck, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatMoney } from "@/lib/format";
 
 type PayMethod = "CASH" | "CARD";
 
@@ -232,7 +233,7 @@ return (
                     {awaiting.itemCount} item{awaiting.itemCount !== 1 ? "s" : ""} due
                   </span>
                   <span className="font-price-label text-price-label text-amber-600 italic">
-                    Rs {awaiting.totalDue.toFixed(2)}
+                    {formatMoney(awaiting.totalDue)}
                   </span>
                 </div>
 
@@ -330,7 +331,7 @@ return (
                   {session.itemCount} item{session.itemCount !== 1 ? "s" : ""} due
                 </span>
                 <span className="font-price-label text-price-label text-primary italic">
-                  Rs {session.totalDue.toFixed(2)}
+                  {formatMoney(session.totalDue)}
                 </span>
               </div>
 
@@ -338,7 +339,7 @@ return (
                 <button
                   onClick={() => handleClose(session.tableId)}
                   disabled={closingId === session.tableId}
-                  className="flex-1 font-cta-label text-cta-label py-3 rounded-full bg-destructive text-white hover:bg-destructive/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait"
+                  className="flex-1 font-cta-label text-cta-label italic py-3 rounded-full border border-destructive/50 bg-transparent text-destructive hover:bg-destructive/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait"
                 >
                   {closingId === session.tableId ? (
                     <Loader2 className="size-4 mx-auto animate-spin" aria-hidden="true" />
