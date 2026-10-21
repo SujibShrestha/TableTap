@@ -83,19 +83,18 @@ export const linkPaymentToOrder = async (paymentId: string, orderId: string) => 
   // For AT_COUNTER flow, payment is PENDING_VERIFICATION — order stays AWAITING_PAYMENT
   // until a cashier verifies.
   if (payment.status === "PAID") {
-    await prisma.order.update({
+    const order = await prisma.order.update({
       where: { id: orderId },
       data: { paymentId, paymentStatus: "PAID" },
+      include: {
+        items: { include: { menuItem: true } },
+        session: { include: { table: true } },
+      },
     });
 
     // Emit order:new since the order is now paid and ready for kitchen
     try {
-      getIo().to('kitchen').to('waiter').emit('order:new', {
-        id: orderId,
-        sessionId: payment.sessionId,
-        status: "PENDING",
-        paymentStatus: "PAID",
-      });
+      getIo().to('kitchen').to('waiter').emit('order:new', order);
     } catch {
       // socket may not be initialized
     }
@@ -143,15 +142,13 @@ export const verifyPayment = async (paymentId: string) => {
   try {
     const sessionOrders = await prisma.order.findMany({
       where: { sessionId: payment.sessionId },
-      select: { id: true, status: true },
+      include: {
+        items: { include: { menuItem: true } },
+        session: { include: { table: true } },
+      },
     });
     for (const order of sessionOrders) {
-      getIo().to('kitchen').to('waiter').emit('order:new', {
-        id: order.id,
-        sessionId: payment.sessionId,
-        status: order.status,
-        paymentStatus: "PAID",
-      });
+      getIo().to('kitchen').to('waiter').emit('order:new', order);
     }
   } catch {
     // socket may not be initialized

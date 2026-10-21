@@ -50,5 +50,11 @@
     "winston": "^3.19.0",
     "ws": "^8.21.3",
     "zod": "^4.4.3"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.10.0": true,
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true,
+    "prisma@7.10.0": true
   }
 }

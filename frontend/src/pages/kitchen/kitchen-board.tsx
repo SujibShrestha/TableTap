@@ -6,6 +6,7 @@ import { Loader2, AlertTriangle, ShoppingBag } from "lucide-react";
 import type { Order } from "@/types";
 import { OrderCard } from "@/components/kitchen/order-card";
 import { toast } from "sonner";
+import { playNotificationSound } from "@/lib/notification-sound";
 
 const STATUS_PRIORITY: Record<string, number> = {
   PENDING: 0,
@@ -50,6 +51,7 @@ export function KitchenBoard() {
           return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         });
       });
+      void playNotificationSound();
       toast.info(`New order from Table ${newOrder.session?.table?.tableNumber ?? newOrder.sessionId.slice(0, 8)}`);
     },
     onOrderStatusUpdate: (updatedOrder: Order) => {
