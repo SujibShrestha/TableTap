@@ -17,6 +17,7 @@ import type {
   UpdateTablePayload,
   User,
 } from "@/types";
+import { clearAuth, getAuth } from "@/lib/auth-store";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
 
@@ -27,6 +28,23 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      getAuth() &&
+      window.location.pathname !== "/login"
+    ) {
+      clearAuth();
+      window.location.replace("/login");
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export interface LoginPayload {
   email: string;
@@ -276,16 +294,6 @@ export const updateMenuItem = async (token: string, id: string, data: UpdateMenu
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data.updatedMenuItem as MenuItem;
-};
-
-export const deleteMenuItem = async (token: string, id: string) => {
-  const res = await api.delete(`/menu/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return res.data.deletedMenuItem as MenuItem;
 };
 
 // ---------------- Upload ----------------

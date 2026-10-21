@@ -6,6 +6,7 @@ import { Loader2, AlertTriangle, ConciergeBell } from "lucide-react";
 import type { Order } from "@/types";
 import { OrderCard } from "@/components/kitchen/order-card";
 import { toast } from "sonner";
+import { playNotificationSound } from "@/lib/notification-sound";
 
 export function WaiterBoard() {
   const { accessToken } = useAuth();
@@ -39,10 +40,14 @@ export function WaiterBoard() {
         if (prev.some((o) => o.id === newOrder.id)) return prev;
         return [...prev, newOrder];
       });
+      void playNotificationSound();
     },
     onOrderStatusUpdate: (updatedOrder: Order) => {
       setOrders((prev) => {
         if (updatedOrder.status === "READY") {
+          if (!prev.some((o) => o.id === updatedOrder.id)) {
+            void playNotificationSound();
+          }
           return prev.some((o) => o.id === updatedOrder.id)
             ? prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o))
             : [...prev, updatedOrder];
