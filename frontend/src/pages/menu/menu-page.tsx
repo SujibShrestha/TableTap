@@ -6,7 +6,6 @@ import {
   createCategory,
   createMenuItem,
   deleteCategory,
-  deleteMenuItem,
   getCategories,
   getErrorMessage,
   getMenuItems,
@@ -80,59 +79,6 @@ function AvailabilityToggle({
           item.isAvailable ? "left-[calc(100%-1.125rem)]" : "left-0.5"
         )}
       />
-    </button>
-  );
-}
-
-function DeleteMenuItemButton({ item, onDone }: { item: MenuItem; onDone: () => void }) {
-  const [confirming, setConfirming] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleClick() {
-    if (!confirming) {
-      setConfirming(true);
-      setTimeout(() => setConfirming(false), 3500);
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      await deleteMenuItem(getAuth()?.accessToken ?? "", item.id);
-      setConfirming(false);
-      onDone();
-    } catch (err) {
-      setError(getErrorMessage(err));
-      setConfirming(false);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  if (error) {
-    return (
-      <span className="flex items-center gap-2 text-xs text-destructive">
-        {error}
-        <button className="underline-offset-4 hover:underline" onClick={() => setError(null)}>
-          dismiss
-        </button>
-      </span>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      aria-label={`Delete ${item.name}`}
-      disabled={busy}
-      onClick={() => void handleClick()}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-outline-variant/40 bg-surface/90 p-2 text-secondary backdrop-blur-sm transition-colors hover:bg-error-container hover:text-on-error-container",
-        confirming && "border-error-container bg-error-container text-on-error-container"
-      )}
-    >
-      <Trash2 className="size-4" />
-      {confirming ? "Confirm" : null}
     </button>
   );
 }
@@ -754,7 +700,6 @@ export function MenuPage() {
                       >
                         <Pencil className="size-4" />
                       </button>
-                      <DeleteMenuItemButton item={item} onDone={() => void loadMenu()} />
                     </div>
                   </div>
 

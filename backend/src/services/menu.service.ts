@@ -107,16 +107,3 @@ export const updatemenuItem = async ({
     }
 };
 
-export const deletemenuItem = async (id: string) => {
-    try {
-        const menuItem = await prisma.menuItem.delete({
-            where: { id },
-        });
-        if(!menuItem) {
-            throw new Error("Menu item deletion failed");
-        }
-        return menuItem;
-    } catch (error) {
-        throw new Error(`Error deleting menu item: ${error}`);
-    }
-};
