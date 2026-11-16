@@ -129,19 +129,25 @@ export const verifyPayment = async (paymentId: string) => {
       data: { status: "PAID" },
     });
 
-    // Mark ALL orders in this session as PAID (not just the linked one)
+    // Mark only the orders this payment covers: the linked one plus the ones
+    // mark-cash-paid already flipped to PENDING_VERIFICATION. Orders placed
+    // after that mark stay AWAITING_PAYMENT — nobody collected for them.
     await tx.order.updateMany({
-      where: { sessionId: payment.sessionId, paymentStatus: { in: ["AWAITING_PAYMENT", "PENDING_VERIFICATION"] } },
+      where: {
+        sessionId: payment.sessionId,
+        OR: [{ paymentId: payment.id }, { paymentStatus: "PENDING_VERIFICATION" }],
+      },
       data: { paymentStatus: "PAID" },
     });
 
     return p;
   });
 
-  // Notify kitchen and waiter for ALL orders in the session
+  // Notify kitchen/waiter with this session's paid orders only — never send
+  // orders still awaiting payment (boards dedupe by id, so re-sends are safe)
   try {
     const sessionOrders = await prisma.order.findMany({
-      where: { sessionId: payment.sessionId },
+      where: { sessionId: payment.sessionId, paymentStatus: "PAID" },
       include: {
         items: { include: { menuItem: true } },
         session: { include: { table: true } },

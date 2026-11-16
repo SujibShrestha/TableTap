@@ -189,6 +189,8 @@ model OrderItem {
   costPriceAtOrder   Decimal    @db.Decimal(10, 2)   // snapshot: cost price at order time
 
   createdAt          DateTime   @default(now())
+
+  @@index([orderId])
 }
 
 
