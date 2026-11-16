@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import type {
   AuthSession,
   BestSellerItem,
@@ -17,7 +17,7 @@ import type {
   UpdateTablePayload,
   User,
 } from "@/types";
-import { clearAuth, getAuth } from "@/lib/auth-store";
+import { clearAuth, getAuth, setAuth } from "@/lib/auth-store";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
 
@@ -29,15 +29,46 @@ export const api = axios.create({
   },
 });
 
+// One refresh shared by all requests that hit 401 at the same time.
+let refreshPromise: Promise<void> | null = null;
+
+async function refreshAuth() {
+  const refreshToken = getAuth()?.refreshToken;
+  // No refresh token = unrecoverable session; clear it so the route guard logs out.
+  if (!refreshToken) {
+    clearAuth();
+    throw new Error("No refresh token");
+  }
+  setAuth(await refreshSession(refreshToken));
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (
-      axios.isAxiosError(error) &&
-      error.response?.status === 401 &&
-      getAuth() &&
-      window.location.pathname !== "/login"
-    ) {
+  async (error) => {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    const config = error.config as (InternalAxiosRequestConfig & { _retried?: boolean }) | undefined;
+    const onLoginPage = window.location.pathname === "/login";
+
+    // Access token expired: refresh once, then replay the original request.
+    if (status === 401 && config && !config._retried && config.url !== "/auth/refresh" && getAuth() && !onLoginPage) {
+      config._retried = true;
+      try {
+        refreshPromise ??= refreshAuth().finally(() => {
+          refreshPromise = null;
+        });
+        await refreshPromise;
+        const accessToken = getAuth()?.accessToken;
+        if (accessToken) config.headers.set("Authorization", `Bearer ${accessToken}`);
+        return api.request(config);
+      } catch (refreshErr) {
+        // Refresh token rejected → session is really over, fall through to logout.
+        // Any other failure (network, 5xx) keeps the session; the next 401 retries.
+        const refreshStatus = axios.isAxiosError(refreshErr) ? refreshErr.response?.status : undefined;
+        if (refreshStatus !== 401) return Promise.reject(error);
+      }
+    }
+
+    if (status === 401 && getAuth() && !onLoginPage) {
       clearAuth();
       window.location.replace("/login");
     }

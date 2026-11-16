@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import type { Server as HttpServer } from 'http';
-import jwt from 'jsonwebtoken';
+import { verifyAccessToken } from './token.js';
 
 let io: Server;
 
@@ -14,7 +14,7 @@ export function initSocket(httpServer: HttpServer) {
     const token = socket.handshake.auth?.token as string | undefined;
     if (token) {
       try {
-        const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as { role: string };
+        const payload = verifyAccessToken(token);
         socket.join(payload.role.toLowerCase()); // e.g. "kitchen", "waiter", "admin", "cashier"
       } catch {
         // invalid/expired token — socket just won't join a role room, no crash

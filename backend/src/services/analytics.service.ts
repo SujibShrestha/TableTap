@@ -1,121 +1,102 @@
 import { prisma } from "../config/db.js";
 import logger from "../config/logger.js";
-import type { Prisma } from "../generated/prisma/index.js";
+import { Prisma } from "../generated/prisma/index.js";
 import { PAID_ORDER_STATUSES } from "../utils/analytics.js";
+
+/**
+ * All aggregation runs in Postgres: one grouped query instead of loading
+ * every OrderItem row into memory (that table only ever grows).
+ * Same rules the old JS version applied — parent order must be
+ * CONFIRMED..SERVED and inside the requested date range.
+ * `o` is the Order alias used by every query below.
+ */
+function paidOrderWhere(createdAt?: Prisma.DateTimeFilter<never>): Prisma.Sql {
+  const conds = [Prisma.sql`o."status" IN (${Prisma.join([...PAID_ORDER_STATUSES])})`];
+  if (createdAt?.gte) conds.push(Prisma.sql`o."createdAt" >= ${createdAt.gte}`);
+  if (createdAt?.lte) conds.push(Prisma.sql`o."createdAt" <= ${createdAt.lte}`);
+  return Prisma.join(conds, " AND ");
+}
 
 export const ordersummary = async ({ createdAt }: { createdAt: Prisma.DateTimeFilter<never> | undefined; }) => {
     try {
-        const orderItems = await prisma.orderItem.findMany({
-            where: {
-               order: {
-                   status: { in: [...PAID_ORDER_STATUSES] },
-                ...(createdAt && { createdAt }),
-            }
-        },
-    }
-    );
+        const rows = await prisma.$queryRaw<
+            { totalRevenue: unknown; totalProfit: unknown; totalOrders: unknown }[]
+        >`
+            SELECT
+                COALESCE(SUM(oi."unitPrice" * oi.quantity), 0)::numeric AS "totalRevenue",
+                COALESCE(SUM((oi."unitPrice" - oi."costPriceAtOrder") * oi.quantity), 0)::numeric AS "totalProfit",
+                (SELECT COUNT(*) FROM "Order" o WHERE ${paidOrderWhere(createdAt)}) AS "totalOrders"
+            FROM "OrderItem" oi
+            JOIN "Order" o ON o."id" = oi."orderId"
+            WHERE ${paidOrderWhere(createdAt)}
+        `;
 
-
-
-
-
-    const totalRevenue = orderItems.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0);
-    
-    const totalProfit = orderItems.reduce((sum, item) => sum + (Number(item.unitPrice)- Number(item.costPriceAtOrder)) * item.quantity, 0);
-
-    const totalOrders = await prisma.order.count({
-        where: {
-            status: { in: [...PAID_ORDER_STATUSES] },
-            ...(createdAt && { createdAt }),
-        }
-    });
+        const row = rows[0];
         return {
-            totalRevenue,
-            totalProfit,
-            totalOrders,
+            totalRevenue: Number(row?.totalRevenue ?? 0),
+            totalProfit: Number(row?.totalProfit ?? 0),
+            totalOrders: Number(row?.totalOrders ?? 0),
         };
     } catch (error) {
         logger.error("Error fetching order summary:", error);
         throw error;
     }
-
 }
 
 
 export const bestSeller = async ({ createdAt }: { createdAt: Prisma.DateTimeFilter<never> | undefined; }) => {
     try {
-       const orderItems = await prisma.orderItem.findMany({
-            where: {
-                order: {
-                    status: { in: [...PAID_ORDER_STATUSES] },
-                    ...(createdAt && { createdAt }),
-                }
-            },
-            include: {
-                menuItem: true,
-                order: { select: { sessionId: true } },
-            },
-        });
+        const rows = await prisma.$queryRaw<
+            { name: string; quantitySold: unknown; revenue: unknown; sessionCount: unknown }[]
+        >`
+            SELECT
+                m."name",
+                SUM(oi.quantity) AS "quantitySold",
+                COALESCE(SUM(oi."unitPrice" * oi.quantity), 0)::numeric AS "revenue",
+                COUNT(DISTINCT o."sessionId") AS "sessionCount"
+            FROM "OrderItem" oi
+            JOIN "Order" o ON o."id" = oi."orderId"
+            JOIN "MenuItem" m ON m."id" = oi."menuItemId"
+            WHERE ${paidOrderWhere(createdAt)}
+            GROUP BY oi."menuItemId", m."name"
+            ORDER BY "sessionCount" DESC, "quantitySold" DESC
+            LIMIT 10
+        `;
 
-        const grouped = new Map<string, { name: string; quantitySold: number; revenue: number; sessionIds: Set<string> }>();
-
-        for (const item of orderItems) {
-            const key = item.menuItemId;
-            const existing = grouped.get(key) ?? { name: item.menuItem.name, quantitySold: 0, revenue: 0, sessionIds: new Set() };
-            existing.quantitySold += item.quantity;
-            existing.revenue += Number(item.unitPrice) * item.quantity;
-            existing.sessionIds.add(item.order.sessionId);
-            grouped.set(key, existing);
-        }
-        
-        const bestSellers = Array.from(grouped.values())
-            .map(({ sessionIds, ...rest }) => ({ ...rest, sessionCount: sessionIds.size }))
-            .sort((a, b) => b.sessionCount - a.sessionCount || b.quantitySold - a.quantitySold)
-            .slice(0, 10);
-        return bestSellers;
+        return rows.map((row) => ({
+            name: row.name,
+            quantitySold: Number(row.quantitySold),
+            revenue: Number(row.revenue),
+            sessionCount: Number(row.sessionCount),
+        }));
     } catch (error) {
         logger.error("Error fetching best sellers:", error);
         throw error;
     }
-} 
+}
 
 
 export const dailyTrend = async ({ createdAt }: { createdAt: Prisma.DateTimeFilter<never> | undefined; }) => {
     try {
-        const orderItems = await prisma.orderItem.findMany({
-            where: {
-                order: {
-                    status: { in: [...PAID_ORDER_STATUSES] },
-                    ...(createdAt && { createdAt }),
-                }
-            },
-            select: {
-                unitPrice: true,
-                costPriceAtOrder: true,
-                quantity: true,
-                createdAt: true,
-            },
-        });
+        const rows = await prisma.$queryRaw<
+            { date: string; revenue: unknown; profit: unknown }[]
+        >`
+            SELECT
+                oi."createdAt"::date::text AS "date",
+                COALESCE(SUM(oi."unitPrice" * oi.quantity), 0)::numeric AS "revenue",
+                COALESCE(SUM((oi."unitPrice" - oi."costPriceAtOrder") * oi.quantity), 0)::numeric AS "profit"
+            FROM "OrderItem" oi
+            JOIN "Order" o ON o."id" = oi."orderId"
+            WHERE ${paidOrderWhere(createdAt)}
+            GROUP BY 1
+            ORDER BY 1
+        `;
 
-        const grouped = new Map<string, { revenue: number; profit: number }>();
-
-        for (const item of orderItems) {
-            const day = item.createdAt.toISOString().slice(0, 10); // YYYY-MM-DD
-            const existing = grouped.get(day) ?? { revenue: 0, profit: 0 };
-            existing.revenue += Number(item.unitPrice) * item.quantity;
-            existing.profit += (Number(item.unitPrice) - Number(item.costPriceAtOrder)) * item.quantity;
-            grouped.set(day, existing);
-        }
-
-        const daily = Array.from(grouped.entries())
-            .map(([date, data]) => ({
-                date,
-                revenue: Number(data.revenue.toFixed(2)),
-                profit: Number(data.profit.toFixed(2)),
-            }))
-            .sort((a, b) => a.date.localeCompare(b.date));
-
-        return daily;
+        return rows.map((row) => ({
+            date: row.date,
+            revenue: Number(row.revenue),
+            profit: Number(row.profit),
+        }));
     } catch (error) {
         logger.error("Error fetching daily trend:", error);
         throw error;
